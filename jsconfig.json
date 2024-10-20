@@ -1,7 +1,33 @@
+// {
+//   "compilerOptions": {
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     }
+//   }
+// }
+
 {
   "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@pages/*": ["src/pages/*"],
+      "@assets/*": ["src/assets/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@store/*": ["src/store/*"],
+      "@modules/*": ["src/modules/*"],
+      "@common/*": ["src/common/*"],
+      "@styles/*": ["src/styles/*"],
+      "@public/assets/*": ["public/assets/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*",
+    "public/**/*",
+    "next-env.d.js",
+    "**/*.js",
+    "**/*.jsx",
+    "next.config.js"
+  ],
+  "exclude": ["node_modules"]
 }
