@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { setAppError, setLoading } from "./app.slice";
 import { apiSlice } from "./api.slice";
+// import { banner_data } from "src/static-data/bannerdata";
 
 const initialState = {
   products: [],
+  banner: []
 };
 
 export const productSlice = createSlice({

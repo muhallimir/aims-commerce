@@ -5,14 +5,20 @@ module.exports = async () => {
     env: {
       NEXT_PUBLIC_MONGODB_URI: process.env._NEXT_PUBLIC_MONGODB_URI,
     },
-    redirects: async () => {
-      return [
+    redirects: async () => [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
+    ],
+    images: {
+      remotePatterns: [
         {
-          source: "/",
-          destination: "/home",
-          permanent: true,
+          protocol: "https",
+          hostname: "**",
         },
-      ];
+      ],
     },
   };
 
