@@ -14,13 +14,15 @@ import mainLogo from "@public/assets/aims-logo.png";
 import mainDarkLogo from "@public/assets/aims-logo-dark.png";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useGetProductListMutation } from "@store/products.slice";
+import { useRouter } from "next/router";
 
-function Header() {
+function MainHeader() {
 	const { theme: mode } = useSelector(({ app }) => app);
 	const [drawerOpen, setDrawerOpen] = useState(false);
-	const [reqProductList, resProductList] = useGetProductListMutation();
+	const [reqProductList] = useGetProductListMutation();
 	const dispatch = useDispatch();
 	const darkMode = mode === "dark";
+	const router = useRouter();
 
 	const toggleTheme = () => {
 		dispatch(switchTheme(darkMode ? "light" : "dark"));
@@ -36,11 +38,9 @@ function Header() {
 		reqProductList();
 	}, [reqProductList]);
 
-	useEffect(() => {
-		if (resProductList.statusCode === 200) {
-			console.log("resProductList:", resProductList);
-		}
-	}, [resProductList]);
+	const handleNavigate = (route) => {
+		router.push(`/${route}`);
+	};
 
 	return (
 		<Box
@@ -63,6 +63,7 @@ function Header() {
 					animation: darkMode ? "pulse 1.5s infinite" : "none",
 					boxShadow: darkMode ? "0 0 5px gold, 0 0 10px gold" : "none",
 				}}
+				onClick={() => router.push("/home")}
 			>
 				<Image
 					alt="main-logo"
@@ -86,6 +87,7 @@ function Header() {
 							color: darkMode ? "common.white" : "common.black",
 							mx: 1,
 						}}
+						onClick={() => handleNavigate(item.toLowerCase())}
 					>
 						{item}
 					</Button>
@@ -155,4 +157,4 @@ function Header() {
 	);
 }
 
-export default Header;
+export default MainHeader;

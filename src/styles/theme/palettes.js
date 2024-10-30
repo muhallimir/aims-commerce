@@ -21,6 +21,8 @@ const lightPalette = {
         primaryHover: _var['--color-button-primary-hover'],
         secondary: _var['--color-button-secondary'],
         secondaryHover: _var['--color-button-container-secondary-emphasis-hover'],
+        modalBackground: _var['--button-modal-background'],
+        modalHover: _var['--button-modal-hover'],
     },
     text: {
         primary: _var['--color-text-primary'],
@@ -33,11 +35,19 @@ const lightPalette = {
         success: _var['--color-success'],
         warning: _var['--color-warning'],
         error: _var['--color-error'],
-        outOfStock: _var['--color-out-of-stock'], // Added out-of-stock color
+        outOfStock: _var['--color-out-of-stock'],
     },
     background: {
         light: _var['--background-light'],
         dark: _var['--background-dark'],
+        modal: _var['--modal-background'],
+    },
+    shadow: {
+        modalImage: _var['--modal-shadow'],
+    },
+    iconButton: {
+        background: _var['--icon-button-background'],
+        hover: _var['--icon-button-hover'],
     },
 };
 

@@ -10,15 +10,19 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import useScreenSize from "src/hooks/useScreenSize";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProductCTA from "../buttons/ProductCTA";
+import { useRouter } from "next/router";
+import { setCurrentProduct } from "@store/products.slice";
 
 const ProductCard = ({ product }) => {
 	const { theme: mode } = useSelector(({ app }) => app);
+	const { products } = useSelector(({ productLists }) => productLists);
 	const darkMode = mode === "dark";
 	const theme = useTheme();
 	const { xs } = useScreenSize();
 	const {
+		_id,
 		name,
 		category,
 		image,
@@ -29,9 +33,19 @@ const ProductCard = ({ product }) => {
 		numReviews,
 		description,
 	} = product;
+	const router = useRouter();
+	const dispatch = useDispatch();
+
+	const currenProduct = products.find((product) => product?._id === _id);
+
+	const handleCardClick = () => {
+		dispatch(setCurrentProduct(currenProduct));
+		router.push(`/product/${_id}`);
+	};
 
 	return (
 		<Card
+			onClick={handleCardClick}
 			sx={{
 				padding: "12px",
 				border: darkMode ? "1px solid gold" : "1px solid transparent",

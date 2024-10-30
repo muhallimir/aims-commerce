@@ -5,6 +5,7 @@ import { apiSlice } from "./api.slice";
 
 const initialState = {
   products: [],
+  currentProduct: null,
   banner: []
 };
 
@@ -15,11 +16,14 @@ export const productSlice = createSlice({
     updateProductList: (state, action) => {
       state.products = action.payload;
     },
+    setCurrentProduct: (state, action) => {
+      state.currentProduct = action.payload;
+    },
   },
   extraReducers: () => { },
 });
 
-export const { updateProductList } = productSlice.actions;
+export const { updateProductList, setCurrentProduct } = productSlice.actions;
 
 export default productSlice.reducer;
 
