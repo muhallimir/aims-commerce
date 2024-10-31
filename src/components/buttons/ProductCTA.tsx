@@ -1,14 +1,15 @@
+import { ProductCTAProps } from "@common/interface";
 import Button from "@mui/material/Button";
 import React from "react";
 
-export default function ProductCTA({
-	variant,
-	color,
+const ProductCTA: React.FC<ProductCTAProps> = ({
+	variant = "contained",
+	color = "primary",
 	onClick,
 	buttonText,
-	disabled,
-	sx,
-}) {
+	disabled = false,
+	sx = {},
+}) => {
 	return (
 		<Button
 			variant={variant}
@@ -31,4 +32,6 @@ export default function ProductCTA({
 			{buttonText}
 		</Button>
 	);
-}
+};
+
+export default ProductCTA;

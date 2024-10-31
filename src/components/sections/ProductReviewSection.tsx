@@ -13,24 +13,27 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash";
 import { useState } from "react";
+import { Product, RootState } from "@common/interface";
 
-export default function ProductReviewSection({ product }) {
+export default function ProductReviewSection() {
+	const { currentProduct: product } = useSelector(
+		(state: any) => state.productLists,
+	) as { currentProduct: Product };
 	const theme = useTheme();
-	const { theme: mode } = useSelector(({ app }) => app);
-	const { userInfo } = useSelector(({ user }) => user);
+	const { theme: mode } = useSelector((state: RootState) => state.app);
+	const { userInfo } = useSelector((state: RootState) => state.user);
 	const router = useRouter();
 
-	const [comment, setComment] = useState("");
-	const [rating, setRating] = useState(0);
+	const [comment, setComment] = useState<string>("");
+	const [rating, setRating] = useState<number | null>(0);
 
 	const handleSignIn = () => {
 		router.push("/login");
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Here you would typically handle the submission of the comment and rating
-		// e.g., sending it to an API
+		// Handle the submission of the comment and rating here
 		console.log("Comment submitted:", comment, "Rating:", rating);
 		// Reset the form after submission
 		setComment("");
@@ -155,10 +158,8 @@ export default function ProductReviewSection({ product }) {
 							variant="body2"
 							sx={{
 								color: theme.palette.text.secondary,
-								mt: 2,
-								ml: 6,
+								ml: 9,
 								lineHeight: 1.8,
-								pl: 3,
 								fontStyle: "italic",
 								textAlign: "left",
 							}}

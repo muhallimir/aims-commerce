@@ -13,13 +13,16 @@ import {
 	Modal,
 	CardMedia,
 } from "@mui/material";
+import { Product } from "@common/interface";
 
-export default function ProductDetailSection() {
+const ProductDetailSection: React.FC = ({}) => {
 	const { currentProduct: product } = useSelector(
-		({ productLists }) => productLists,
-	);
-	const [open, setOpen] = useState(false);
+		(state: any) => state.productLists,
+	) as { currentProduct: Product };
+
+	const [open, setOpen] = useState<boolean>(false);
 	const { xs } = useScreenSize();
+
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
@@ -195,4 +198,6 @@ export default function ProductDetailSection() {
 			</Box>
 		</Box>
 	);
-}
+};
+
+export default ProductDetailSection;

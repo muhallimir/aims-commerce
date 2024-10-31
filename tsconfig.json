@@ -1,6 +1,22 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "@pages/*": [
@@ -27,14 +43,15 @@
       "@public/assets/*": [
         "public/assets/*"
       ]
-    }
+    },
+    "incremental": true
   },
   "include": [
     "src/**/*",
     "public/**/*",
-    "next-env.d.js",
-    "**/*.js",
-    "**/*.jsx",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
     "next.config.js"
   ],
   "exclude": [

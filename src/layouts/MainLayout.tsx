@@ -1,10 +1,9 @@
+import { MainLayoutProps } from "@common/interface";
 import { Box } from "@mui/material";
-import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 
-export default function MainLayout({ children }) {
-	const router = useRouter();
-	const { theme: mode } = useSelector(({ app }) => app);
+export default function MainLayout({ children }: MainLayoutProps) {
+	const { theme: mode } = useSelector((state: any) => state.app);
 
 	return (
 		<Box
@@ -14,7 +13,7 @@ export default function MainLayout({ children }) {
 				height: "100%",
 			}}
 		>
-			<Box location={router.pathname}>{children}</Box>
+			<Box>{children}</Box>
 		</Box>
 	);
 }

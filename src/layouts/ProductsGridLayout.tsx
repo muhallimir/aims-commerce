@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-	Grid,
-	Container,
-	Typography,
-	Box,
-	useTheme,
-	// CircularProgress,
-} from "@mui/material";
+import { Grid, Container, Typography, Box, useTheme } from "@mui/material";
 import ProductCard from "src/components/cards/ProductCard";
 import { useSelector } from "react-redux";
-import ProductCardSkeleton from "src/components/loaders/ProductCardSkeleton";
 import useScreenSize from "src/hooks/useScreenSize";
 import { keyframes } from "@emotion/react";
+import ProductCardSkeleton from "src/components/loaders/ProductCardSkeleton";
 
-const LoadingOverlay = () => {
+const LoadingOverlay: React.FC = () => {
 	const theme = useTheme();
 	const bounce = keyframes`0%, 100% { transform: translateY(0); }  50% { transform: translateY(-10px); }`;
 	const gradientShift = keyframes`0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }`;
@@ -70,32 +63,32 @@ const LoadingOverlay = () => {
 	);
 };
 
-const ProductsGridLayout = () => {
-	const { theme: mode, loading } = useSelector(({ app }) => app);
-	const { products } = useSelector(({ productLists }) => productLists);
+const ProductsGridLayout: React.FC = () => {
+	const { theme: mode, loading } = useSelector((state: any) => state.app);
+	const { products } = useSelector((state: any) => state.productLists);
 	const { xs } = useScreenSize();
-	const [showOverlay, setShowOverlay] = useState(false);
-	const [loadingStartTime, setLoadingStartTime] = useState(null);
+	const [showOverlay, setShowOverlay] = useState<boolean>(false);
+	const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (loading) {
-			setLoadingStartTime(Date.now()); // Start timing when loading begins
+			setLoadingStartTime(Date.now());
 		} else if (loadingStartTime) {
 			const loadingDuration = Date.now() - loadingStartTime;
-			if (loadingDuration > 1) setShowOverlay(false); // Remove overlay if loading completes
-			setLoadingStartTime(null); // Reset the loading start time
+			if (loadingDuration > 1) setShowOverlay(false);
+			setLoadingStartTime(null);
 		}
 	}, [loading]);
 
 	useEffect(() => {
-		let overlayTimeout;
+		let overlayTimeout: NodeJS.Timeout;
 		if (loading && loadingStartTime) {
 			overlayTimeout = setTimeout(() => {
 				setShowOverlay(true);
 			}, 2000);
 		}
 
-		return () => clearTimeout(overlayTimeout); // Cleanup timeout on unmount or when loading ends
+		return () => clearTimeout(overlayTimeout);
 	}, [loading, loadingStartTime]);
 
 	return (
@@ -118,14 +111,10 @@ const ProductsGridLayout = () => {
 									justifyContent: "center",
 								}}
 							>
-								<ProductCardSkeleton
-									darkMode={mode === "dark"}
-									theme={mode}
-									isMobile={xs}
-								/>
+								<ProductCardSkeleton darkMode={mode === "dark"} isMobile={xs} />
 							</Grid>
 					  ))
-					: products.map((product) => (
+					: products.map((product: any) => (
 							<Grid
 								item
 								xs={12}

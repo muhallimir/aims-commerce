@@ -1,18 +1,19 @@
-import { useTheme } from "@emotion/react";
+import { ProductCardSkeletonProps } from "@common/interface";
 import { Box, Card, CardActions, CardContent, Skeleton } from "@mui/material";
 import React from "react";
 
-export default function ProductCardSkeleton({ darkMode, isMobile }) {
-	const theme = useTheme();
-
+const ProductCardSkeleton: React.FC<ProductCardSkeletonProps> = ({
+	darkMode,
+	isMobile,
+}) => {
 	return (
 		<Card
 			sx={{
 				padding: "12px",
 				border: darkMode ? "1px solid gold" : "1px solid transparent",
 				borderTopLeftRadius: "24px",
-				width: isMobile ? "100%" : 280, // Match ProductCard's width
-				height: isMobile ? "auto" : 450, // Fixed height to match ProductCard
+				width: isMobile ? "100%" : 280,
+				height: isMobile ? "auto" : 450,
 				backgroundColor: "common.white",
 				color: "common.black",
 				boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
@@ -26,7 +27,7 @@ export default function ProductCardSkeleton({ darkMode, isMobile }) {
 			<Box
 				sx={{
 					position: "relative",
-					height: isMobile ? 120 : 180, // Match ProductCard's image height
+					height: isMobile ? 120 : 180,
 					width: "100%",
 				}}
 			>
@@ -34,12 +35,12 @@ export default function ProductCardSkeleton({ darkMode, isMobile }) {
 			</Box>
 			<CardContent
 				sx={{
-					padding: theme.spacing(2),
+					padding: "16px",
 					flexGrow: 1,
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "space-between",
-					height: isMobile ? 160 : 180, // Adjust content height for mobile
+					height: isMobile ? 160 : 180,
 				}}
 			>
 				<Skeleton height={20} /> {/* Title */}
@@ -56,11 +57,13 @@ export default function ProductCardSkeleton({ darkMode, isMobile }) {
 				sx={{
 					display: "flex",
 					justifyContent: "space-between",
-					padding: theme.spacing(1, 2),
+					padding: "8px 16px",
 				}}
 			>
-				<Skeleton height={36} width="100%" /> {/* Button */}
+				<Skeleton height={36} width="100%" />
 			</CardActions>
 		</Card>
 	);
-}
+};
+
+export default ProductCardSkeleton;

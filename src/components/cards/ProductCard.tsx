@@ -15,10 +15,22 @@ import ProductCTA from "../buttons/ProductCTA";
 import { useRouter } from "next/router";
 import { setCurrentProduct } from "@store/products.slice";
 import { updateCartList } from "@store/cart.slice";
+import {
+	AppState,
+	CardsContentProps,
+	Product,
+	ProductCardProps,
+	ProductListState,
+} from "@common/interface";
 
-const CardsContent = ({ product, theme, isMobile }) => {
+const CardsContent: React.FC<CardsContentProps> = ({
+	product,
+	theme,
+	isMobile,
+}) => {
 	const { name, category, brand, price, description, rating, numReviews } =
 		product;
+
 	return (
 		<CardContent
 			sx={{
@@ -44,7 +56,7 @@ const CardsContent = ({ product, theme, isMobile }) => {
 					? `${description.substring(0, isMobile ? 40 : 15)}...`
 					: description}
 			</Typography>
-			<Box display="flex" alignItems="center">
+			<Box display="flex" alignItems="center" justifyContent="center">
 				<Rating value={rating} readOnly precision={0.5} size="small" />
 				<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
 					({numReviews} reviews)
@@ -54,9 +66,11 @@ const CardsContent = ({ product, theme, isMobile }) => {
 	);
 };
 
-const ProductCard = ({ product }) => {
-	const { theme: mode } = useSelector(({ app }) => app);
-	const { products } = useSelector(({ productLists }) => productLists);
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+	const { theme: mode } = useSelector((state: { app: AppState }) => state.app);
+	const { products } = useSelector(
+		(state: { productLists: ProductListState }) => state.productLists,
+	);
 	const darkMode = mode === "dark";
 	const theme = useTheme();
 	const { xs } = useScreenSize();
@@ -64,11 +78,11 @@ const ProductCard = ({ product }) => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 
-	const currenProduct = products.find((product) => product?._id === _id);
+	const currentProduct = products.find((p: Product) => p?._id === _id);
 
 	const handleCardClick = () => {
-		dispatch(setCurrentProduct(currenProduct));
-		router.push(`/product/${_id}`);
+		dispatch(setCurrentProduct(currentProduct));
+		router.push(`/store/product/${_id}`);
 	};
 
 	const handleAddToCart = () => {
@@ -128,7 +142,6 @@ const ProductCard = ({ product }) => {
 			>
 				<ProductCTA
 					variant="contained"
-					countInStock={product.countInStock}
 					onClick={handleAddToCart}
 					color="primary"
 					buttonText={countInStock > 0 ? "Add to Cart" : "Out of Stock"}

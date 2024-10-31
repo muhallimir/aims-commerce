@@ -21,15 +21,21 @@ import { useRouter } from "next/router";
 import CartDrawer from "../drawers/CartDrawer";
 
 function MainHeader() {
-	const { theme: mode } = useSelector(({ app }) => app);
-	const { cart } = useSelector(({ cartList }) => cartList);
-	const [drawerOpen, setDrawerOpen] = useState(false);
-	const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
-	const [reqProductList] = useGetProductListMutation();
+	const { theme: mode } = useSelector(
+		(state: { app: { theme: string } }) => state.app,
+	);
+	const { cart } = useSelector(
+		(state: { cartList: { cart: any[] } }) => state.cartList,
+	);
+	const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+	const [cartDrawerOpen, setCartDrawerOpen] = useState<boolean>(false);
+	const [reqProductList] = useGetProductListMutation() as unknown as [
+		() => Promise<void>,
+	];
 	const dispatch = useDispatch();
 	const darkMode = mode === "dark";
 	const router = useRouter();
-	const [cartItemsCount, setCartItemsCount] = useState(0);
+	const [cartItemsCount, setCartItemsCount] = useState<number>(0);
 
 	const toggleTheme = () => {
 		dispatch(switchTheme(darkMode ? "light" : "dark"));
@@ -54,11 +60,11 @@ function MainHeader() {
 		setCartItemsCount(totalQuantity);
 	}, [cart]);
 
-	const handleNavigate = (route) => {
+	const handleNavigate = (route: string) => {
 		router.push(`/${route}`);
 	};
 
-	const isActive = (item) => {
+	const isActive = (item: string) => {
 		return router.pathname.includes(item.toLowerCase());
 	};
 
@@ -104,7 +110,6 @@ function MainHeader() {
 					<Button
 						key={item}
 						sx={{
-							color: darkMode ? "common.white" : "common.black",
 							mx: 1,
 							backgroundColor: isActive(item)
 								? "secondary.main"
@@ -204,7 +209,6 @@ function MainHeader() {
 								toggleDrawer();
 							}}
 							sx={{
-								color: darkMode ? "common.white" : "common.black",
 								my: 1,
 								backgroundColor: isActive(item)
 									? "primary.main"
