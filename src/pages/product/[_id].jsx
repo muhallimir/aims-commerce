@@ -1,9 +1,9 @@
-import Box from "@mui/material/Box";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Stack from "@mui/material/Stack";
 import { useSelector } from "react-redux";
-import MainHeader from "src/components/headers/MainHeader";
 import ProductDetailSection from "src/components/sections/ProductDetailSection";
+import ProductReviewSection from "src/components/sections/ProductReviewSection";
 
 const Product = () => {
 	const router = useRouter();
@@ -17,12 +17,10 @@ const Product = () => {
 	}, [productId, products]);
 
 	return (
-		<>
-			<MainHeader />
-			<Box minHeight="100vh">
-				<ProductDetailSection product={product} />
-			</Box>
-		</>
+		<Stack minHeight="100vh">
+			<ProductDetailSection product={product} />
+			<ProductReviewSection product={product} />
+		</Stack>
 	);
 };
 

@@ -1,7 +1,8 @@
-import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import userReducer from "./user.slice";
 import menuReducer from "./menu.slice";
+import cartReducer from "./cart.slice";
 import appReducer from "./app.slice";
 import productReducer from "./products.slice";
 import { apiSlice } from "./api.slice";
@@ -11,7 +12,7 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['productLists'],
+  whitelist: ['productLists', 'cartList'],
 };
 
 const rootReducer = (state, action) => {
@@ -29,6 +30,7 @@ const rootReducerWithoutHydrate = combineReducers({
   user: userReducer,
   menuList: menuReducer,
   productLists: productReducer,
+  cartList: cartReducer,
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 

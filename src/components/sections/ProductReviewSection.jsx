@@ -1,18 +1,184 @@
-import { Box, Rating, Typography } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Stack,
+	Rating,
+	Button,
+	Divider,
+	Avatar,
+	TextField,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { isEmpty } from "lodash";
+import { useState } from "react";
 
 export default function ProductReviewSection({ product }) {
+	const theme = useTheme();
+	const { theme: mode } = useSelector(({ app }) => app);
+	const { userInfo } = useSelector(({ user }) => user);
+	const router = useRouter();
+
+	const [comment, setComment] = useState("");
+	const [rating, setRating] = useState(0);
+
+	const handleSignIn = () => {
+		router.push("/login");
+	};
+
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		// Here you would typically handle the submission of the comment and rating
+		// e.g., sending it to an API
+		console.log("Comment submitted:", comment, "Rating:", rating);
+		// Reset the form after submission
+		setComment("");
+		setRating(0);
+	};
+
 	return (
-		<Box sx={{ mt: 4 }}>
-			<Typography variant="h5">Customer Reviews</Typography>
-			{product?.reviews.map((review, index) => (
-				<Box key={index} sx={{ mt: 2 }}>
-					<Typography variant="body2" fontWeight="bold">
-						{review.name}
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				placeSelf: "center",
+				px: { xs: 2, md: 4 },
+				py: 4,
+				borderRadius: "12px",
+				boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
+				width: "100%",
+				maxWidth: 1300,
+				backgroundColor: "var(--background-light)",
+				border: mode === "dark" ? "1px solid gold" : "1px solid transparent",
+			}}
+		>
+			<Typography
+				variant="h5"
+				sx={{
+					fontWeight: "bold",
+					color: "var(--primary-aims-main)",
+					mb: 3,
+					borderBottom: `2px solid ${theme.palette.divider}`,
+					pb: 1,
+				}}
+			>
+				Customer Reviews
+			</Typography>
+
+			{isEmpty(userInfo) ? (
+				<Box sx={{ textAlign: "center", my: 4 }}>
+					<Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
+						Sign in to add your review
 					</Typography>
-					<Rating value={review.rating} readOnly size="small" />
-					<Typography variant="body2">{review.comment}</Typography>
+					<Button
+						variant="contained"
+						onClick={handleSignIn}
+						color="secondary"
+						sx={{
+							borderRadius: "20px",
+							textTransform: "capitalize",
+							px: 4,
+						}}
+					>
+						Sign In
+					</Button>
 				</Box>
-			))}
+			) : (
+				<form onSubmit={handleSubmit}>
+					<Stack spacing={2} sx={{ mb: 4 }}>
+						<Rating
+							value={rating}
+							onChange={(event, newValue) => {
+								setRating(newValue);
+							}}
+							size="large"
+							sx={{ mb: 2 }}
+						/>
+						<TextField
+							label="Write your comment"
+							multiline
+							rows={4}
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							variant="outlined"
+							fullWidth
+							sx={{ bgcolor: "white" }} // Optional: Change background color
+						/>
+						<Button
+							type="submit"
+							variant="contained"
+							color="primary"
+							sx={{
+								borderRadius: "20px",
+								textTransform: "capitalize",
+								px: 4,
+							}}
+						>
+							Submit Review
+						</Button>
+					</Stack>
+				</form>
+			)}
+
+			{product?.reviews?.length > 0 ? (
+				product.reviews.map((review, index) => (
+					<Box key={index}>
+						<Stack
+							direction="row"
+							alignItems="center"
+							textAlign="left"
+							spacing={2}
+						>
+							<Avatar
+								alt={review.name}
+								sx={{
+									bgcolor: "var(--background-dark)",
+									width: 48,
+									height: 48,
+								}}
+							>
+								{review.name.charAt(0)}
+							</Avatar>
+							<Box>
+								<Typography
+									variant="subtitle1"
+									fontWeight="bold"
+									sx={{ color: theme.palette.text.primary }}
+								>
+									{review.name}
+								</Typography>
+								<Rating value={review.rating} readOnly size="small" />
+							</Box>
+						</Stack>
+						<Typography
+							variant="body2"
+							sx={{
+								color: theme.palette.text.secondary,
+								mt: 2,
+								ml: 6,
+								lineHeight: 1.8,
+								pl: 3,
+								fontStyle: "italic",
+								textAlign: "left",
+							}}
+						>
+							{review.comment}
+						</Typography>
+						{index < product.reviews.length - 1 && (
+							<Divider sx={{ my: 2, borderColor: theme.palette.divider }} />
+						)}
+					</Box>
+				))
+			) : (
+				<Typography
+					variant="body1"
+					color="textSecondary"
+					sx={{ textAlign: "center", my: 4 }}
+				>
+					No reviews available for this product
+				</Typography>
+			)}
 		</Box>
 	);
 }

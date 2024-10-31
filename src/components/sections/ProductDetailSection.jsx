@@ -130,7 +130,12 @@ export default function ProductDetailSection() {
 
 				{/* Product Details */}
 				<Box sx={{ flex: 2 }}>
-					<Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
+					<Typography
+						variant="h4"
+						color="primary"
+						gutterBottom
+						sx={{ fontWeight: "bold" }}
+					>
 						{product?.name}
 					</Typography>
 					<Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>

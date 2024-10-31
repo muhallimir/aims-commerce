@@ -8,6 +8,7 @@ import { wrapper } from "@store/index"; // Import the wrapper and persistor
 import "../styles/globals.css";
 import createEmotionCache from "@helpers/createEmotionCache";
 import MainLayout from "src/layouts/MainLayout";
+import MainHeader from "src/components/headers/MainHeader";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -26,6 +27,8 @@ export function MyApp(props) {
 				{setGlobalStyles(Theme)}
 				<CssBaseline />
 				<MainLayout>
+					<MainHeader />
+
 					<Component {...pageProps} />
 				</MainLayout>
 			</ThemeProvider>

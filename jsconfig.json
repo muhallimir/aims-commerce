@@ -1,24 +1,32 @@
-// {
-//   "compilerOptions": {
-//     "paths": {
-//       "@/*": ["./src/*"]
-//     }
-//   }
-// }
-
 {
   "compilerOptions": {
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@pages/*": ["src/pages/*"],
-      "@assets/*": ["src/assets/*"],
-      "@helpers/*": ["src/helpers/*"],
-      "@store/*": ["src/store/*"],
-      "@modules/*": ["src/modules/*"],
-      "@common/*": ["src/common/*"],
-      "@styles/*": ["src/styles/*"],
-      "@public/assets/*": ["public/assets/*"]
+      "@pages/*": [
+        "src/pages/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@helpers/*": [
+        "src/helpers/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@public/assets/*": [
+        "public/assets/*"
+      ]
     }
   },
   "include": [
@@ -29,5 +37,7 @@
     "**/*.jsx",
     "next.config.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
