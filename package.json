@@ -28,6 +28,7 @@
     "@reduxjs/toolkit": "1.9.3",
     "crypto-js": "4.2.0",
     "dayjs": "1.11.7",
+    "formik": "^2.4.6",
     "html-react-parser": "5.1.8",
     "hybrid-crypto-js": "0.2.4",
     "i18n-iso-countries": "7.6.0",
@@ -47,6 +48,7 @@
     "react-pdf": "^6.0.1",
     "react-redux": "8.0.5",
     "react-simple-pull-to-refresh": "1.3.3",
+    "react-transition-group": "^4.4.5",
     "redux-persist": "^6.0.0",
     "swiper": "8.4.2",
     "yup": "0.32.11"

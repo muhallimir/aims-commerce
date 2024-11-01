@@ -19,11 +19,35 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 import CartDrawer from "../drawers/CartDrawer";
+import useThemeMode from "src/hooks/useThemeMode";
+import { SignInProps } from "@common/interface";
+
+const SignIn: React.FC<SignInProps> = ({ router, isDarkMode }) => {
+	return (
+		<Button
+			variant="contained"
+			onClick={() => router.push("/signin")}
+			sx={{
+				ml: 2,
+				backgroundColor: isDarkMode ? "primary.main" : "secondary.main",
+				color: "common.white",
+				borderRadius: "20px",
+				boxShadow: `0px 4px 6px ${
+					isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)"
+				}`,
+				transition: "background-color 0.3s ease, transform 0.3s ease",
+				"&:hover": {
+					backgroundColor: isDarkMode ? "primary.dark" : "secondary.dark",
+					transform: "scale(1.05)",
+				},
+			}}
+		>
+			Sign In
+		</Button>
+	);
+};
 
 function MainHeader() {
-	const { theme: mode } = useSelector(
-		(state: { app: { theme: string } }) => state.app,
-	);
 	const { cart } = useSelector(
 		(state: { cartList: { cart: any[] } }) => state.cartList,
 	);
@@ -32,14 +56,9 @@ function MainHeader() {
 	const [reqProductList] = useGetProductListMutation() as unknown as [
 		() => Promise<void>,
 	];
-	const dispatch = useDispatch();
-	const darkMode = mode === "dark";
+	const { isDarkMode, toggleTheme } = useThemeMode();
 	const router = useRouter();
 	const [cartItemsCount, setCartItemsCount] = useState<number>(0);
-
-	const toggleTheme = () => {
-		dispatch(switchTheme(darkMode ? "light" : "dark"));
-	};
 
 	const toggleDrawer = () => {
 		setDrawerOpen(!drawerOpen);
@@ -74,7 +93,7 @@ function MainHeader() {
 				display: "flex",
 				justifyContent: "space-between",
 				alignItems: "center",
-				backgroundColor: darkMode ? "common.black" : "common.white",
+				backgroundColor: isDarkMode ? "common.black" : "common.white",
 				boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
 				padding: "4px",
 			}}
@@ -85,15 +104,15 @@ function MainHeader() {
 					padding: "1px",
 					borderRadius: "5px",
 					border: `1px solid transparent`,
-					backgroundColor: darkMode ? "transparent" : "none",
-					animation: darkMode ? "pulse 1.5s infinite" : "none",
-					boxShadow: darkMode ? "0 0 5px gold, 0 0 10px gold" : "none",
+					backgroundColor: isDarkMode ? "transparent" : "none",
+					animation: isDarkMode ? "pulse 1.5s infinite" : "none",
+					boxShadow: isDarkMode ? "0 0 5px gold, 0 0 10px gold" : "none",
 				}}
 				onClick={() => router.push("/store")}
 			>
 				<Image
 					alt="main-logo"
-					src={darkMode ? mainDarkLogo : mainLogo}
+					src={isDarkMode ? mainDarkLogo : mainLogo}
 					width={100}
 					height={40}
 					priority
@@ -116,13 +135,13 @@ function MainHeader() {
 								: "transparent",
 							color: isActive(item)
 								? "common.white"
-								: darkMode
+								: isDarkMode
 								? "common.white"
 								: "common.black",
 							"&:hover": {
 								backgroundColor: isActive(item)
 									? "secondary.main"
-									: darkMode
+									: isDarkMode
 									? "rgba(255, 255, 255, 0.1)"
 									: "rgba(0, 0, 0, 0.1)",
 							},
@@ -139,15 +158,13 @@ function MainHeader() {
 					sx={{ display: { xs: "flex", sm: "none" } }}
 				>
 					<MenuIcon
-						sx={{ color: darkMode ? "common.white" : "common.black" }}
+						sx={{ color: isDarkMode ? "common.white" : "common.black" }}
 					/>
 				</IconButton>
 				<IconButton onClick={toggleCartDrawer} sx={{ mr: 1 }}>
 					<Badge badgeContent={cartItemsCount} color="secondary">
 						<ShoppingCartIcon
-							sx={{
-								color: darkMode ? "common.white" : "common.black",
-							}}
+							sx={{ color: isDarkMode ? "common.white" : "common.black" }}
 						/>
 					</Badge>
 				</IconButton>
@@ -155,18 +172,20 @@ function MainHeader() {
 					variant="body2"
 					sx={{
 						marginRight: "1rem",
-						color: darkMode ? "common.white" : "common.black",
+						color: isDarkMode ? "common.white" : "common.black",
 						display: { xs: "none", sm: "flex" },
 					}}
 				>
-					{darkMode ? "Dark" : "Light"} Mode
+					{isDarkMode ? "Dark" : "Light"} Mode
 				</Typography>
 				<Switch
-					checked={darkMode}
+					checked={isDarkMode}
 					onChange={toggleTheme}
 					color="primary"
 					sx={{ display: { xs: "none", sm: "flex" } }}
 				/>
+
+				<SignIn router={router} isDarkMode={isDarkMode} />
 			</Box>
 			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
 			<Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
@@ -175,7 +194,7 @@ function MainHeader() {
 						height: "100vh",
 						width: 250,
 						padding: 2,
-						backgroundColor: darkMode ? "common.black" : "common.white",
+						backgroundColor: isDarkMode ? "common.black" : "common.white",
 					}}
 				>
 					<Box
@@ -187,16 +206,18 @@ function MainHeader() {
 					>
 						<Typography
 							variant="body2"
-							sx={{
-								color: darkMode ? "common.white" : "common.black",
-							}}
+							sx={{ color: isDarkMode ? "common.white" : "common.black" }}
 						>
-							{darkMode ? "Dark" : "Light"} Mode
+							{isDarkMode ? "Dark" : "Light"} Mode
 						</Typography>
-						<Switch checked={darkMode} onChange={toggleTheme} color="primary" />
+						<Switch
+							checked={isDarkMode}
+							onChange={toggleTheme}
+							color="primary"
+						/>
 						<IconButton onClick={toggleDrawer}>
 							<CloseIcon
-								sx={{ color: darkMode ? "common.white" : "common.black" }}
+								sx={{ color: isDarkMode ? "common.white" : "common.black" }}
 							/>
 						</IconButton>
 					</Box>
@@ -215,13 +236,13 @@ function MainHeader() {
 									: "transparent",
 								color: isActive(item)
 									? "common.white"
-									: darkMode
+									: isDarkMode
 									? "common.white"
 									: "common.black",
 								"&:hover": {
 									backgroundColor: isActive(item)
 										? "primary.dark"
-										: darkMode
+										: isDarkMode
 										? "rgba(255, 255, 255, 0.1)"
 										: "rgba(0, 0, 0, 0.1)",
 								},

@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { ReactNode } from "react";
 
 export interface MainLayoutProps {
@@ -80,4 +81,9 @@ export interface CartItem {
 export interface CartDrawerProps {
 	open: boolean;
 	onClose: () => void;
+}
+
+export interface SignInProps {
+	router: ReturnType<typeof useRouter>;
+	isDarkMode: boolean;
 }

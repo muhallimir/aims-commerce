@@ -8,25 +8,13 @@ import {
 	Divider,
 	Grid,
 } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-	decreaseItemQuantity,
-	increaseItemQuantity,
-	removeItemFromCart,
-} from "@store/cart.slice";
-import { useRouter } from "next/router";
-import {
-	CartDrawerProps,
-	CartItem,
-	Product,
-	ProductListState,
-} from "@common/interface";
-import { setCurrentProduct } from "@store/products.slice";
+import { CartDrawerProps } from "@common/interface";
+import useCartHandling from "src/hooks/useCartHandling";
 
 const truncatedName = (name: string, maxLength: number) => {
 	if (name.length > maxLength) {
@@ -36,37 +24,16 @@ const truncatedName = (name: string, maxLength: number) => {
 };
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
-	const dispatch = useDispatch();
-	const router = useRouter(); // Initialize useRouter
-	const { cart }: { cart: CartItem[] } = useSelector(
-		({ cartList }: { cartList: { cart: CartItem[] } }) => cartList,
-	);
-	const { products } = useSelector(
-		(state: { productLists: ProductListState }) => state.productLists,
-	);
-
-	const totalPrice = cart.reduce(
-		(total, item) => total + item.price * item.quantity,
-		0,
-	);
-
-	const increaseQuantity = (itemId: string) => {
-		dispatch(increaseItemQuantity(itemId));
-	};
-
-	const decreaseQuantity = (itemId: string) => {
-		dispatch(decreaseItemQuantity(itemId));
-	};
-
-	const removeItem = (itemId: string) => {
-		dispatch(removeItemFromCart(itemId));
-	};
-
-	const viewItem = (itemId: string) => {
-		const currentProduct = products.find((p: Product) => p?._id === itemId);
-		dispatch(setCurrentProduct(currentProduct));
-		router.push(`/store/product/${itemId}`);
-	};
+	const {
+		cart,
+		increaseQuantity,
+		decreaseQuantity,
+		removeItem,
+		viewItem,
+		viewCartPage,
+		totalPrice,
+		proceedToCheckout,
+	} = useCartHandling(onClose);
 
 	return (
 		<Drawer anchor="right" open={open} onClose={onClose}>
@@ -176,10 +143,22 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 					<Typography variant="h6">Total:</Typography>
 					<Typography variant="h6">${totalPrice.toFixed(2)}</Typography>
 				</Box>
-				<Button variant="contained" color="primary" fullWidth sx={{ mb: 1 }}>
+				<Button
+					variant="contained"
+					color="primary"
+					fullWidth
+					sx={{ mb: 1 }}
+					onClick={viewCartPage}
+				>
 					View Cart
 				</Button>
-				<Button variant="contained" color="success" fullWidth sx={{ mb: 4 }}>
+				<Button
+					variant="contained"
+					color="success"
+					fullWidth
+					sx={{ mb: 4 }}
+					onClick={() => proceedToCheckout()}
+				>
 					Proceed to Checkout
 				</Button>
 			</Box>

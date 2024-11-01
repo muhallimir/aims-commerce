@@ -1,75 +1,3 @@
-// import { createTheme } from '@mui/material';
-
-// const theme = createTheme();
-
-// const typography = {
-//     fontFamily: [
-//         '-apple-system',
-//         'system-ui',
-//         'BlinkMacSystemFont',
-//         '"Segoe UI"',
-//         'Roboto',
-//         '"Helvetica Neue"',
-//         '"Fira Sans"',
-//         'Ubuntu',
-//         'Oxygen',
-//         '"Oxygen Sans"',
-//         'Cantarell',
-//         '"Droid Sans"',
-//         '"Apple Color Emoji"',
-//         '"Segoe UI Emoji"',
-//         '"Segoe UI Emoji"',
-//         '"Segoe UI Symbol"',
-//         '"Lucida Grande"',
-//         'Helvetica',
-//         'Arial',
-//         'sans-serif',
-//     ].join(','),
-
-//     /* -------------------------------- variants -------------------------------- */
-
-//     h4: {
-//         fontWeight: 700,
-//         fontSize: '1.25rem',
-//         lineHeight: '21.88px',
-//         [theme.breakpoints.up('sm')]: {
-//             fontSize: '1.563rem',
-//             lineHeight: '40px',
-//         },
-//     },
-//     body2: {
-//         fontWeight: 400,
-//         fontSize: '0.8rem',
-//         lineHeight: '14px',
-//         [theme.breakpoints.up('sm')]: {
-//             lineHeight: '18px',
-//         },
-//     },
-//     menu_xs: {
-//         fontWeight: 400,
-//         fontSize: '12px',
-//         lineHeight: '15px',
-//     },
-//     auth1: {
-//         fontWeight: 600,
-//         fontSize: '16px',
-//         lineHeight: '24px',
-//     },
-//     hero_headline: {
-//         fontWeight: 300,
-//         fontSize: '56px',
-//         lineHeight: '67px'
-//     },
-//     tc_text: {
-//         fontWeight: 400,
-//         fontSize: '12px',
-//         lineHeight: '18px'
-//     }
-// };
-
-// export default typography;
-
-
 import { createTheme } from '@mui/material';
 
 const theme = createTheme();
@@ -149,6 +77,32 @@ const typography = {
         [theme.breakpoints.up('md')]: {
             fontSize: '1.875rem',
             lineHeight: '2.25rem',
+        },
+    },
+    h5: {
+        fontWeight: 600,
+        fontSize: '1rem',
+        lineHeight: '1.5rem',
+        [theme.breakpoints.up('sm')]: {
+            fontSize: '1.125rem',
+            lineHeight: '1.75rem',
+        },
+        [theme.breakpoints.up('md')]: {
+            fontSize: '1.25rem',
+            lineHeight: '1.875rem',
+        },
+    },
+    h6: {
+        fontWeight: 500,
+        fontSize: '0.875rem',
+        lineHeight: '1.25rem',
+        [theme.breakpoints.up('sm')]: {
+            fontSize: '1rem',
+            lineHeight: '1.5rem',
+        },
+        [theme.breakpoints.up('md')]: {
+            fontSize: '1.125rem',
+            lineHeight: '1.75rem',
         },
     },
     body1: {
