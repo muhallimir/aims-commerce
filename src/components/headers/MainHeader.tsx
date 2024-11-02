@@ -8,8 +8,7 @@ import {
 	Drawer,
 	Badge,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { switchTheme } from "@store/app.slice";
+import { useSelector } from "react-redux";
 import Image from "next/image";
 import mainLogo from "@public/assets/aims-logo.png";
 import mainDarkLogo from "@public/assets/aims-logo-dark.png";
@@ -21,15 +20,19 @@ import { useRouter } from "next/router";
 import CartDrawer from "../drawers/CartDrawer";
 import useThemeMode from "src/hooks/useThemeMode";
 import { SignInProps } from "@common/interface";
+import useAuthentication from "src/hooks/useAuthentication";
 
-const SignIn: React.FC<SignInProps> = ({ router, isDarkMode }) => {
+const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
+	const { isAuthenticated, handleAuthentication } = useAuthentication();
+
 	return (
 		<Button
 			variant="contained"
-			onClick={() => router.push("/signin")}
+			onClick={() => handleAuthentication()}
 			sx={{
 				ml: 2,
-				backgroundColor: isDarkMode ? "primary.main" : "secondary.main",
+				backgroundColor:
+					isDarkMode || isAuthenticated ? "primary.main" : "secondary.main",
 				color: "common.white",
 				borderRadius: "20px",
 				boxShadow: `0px 4px 6px ${
@@ -42,14 +45,14 @@ const SignIn: React.FC<SignInProps> = ({ router, isDarkMode }) => {
 				},
 			}}
 		>
-			Sign In
+			{isAuthenticated ? "Sign out" : "Sign In"}
 		</Button>
 	);
 };
 
 function MainHeader() {
-	const { cart } = useSelector(
-		(state: { cartList: { cart: any[] } }) => state.cartList,
+	const { cartItems } = useSelector(
+		(state: { cart: { cartItems: any[] } }) => state.cart,
 	);
 	const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 	const [cartDrawerOpen, setCartDrawerOpen] = useState<boolean>(false);
@@ -75,9 +78,12 @@ function MainHeader() {
 	}, [reqProductList]);
 
 	useEffect(() => {
-		const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+		const totalQuantity = cartItems.reduce(
+			(acc, item) => acc + item.quantity,
+			0,
+		);
 		setCartItemsCount(totalQuantity);
-	}, [cart]);
+	}, [cartItems]);
 
 	const handleNavigate = (route: string) => {
 		router.push(`/${route}`);
@@ -89,6 +95,7 @@ function MainHeader() {
 
 	return (
 		<Box
+			id="main-header"
 			sx={{
 				display: "flex",
 				justifyContent: "space-between",
@@ -96,6 +103,11 @@ function MainHeader() {
 				backgroundColor: isDarkMode ? "common.black" : "common.white",
 				boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
 				padding: "4px",
+				position: "fixed",
+				top: 0,
+				left: 0,
+				right: 0,
+				zIndex: 1000,
 			}}
 		>
 			<Box
@@ -153,17 +165,11 @@ function MainHeader() {
 				))}
 			</Box>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
-				<IconButton
-					onClick={toggleDrawer}
-					sx={{ display: { xs: "flex", sm: "none" } }}
-				>
-					<MenuIcon
-						sx={{ color: isDarkMode ? "common.white" : "common.black" }}
-					/>
-				</IconButton>
+				<SignInButton isDarkMode={isDarkMode} />
 				<IconButton onClick={toggleCartDrawer} sx={{ mr: 1 }}>
 					<Badge badgeContent={cartItemsCount} color="secondary">
 						<ShoppingCartIcon
+							id="cart-icon"
 							sx={{ color: isDarkMode ? "common.white" : "common.black" }}
 						/>
 					</Badge>
@@ -184,8 +190,14 @@ function MainHeader() {
 					color="primary"
 					sx={{ display: { xs: "none", sm: "flex" } }}
 				/>
-
-				<SignIn router={router} isDarkMode={isDarkMode} />
+				<IconButton
+					onClick={toggleDrawer}
+					sx={{ display: { xs: "flex", sm: "none" } }}
+				>
+					<MenuIcon
+						sx={{ color: isDarkMode ? "common.white" : "common.black" }}
+					/>
+				</IconButton>
 			</Box>
 			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
 			<Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
@@ -241,7 +253,7 @@ function MainHeader() {
 									: "common.black",
 								"&:hover": {
 									backgroundColor: isActive(item)
-										? "primary.dark"
+										? "primary.main"
 										: isDarkMode
 										? "rgba(255, 255, 255, 0.1)"
 										: "rgba(0, 0, 0, 0.1)",
@@ -253,22 +265,6 @@ function MainHeader() {
 					))}
 				</Box>
 			</Drawer>
-			<style jsx>{`
-				@keyframes pulse {
-					0% {
-						transform: scale(1);
-						box-shadow: 0 0 5px gold, 0 0 10px gold;
-					}
-					50% {
-						transform: scale(1.05);
-						box-shadow: 0 0 10px gold, 0 0 20px gold;
-					}
-					100% {
-						transform: scale(1);
-						box-shadow: 0 0 5px gold, 0 0 10px gold;
-					}
-				}
-			`}</style>
 		</Box>
 	);
 }

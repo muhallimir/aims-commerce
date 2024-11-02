@@ -1,6 +1,10 @@
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
 
+export interface LoadingOverLayProps {
+	loadingMessage: string;
+	variant: string;
+}
 export interface MainLayoutProps {
 	children: ReactNode;
 }
@@ -84,6 +88,26 @@ export interface CartDrawerProps {
 }
 
 export interface SignInProps {
-	router: ReturnType<typeof useRouter>;
 	isDarkMode: boolean;
+}
+
+export interface ShippingFormValues {
+	fullName: string;
+	contactNo: string;
+	address: string;
+	city: string;
+	postalCode: string;
+	country: string;
+}
+
+export interface SignInFormValues {
+	email: string;
+	password: string;
+}
+
+export interface RegistrationFormValues {
+	name: string;
+	email: string;
+	password: string;
+	confirmPassword: string;
 }

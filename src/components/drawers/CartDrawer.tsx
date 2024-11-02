@@ -25,7 +25,7 @@ const truncatedName = (name: string, maxLength: number) => {
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 	const {
-		cart,
+		cartItems,
 		increaseQuantity,
 		decreaseQuantity,
 		removeItem,
@@ -62,13 +62,13 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 					</IconButton>
 				</Box>
 				<Divider sx={{ my: 2 }} />
-				{cart.length === 0 ? (
+				{cartItems.length === 0 ? (
 					<Typography variant="body1" sx={{ textAlign: "center" }}>
 						Your cart is empty.
 					</Typography>
 				) : (
 					<Grid container spacing={2}>
-						{cart.map((item) => (
+						{cartItems.map((item) => (
 							<Grid item xs={12} key={item._id}>
 								<Box
 									sx={{

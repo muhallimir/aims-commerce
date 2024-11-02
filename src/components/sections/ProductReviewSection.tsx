@@ -33,9 +33,9 @@ export default function ProductReviewSection() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Handle the submission of the comment and rating here
+		// Todo: Handle the submission of the comment and rating here
 		console.log("Comment submitted:", comment, "Rating:", rating);
-		// Reset the form after submission
+		// Todo: Reset the form after submission
 		setComment("");
 		setRating(0);
 	};

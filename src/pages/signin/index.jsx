@@ -1,6 +1,6 @@
 import React from "react";
-import ComingSoon from "src/components/misc/ComingSoon";
+import SignInForm from "src/forms/SignInForm";
 
 export default function Signin() {
-	return <ComingSoon />;
+	return <SignInForm />;
 }

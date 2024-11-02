@@ -3,7 +3,7 @@ import { Container } from "@mui/material";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
 import ShippingForm from "src/forms/ShippingForm";
 
-export default function ShippingLayout() {
+const ShippingLayout: React.FC = () => {
 	return (
 		<>
 			<PurchaseProgressBar activeStep={1} />
@@ -12,4 +12,6 @@ export default function ShippingLayout() {
 			</Container>
 		</>
 	);
-}
+};
+
+export default ShippingLayout;

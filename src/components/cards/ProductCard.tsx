@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
 	Box,
 	Card,
@@ -22,6 +22,7 @@ import {
 	ProductCardProps,
 	ProductListState,
 } from "@common/interface";
+import useCartAnimation from "src/hooks/useCartAnimation";
 
 const CardsContent: React.FC<CardsContentProps> = ({
 	product,
@@ -85,12 +86,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 		router.push(`/store/product/${_id}`);
 	};
 
+	const productCardRef = useRef<HTMLDivElement>(null);
+	const { setIsFlying, startFlyToCartAnimation } = useCartAnimation();
+
 	const handleAddToCart = () => {
-		dispatch(updateCartList(product));
+		startFlyToCartAnimation(productCardRef);
+		setTimeout(() => {
+			setIsFlying(false);
+			dispatch(updateCartList(product));
+		}, 500);
 	};
 
 	return (
 		<Card
+			ref={productCardRef}
 			sx={{
 				padding: "12px",
 				border: darkMode ? "1px solid gold" : "1px solid transparent",

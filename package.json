@@ -33,6 +33,7 @@
     "hybrid-crypto-js": "0.2.4",
     "i18n-iso-countries": "7.6.0",
     "jsonwebtoken": "9.0.0",
+    "lodash": "^4.17.21",
     "lottie-react": "2.4.0",
     "mui-one-time-password-input": "2.0.2",
     "next": "^14.2.15",

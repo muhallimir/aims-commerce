@@ -17,9 +17,9 @@ const ComingSoon: React.FC<ComingSoonProps> = ({ darkMode }) => {
 				flexDirection: "column",
 				alignItems: "center",
 				justifyContent: "center",
-				height: "100vh",
-				backgroundColor: darkMode ? "#424242" : "common.white", // Dark mode background
-				color: darkMode ? "common.white" : "common.black", // Dark mode text color
+				height: "90vh",
+				backgroundColor: darkMode ? "#424242" : "common.white",
+				color: darkMode ? "common.white" : "common.black",
 				textAlign: "center",
 				padding: 2,
 				boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",

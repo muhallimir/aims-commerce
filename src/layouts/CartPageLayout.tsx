@@ -15,11 +15,12 @@ import useScreenSize from "src/hooks/useScreenSize";
 import useCartHandling from "src/hooks/useCartHandling";
 import useThemeMode from "src/hooks/useThemeMode";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
+import { CartItem } from "@common/interface";
 
-const CartPageLayout = () => {
+const CartPageLayout: React.FC = () => {
 	const { xs } = useScreenSize();
 	const {
-		cart,
+		cartItems,
 		increaseQuantity,
 		decreaseQuantity,
 		removeItem,
@@ -43,7 +44,7 @@ const CartPageLayout = () => {
 					Shopping Cart
 				</Typography>
 				<Divider sx={{ mb: 2 }} />
-				{cart.length === 0 ? (
+				{cartItems.length === 0 ? (
 					<Typography variant="body1" sx={{ textAlign: "center" }}>
 						Your cart is empty.
 					</Typography>
@@ -51,7 +52,7 @@ const CartPageLayout = () => {
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={8}>
 							<Box>
-								{cart.map((item) => (
+								{cartItems.map((item: CartItem) => (
 									<Box
 										key={item._id}
 										sx={{
@@ -80,9 +81,9 @@ const CartPageLayout = () => {
 											onClick={() => viewItem(item._id)}
 										/>
 										<Box sx={{ flexGrow: 1, color: "primary.main" }}>
-											<Typography variant="h5">
+											<Typography variant={xs ? "body1" : "h5"}>
 												{item.name.length > 15
-													? `${item.name.slice(0, xs ? 25 : 50)}...`
+													? `${item.name.slice(0, xs ? 15 : 50)}...`
 													: item.name}
 											</Typography>
 											{xs ? (
@@ -111,6 +112,9 @@ const CartPageLayout = () => {
 																? removeItem(item._id)
 																: decreaseQuantity(item._id)
 														}
+														sx={{
+															...(isDarkMode && { color: "common.white" }),
+														}}
 													>
 														<RemoveIcon />
 													</IconButton>
@@ -119,6 +123,9 @@ const CartPageLayout = () => {
 													</Typography>
 													<IconButton
 														onClick={() => increaseQuantity(item._id)}
+														sx={{
+															...(isDarkMode && { color: "common.white" }),
+														}}
 													>
 														<AddIcon />
 													</IconButton>
@@ -183,17 +190,10 @@ const CartPageLayout = () => {
 								</Typography>
 								<Button
 									variant="contained"
-									color="primary"
-									fullWidth
-									sx={{ my: 1 }}
-								>
-									View Cart
-								</Button>
-								<Button
-									variant="contained"
 									color="success"
 									fullWidth
 									onClick={() => proceedToCheckout()}
+									sx={{ mt: 1 }}
 								>
 									Proceed to Checkout
 								</Button>

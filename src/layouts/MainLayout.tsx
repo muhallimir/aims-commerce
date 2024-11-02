@@ -10,6 +10,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
 			textAlign="center"
 			sx={{
 				backgroundColor: mode === "dark" ? "common.black" : "common.white",
+				paddingTop: "59px",
+				minHeight: "80vh",
 				height: "100%",
 			}}
 		>

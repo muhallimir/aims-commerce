@@ -6,11 +6,10 @@ import { keyframes } from "@emotion/react";
 const steps = [
 	{ label: "Order", path: "/store/cart" },
 	{ label: "Shipping", path: "/store/shipping" },
-	{ label: "Payment", path: "/store/payment" },
+	{ label: "Payment", path: "/store/payment-selection" },
 	{ label: "Checkout", path: "/store/checkout" },
 ];
 
-// Define a blinking animation
 const blink = keyframes`
   0% { opacity: 1; }
   50% { opacity: 0.5; }

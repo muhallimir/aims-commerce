@@ -12,7 +12,7 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['productLists', 'cartList'],
+  whitelist: ['user', 'productLists', 'cart',],
 };
 
 const rootReducer = (state, action) => {
@@ -30,7 +30,7 @@ const rootReducerWithoutHydrate = combineReducers({
   user: userReducer,
   menuList: menuReducer,
   productLists: productReducer,
-  cartList: cartReducer,
+  cart: cartReducer,
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 

@@ -1,38 +1,40 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    cart: [],
+    cartItems: [],
+    shippingAddress: [],
+    paymentMethod: null,
+    isCheckingOut: false,
 };
 
 export const cartSlice = createSlice({
-    name: "cartList",
+    name: "cart",
     initialState,
     reducers: {
         updateCartList: (state, action) => {
             const productToAdd = action.payload;
             // Check if the product is already in the cart
-            const existingProduct = state.cart.find(product => product._id === productToAdd._id);
+            const existingProduct = state.cartItems.find(product => product._id === productToAdd._id);
 
             if (existingProduct) {
                 // Increment quantity
                 existingProduct.quantity += 1;
             } else {
                 // Add the new product to the cart
-                state.cart.push({ ...productToAdd, quantity: 1 });
+                state.cartItems.push({ ...productToAdd, quantity: 1 });
             }
         },
         increaseItemQuantity: (state, action) => {
             const itemId = action.payload;
-            const existingProduct = state.cart.find(product => product._id === itemId);
+            const existingProduct = state.cartItems.find(product => product._id === itemId);
             if (existingProduct) {
                 existingProduct.quantity += 1;
             }
         },
         decreaseItemQuantity: (state, action) => {
             const itemId = action.payload;
-            const existingProduct = state.cart.find(product => product._id === itemId);
+            const existingProduct = state.cartItems.find(product => product._id === itemId);
             if (existingProduct) {
-                // Only decrease quantity if it's greater than 1
                 if (existingProduct.quantity > 1) {
                     existingProduct.quantity -= 1;
                 }
@@ -40,14 +42,24 @@ export const cartSlice = createSlice({
         },
         removeItemFromCart: (state, action) => {
             const itemId = action.payload;
-            // Filter out the item to remove
-            state.cart = state.cart.filter(product => product._id !== itemId);
+            state.cartItems = state.cartItems.filter(product => product._id !== itemId);
         },
+        resetCartState: () => {
+            return initialState;
+        },
+        setIsCheckingOut: (state, action) => {
+            state.isCheckingOut = action.payload;
+        },
+        updateShippingAddress: (state, action) => {
+            state.shippingAddress = action.payload;
+        },
+        updatePaymentMethod: (state, action) => {
+            state.paymentMethod = action.payload;
+        }
     },
     extraReducers: () => { },
 });
 
-// Export actions
-export const { updateCartList, increaseItemQuantity, decreaseItemQuantity, removeItemFromCart } = cartSlice.actions;
+export const { updateCartList, increaseItemQuantity, decreaseItemQuantity, removeItemFromCart, resetCartState, setIsCheckingOut, updateShippingAddress, updatePaymentMethod } = cartSlice.actions;
 
 export default cartSlice.reducer;

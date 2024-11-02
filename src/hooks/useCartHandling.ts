@@ -1,21 +1,30 @@
-import { CartItem, Product, ProductListState } from "@common/interface";
-import { decreaseItemQuantity, increaseItemQuantity, removeItemFromCart } from "@store/cart.slice";
+import { CartItem, Product, ProductListState, ShippingFormValues } from "@common/interface";
+import { decreaseItemQuantity, increaseItemQuantity, removeItemFromCart, setIsCheckingOut } from "@store/cart.slice";
 import { setCurrentProduct } from "@store/products.slice";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
+import useAuthentication from "./useAuthentication";
+import { isEmpty } from "lodash";
 
-const useCartHandling = (onClose: () => void) => {
+interface CartState {
+	cartItems: CartItem[];
+	shippingAddress: ShippingFormValues;
+	isCheckingOut: boolean;
+}
+
+const useCartHandling = (onClose?: () => void) => {
+	const { isAuthenticated } = useAuthentication();
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { products } = useSelector(
 		(state: { productLists: ProductListState }) => state.productLists,
 	);
 
-	const { cart }: { cart: CartItem[] } = useSelector(
-		({ cartList }: { cartList: { cart: CartItem[] } }) => cartList,
+	const { cartItems, shippingAddress }: CartState = useSelector(
+		({ cart }: { cart: CartState }) => cart,
 	);
 
-	const totalPrice = cart.reduce(
+	const totalPrice = cartItems.reduce(
 		(total, item) => total + item.price * item.quantity,
 		0,
 	);
@@ -37,23 +46,29 @@ const useCartHandling = (onClose: () => void) => {
 			products.find((p: Product) => p?._id === itemId) || null;
 		dispatch(setCurrentProduct(currentProduct));
 		router.push(`/store/product/${itemId}`);
-		onClose()
+		if (typeof onClose === 'function') {
+			onClose();
+		}
 	};
 
 	const viewCartPage = () => {
-		router.push('/store/cart')
-		onClose()
-	}
+		router.push('/store/cart');
+		onClose?.();
+	};
 
 	const proceedToCheckout = () => {
-		router.push('/store/shipping')
-		if (typeof onClose === 'function') {
-			onClose()
+		const targetRoute = isAuthenticated
+			? (isEmpty(cartItems) ? '/store/cart' : '/store/shipping')
+			: '/signin';
+
+		router.push(targetRoute);
+		if (!isEmpty(cartItems)) {
+			dispatch(setIsCheckingOut(true));
 		}
-	}
+		onClose?.();
+	};
 
-	return { cart, increaseQuantity, decreaseQuantity, removeItem, viewItem, totalPrice, viewCartPage, proceedToCheckout }
+	return { cartItems, shippingAddress, increaseQuantity, decreaseQuantity, removeItem, viewItem, totalPrice, viewCartPage, proceedToCheckout };
 }
-
 
 export default useCartHandling;
