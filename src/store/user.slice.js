@@ -35,10 +35,17 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: args,
             }),
         }),
+        PostRegistration: builder.mutation({
+            query: (args) => ({
+                url: '/api/users/register',
+                method: 'POST',
+                body: args,
+            }),
+        }),
     }),
 });
 
-export const { usePostSignInMutation } = userApiSlice;
+export const { usePostSignInMutation, usePostRegistrationMutation } = userApiSlice;
 
 
 

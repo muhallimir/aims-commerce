@@ -3,6 +3,9 @@ import { Box, Button, TextField, Typography, Container } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { RegistrationFormValues } from "@common/interface";
+import useAuthentication from "src/hooks/useAuthentication";
+import { LOADERTEXT } from "@common/constants";
+import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const validationSchema = yup.object({
 	name: yup.string().required("Name is required"),
@@ -21,16 +24,30 @@ const validationSchema = yup.object({
 });
 
 const RegistrationForm: React.FC = () => {
+	const { reqRegister, resRegister } = useAuthentication();
+	const { isLoading, isError, error } = resRegister;
 	const formik = useFormik<RegistrationFormValues>({
 		initialValues: { name: "", email: "", password: "", confirmPassword: "" },
 		validationSchema: validationSchema,
 		onSubmit: (values) => {
-			console.log("Registration submitted:", values); // Todo: API integ
+			reqRegister(values);
 		},
 	});
 
+	const getErrorMessage = (error: any) => {
+		if ("data" in error) {
+			return error.data?.message || "An unknown error occurred.";
+		} else if ("message" in error) {
+			return error.message || "An unknown error occurred.";
+		}
+		return "An unknown error occurred.";
+	};
+
 	return (
 		<Container maxWidth="sm">
+			{isLoading && (
+				<LoadingOverlay variant="modal" loadingMessage={LOADERTEXT.REGISTER} />
+			)}
 			<Box
 				component="form"
 				onSubmit={formik.handleSubmit}
@@ -113,7 +130,15 @@ const RegistrationForm: React.FC = () => {
 					}
 					InputProps={{ autoComplete: "off" }}
 				/>
-
+				{isError && (
+					<Typography
+						variant="body2"
+						color="error"
+						sx={{ mt: 2, textAlign: "center" }}
+					>
+						{getErrorMessage(error)}
+					</Typography>
+				)}
 				<Button
 					type="submit"
 					variant="contained"
