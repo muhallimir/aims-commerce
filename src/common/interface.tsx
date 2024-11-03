@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
 import { ReactNode } from "react";
 
 export interface LoadingOverLayProps {
-	loadingMessage: string;
-	variant: string;
+	variant: "transparent" | "overlay";
+	loadingMessage?: string;
 }
+
 export interface MainLayoutProps {
 	children: ReactNode;
 }
@@ -59,6 +59,7 @@ export interface ProductCardProps {
 
 export interface AppState {
 	theme: string;
+	loading: boolean;
 }
 
 export interface ProductListState {
@@ -110,4 +111,57 @@ export interface RegistrationFormValues {
 	email: string;
 	password: string;
 	confirmPassword: string;
+}
+
+export interface ShippingAddress {
+	fullName: string;
+	address: string;
+	city: string;
+	postalCode: string;
+	country: string;
+	contact: string;
+}
+
+export interface OrderItem {
+	_id: string;
+	product: string;
+	qty: number;
+	price: number;
+	image: string;
+	name: string;
+}
+
+export interface OrderData {
+	_id: string;
+	shippingAddress: ShippingAddress;
+	orderItems: OrderItem[];
+	paymentMethod: string;
+	itemsPrice: number;
+	shippingPrice: number;
+	taxPrice: number;
+	totalPrice: number;
+	isPaid: boolean;
+	isDelivered: boolean;
+	paidAt: string;
+}
+
+export interface PaymentDetails {
+	_id: string;
+	status: string;
+	update_time: string;
+	payer: {
+		email_address: string;
+	};
+}
+
+export interface Order {
+	_id: string;
+	shippingAddress: ShippingAddress;
+	isPaid: boolean;
+	isDelivered: boolean;
+	orderItems: OrderItem[];
+	totalPrice: number;
+	createdAt: string;
+	paidAt?: string;
+	deliveredAt?: string;
 }

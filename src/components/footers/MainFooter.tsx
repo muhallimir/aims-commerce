@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Link, IconButton } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import mainLogo from "@public/assets/aims-logo.png";
 import mainDarkLogo from "@public/assets/aims-logo-dark.png";
 import FacebookIcon from "@mui/icons-material/Facebook";

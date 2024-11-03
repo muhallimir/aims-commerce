@@ -23,7 +23,7 @@ const LoadingOverlay: React.FC<LoadingOverLayProps> = ({
 				alignItems: "center",
 				justifyContent: "center",
 				zIndex: 9999,
-				backgroundColor: variant === "default" ? "" : "background.modal",
+				backgroundColor: variant === "transparent" ? "" : "background.modal",
 			}}
 		>
 			<Typography

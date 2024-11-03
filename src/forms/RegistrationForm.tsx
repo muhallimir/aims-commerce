@@ -6,6 +6,7 @@ import { RegistrationFormValues } from "@common/interface";
 import useAuthentication from "src/hooks/useAuthentication";
 import { LOADERTEXT } from "@common/constants";
 import LoadingOverlay from "src/components/loaders/TextLoader";
+import { getErrorMessage } from "@helpers/getErrorMessage";
 
 const validationSchema = yup.object({
 	name: yup.string().required("Name is required"),
@@ -34,19 +35,13 @@ const RegistrationForm: React.FC = () => {
 		},
 	});
 
-	const getErrorMessage = (error: any) => {
-		if ("data" in error) {
-			return error.data?.message || "An unknown error occurred.";
-		} else if ("message" in error) {
-			return error.message || "An unknown error occurred.";
-		}
-		return "An unknown error occurred.";
-	};
-
 	return (
 		<Container maxWidth="sm">
 			{isLoading && (
-				<LoadingOverlay variant="modal" loadingMessage={LOADERTEXT.REGISTER} />
+				<LoadingOverlay
+					variant="overlay"
+					loadingMessage={LOADERTEXT.REGISTER}
+				/>
 			)}
 			<Box
 				component="form"

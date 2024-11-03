@@ -33,7 +33,13 @@ const CartPageLayout: React.FC = () => {
 	return (
 		<>
 			<PurchaseProgressBar activeStep={0} />
-			<Container maxWidth="lg" sx={{ padding: 4, minHeight: "100vh" }}>
+			<Container
+				maxWidth="lg"
+				sx={{
+					padding: 4,
+					minHeight: "100vh",
+				}}
+			>
 				<Typography
 					variant="h4"
 					gutterBottom

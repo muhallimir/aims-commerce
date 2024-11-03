@@ -14,6 +14,7 @@ import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { SignInFormValues } from "@common/interface";
 import useAuthentication from "src/hooks/useAuthentication";
+import { getErrorMessage } from "@helpers/getErrorMessage";
 
 const validationSchema = yup.object({
 	email: yup
@@ -39,19 +40,10 @@ const SignInForm: React.FC = () => {
 		},
 	});
 
-	const getErrorMessage = (error: any) => {
-		if ("data" in error) {
-			return error.data?.message || "An unknown error occurred.";
-		} else if ("message" in error) {
-			return error.message || "An unknown error occurred.";
-		}
-		return "An unknown error occurred.";
-	};
-
 	return (
 		<Container maxWidth="sm">
 			{isLoading && (
-				<LoadingOverlay variant="modal" loadingMessage={LOADERTEXT.SIGN_IN} />
+				<LoadingOverlay variant="overlay" loadingMessage={LOADERTEXT.SIGN_IN} />
 			)}
 			<Box
 				component="form"

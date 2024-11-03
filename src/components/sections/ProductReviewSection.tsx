@@ -28,7 +28,7 @@ export default function ProductReviewSection() {
 	const [rating, setRating] = useState<number | null>(0);
 
 	const handleSignIn = () => {
-		router.push("/login");
+		router.push("/signin");
 	};
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,6 +48,7 @@ export default function ProductReviewSection() {
 				placeSelf: "center",
 				px: { xs: 2, md: 4 },
 				py: 4,
+				mb: 4,
 				borderRadius: "12px",
 				boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
 				width: "100%",

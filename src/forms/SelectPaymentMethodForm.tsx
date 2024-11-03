@@ -27,7 +27,7 @@ const SelectPaymentMethodForm: React.FC = () => {
 		validationSchema: validationSchema,
 		onSubmit: ({ paymentMethod }) => {
 			dispatch(updatePaymentMethod(paymentMethod));
-			router.push("order-placement");
+			router.push("/store/checkout");
 		},
 	});
 

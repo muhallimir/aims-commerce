@@ -2,6 +2,7 @@ import React from "react";
 import { Stepper, Step, StepLabel, Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { keyframes } from "@emotion/react";
+import useThemeMode from "src/hooks/useThemeMode";
 
 const steps = [
 	{ label: "Order", path: "/store/cart" },
@@ -18,6 +19,7 @@ const blink = keyframes`
 
 export default function PurchaseProgressBar({ activeStep }) {
 	const router = useRouter();
+	const { isDarkMode } = useThemeMode();
 
 	const handleStepClick = (index) => {
 		if (index < activeStep) {
@@ -32,11 +34,28 @@ export default function PurchaseProgressBar({ activeStep }) {
 					<Step
 						key={step.label}
 						onClick={() => handleStepClick(index)}
-						sx={{ cursor: index < activeStep ? "pointer" : "default" }}
+						sx={{
+							cursor: index < activeStep ? "pointer" : "default",
+							color: "gold",
+						}}
 					>
 						<StepLabel
 							sx={{
-								animation: index < activeStep ? `${blink} 1s infinite` : "none",
+								animation:
+									index < activeStep ? `${blink} 1.3s infinite` : "none",
+								color: isDarkMode ? "gold" : "inherit",
+								"& .MuiStepIcon-root": {
+									...(isDarkMode && { color: "gold" }),
+								},
+								"&.Mui-active": {
+									...(isDarkMode && { color: "gold" }),
+								},
+								".MuiStepIcon-text ": {
+									...(isDarkMode && { color: "common.black" }),
+								},
+								".MuiStepLabel-label": {
+									...(isDarkMode && { color: "gold" }),
+								},
 							}}
 						>
 							{step.label}

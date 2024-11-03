@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Container } from "@mui/material";
 import ProductCard from "src/components/cards/ProductCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useScreenSize from "src/hooks/useScreenSize";
 import ProductCardSkeleton from "src/components/loaders/ProductCardSkeleton";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
+import { setFromPurchaseHistory } from "@store/order.slice";
 
 const ProductsGridLayout: React.FC = () => {
 	const { theme: mode, loading } = useSelector((state: any) => state.app);
@@ -13,7 +14,7 @@ const ProductsGridLayout: React.FC = () => {
 	const { xs } = useScreenSize();
 	const [showOverlay, setShowOverlay] = useState<boolean>(false);
 	const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
-
+	const dispatch = useDispatch();
 	useEffect(() => {
 		if (loading) {
 			setLoadingStartTime(Date.now());
@@ -35,13 +36,17 @@ const ProductsGridLayout: React.FC = () => {
 		return () => clearTimeout(overlayTimeout);
 	}, [loading, loadingStartTime]);
 
+	useEffect(() => {
+		dispatch(setFromPurchaseHistory(false));
+	}, []);
+
 	return (
 		<Container
 			sx={{ py: 4, width: "100vw", minHeight: "100vh", position: "relative" }}
 		>
 			{showOverlay && (
 				<LoadingOverlay
-					variant="text"
+					variant="transparent"
 					loadingMessage={LOADERTEXT.INITIAL_LOAD}
 				/>
 			)}

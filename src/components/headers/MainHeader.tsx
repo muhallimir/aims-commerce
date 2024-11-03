@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
 	Box,
-	Typography,
-	Switch,
 	Button,
 	IconButton,
 	Drawer,
 	Badge,
+	Menu,
+	MenuItem,
+	Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import Image from "next/image";
@@ -14,39 +15,120 @@ import mainLogo from "@public/assets/aims-logo.png";
 import mainDarkLogo from "@public/assets/aims-logo-dark.png";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import CloseIcon from "@mui/icons-material/Close";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 import CartDrawer from "../drawers/CartDrawer";
 import useThemeMode from "src/hooks/useThemeMode";
 import { SignInProps } from "@common/interface";
 import useAuthentication from "src/hooks/useAuthentication";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import WbSunnyIcon from "@mui/icons-material/WbSunny"; // Sun icon
+import NightsStayIcon from "@mui/icons-material/NightsStay"; // Moon icon
 
 const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
-	const { isAuthenticated, handleAuthentication } = useAuthentication();
+	const { userInfo, isAuthenticated, handleSignIn, handleSignOut } =
+		useAuthentication();
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const router = useRouter();
+
+	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
+
+	const redirectToPurchases = () => {
+		handleMenuClose();
+		router.push("/purchases");
+	};
+
+	const handleLogout = () => {
+		handleSignOut();
+		handleMenuClose();
+	};
+
+	const truncatedName =
+		isAuthenticated && userInfo.name.length > 6
+			? `${userInfo.name.slice(0, 6)}...`
+			: userInfo.name;
 
 	return (
-		<Button
-			variant="contained"
-			onClick={() => handleAuthentication()}
-			sx={{
-				ml: 2,
-				backgroundColor:
-					isDarkMode || isAuthenticated ? "primary.main" : "secondary.main",
-				color: "common.white",
-				borderRadius: "20px",
-				boxShadow: `0px 4px 6px ${
-					isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)"
-				}`,
-				transition: "background-color 0.3s ease, transform 0.3s ease",
-				"&:hover": {
-					backgroundColor: isDarkMode ? "primary.dark" : "secondary.dark",
-					transform: "scale(1.05)",
-				},
-			}}
-		>
-			{isAuthenticated ? "Sign out" : "Sign In"}
-		</Button>
+		<>
+			<Button
+				variant="text"
+				onClick={() => {
+					if (!isAuthenticated) handleSignIn();
+				}}
+				sx={{
+					ml: 2,
+					color: isDarkMode ? "common.white" : "common.black",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "flex-start",
+					textTransform: "none",
+					p: 0,
+					minWidth: "auto",
+					"&:hover": {
+						backgroundColor: "transparent",
+					},
+				}}
+			>
+				<Typography variant="caption" sx={{ lineHeight: 1 }}>
+					{isAuthenticated ? "Welcome," : "Hello,"}
+				</Typography>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+					<Typography
+						variant="body2"
+						sx={{
+							fontWeight: "bold",
+							fontSize: "0.9rem",
+							lineHeight: { xs: 1, md: isAuthenticated ? 0.5 : 1 },
+						}}
+					>
+						{isAuthenticated ? truncatedName : "Sign in"}
+					</Typography>
+					{isAuthenticated && (
+						<Box
+							onClick={handleMenuOpen}
+							sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+						>
+							<ArrowDropDownIcon fontSize="small" />
+						</Box>
+					)}
+				</Box>
+			</Button>
+			<Menu
+				anchorEl={anchorEl}
+				open={Boolean(anchorEl)}
+				onClose={handleMenuClose}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "center",
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "center",
+				}}
+			>
+				<MenuItem onClick={handleMenuClose}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Profile
+					</Typography>
+				</MenuItem>
+				<MenuItem onClick={redirectToPurchases}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Purchases
+					</Typography>
+				</MenuItem>
+				<MenuItem onClick={handleLogout}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Logout
+					</Typography>
+				</MenuItem>
+			</Menu>
+		</>
 	);
 };
 
@@ -174,22 +256,13 @@ function MainHeader() {
 						/>
 					</Badge>
 				</IconButton>
-				<Typography
-					variant="body2"
-					sx={{
-						marginRight: "1rem",
-						color: isDarkMode ? "common.white" : "common.black",
-						display: { xs: "none", sm: "flex" },
-					}}
-				>
-					{isDarkMode ? "Dark" : "Light"} Mode
-				</Typography>
-				<Switch
-					checked={isDarkMode}
-					onChange={toggleTheme}
-					color="primary"
-					sx={{ display: { xs: "none", sm: "flex" } }}
-				/>
+				<IconButton onClick={toggleTheme}>
+					{isDarkMode ? (
+						<NightsStayIcon sx={{ color: "common.white" }} />
+					) : (
+						<WbSunnyIcon sx={{ color: "common.black" }} />
+					)}
+				</IconButton>
 				<IconButton
 					onClick={toggleDrawer}
 					sx={{ display: { xs: "flex", sm: "none" } }}
@@ -200,6 +273,7 @@ function MainHeader() {
 				</IconButton>
 			</Box>
 			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
+			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
 			<Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
 				<Box
 					sx={{
@@ -209,30 +283,6 @@ function MainHeader() {
 						backgroundColor: isDarkMode ? "common.black" : "common.white",
 					}}
 				>
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-						}}
-					>
-						<Typography
-							variant="body2"
-							sx={{ color: isDarkMode ? "common.white" : "common.black" }}
-						>
-							{isDarkMode ? "Dark" : "Light"} Mode
-						</Typography>
-						<Switch
-							checked={isDarkMode}
-							onChange={toggleTheme}
-							color="primary"
-						/>
-						<IconButton onClick={toggleDrawer}>
-							<CloseIcon
-								sx={{ color: isDarkMode ? "common.white" : "common.black" }}
-							/>
-						</IconButton>
-					</Box>
 					{menuItems.map((item) => (
 						<Button
 							key={item}

@@ -10,6 +10,7 @@ interface CartState {
 	cartItems: CartItem[];
 	shippingAddress: ShippingFormValues;
 	isCheckingOut: boolean;
+	paymentMethod: string,
 }
 
 const useCartHandling = (onClose?: () => void) => {
@@ -20,7 +21,7 @@ const useCartHandling = (onClose?: () => void) => {
 		(state: { productLists: ProductListState }) => state.productLists,
 	);
 
-	const { cartItems, shippingAddress }: CartState = useSelector(
+	const { cartItems, shippingAddress, paymentMethod }: CartState = useSelector(
 		({ cart }: { cart: CartState }) => cart,
 	);
 
@@ -68,7 +69,7 @@ const useCartHandling = (onClose?: () => void) => {
 		onClose?.();
 	};
 
-	return { cartItems, shippingAddress, increaseQuantity, decreaseQuantity, removeItem, viewItem, totalPrice, viewCartPage, proceedToCheckout };
+	return { cartItems, shippingAddress, paymentMethod, increaseQuantity, decreaseQuantity, removeItem, viewItem, totalPrice, viewCartPage, proceedToCheckout };
 }
 
 export default useCartHandling;
