@@ -145,7 +145,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 				sx={{
 					display: "flex",
 					justifyContent: countInStock === 0 ? "center" : "space-between",
-					backgroundColor: "primary.dark",
 					padding: theme.spacing(1, 2),
 				}}
 			>
@@ -157,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 					disabled={countInStock === 0}
 				/>
 				{countInStock > 0 && (
-					<Typography variant="body2" color="common.white">
+					<Typography variant="body2" color="common.black">
 						In stock: {countInStock}
 					</Typography>
 				)}
