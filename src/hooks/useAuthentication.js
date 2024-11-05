@@ -41,6 +41,7 @@ const useAuthentication = () => {
         }
     }, [resSignIn, resRegister, resUpdateProfile]);
 
+
     return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut }
 }
 

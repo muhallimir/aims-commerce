@@ -40,6 +40,7 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 	};
 
 	const handleRedirectToProfile = () => {
+		handleMenuClose();
 		router.push("/profile");
 	};
 
@@ -129,6 +130,108 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 				<MenuItem onClick={handleLogout}>
 					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
 						Logout
+					</Typography>
+				</MenuItem>
+			</Menu>
+		</>
+	);
+};
+
+const AdminAccessButton: React.FC<SignInProps> = ({ isDarkMode }) => {
+	const { isAdmin, isAuthenticated } = useAuthentication();
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const router = useRouter();
+
+	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
+
+	const handleRedirectToDashboard = () => {
+		handleMenuClose();
+		router.push("/admin/dashboard");
+	};
+
+	return (
+		<>
+			<Button
+				variant="text"
+				onClick={handleMenuOpen}
+				sx={{
+					ml: 2,
+					color: isDarkMode ? "common.white" : "common.black",
+					display: isAdmin ? "flex" : "none",
+					flexDirection: "column",
+					alignItems: "flex-start",
+					textTransform: "none",
+					p: 0,
+					minWidth: "auto",
+					"&:hover": {
+						backgroundColor: "transparent",
+					},
+				}}
+			>
+				<Typography variant="caption" sx={{ lineHeight: 1 }}>
+					Admin
+				</Typography>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+					<Typography
+						variant="body2"
+						sx={{
+							fontWeight: "bold",
+							fontSize: "0.9rem",
+							lineHeight: { xs: 1, md: isAuthenticated ? 0.5 : 1 },
+						}}
+					>
+						Access
+					</Typography>
+					{isAuthenticated && (
+						<Box
+							onClick={handleMenuOpen}
+							sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+						>
+							<ArrowDropDownIcon fontSize="small" />
+						</Box>
+					)}
+				</Box>
+			</Button>
+			<Menu
+				anchorEl={anchorEl}
+				open={Boolean(anchorEl)}
+				onClose={handleMenuClose}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "center",
+				}}
+				transformOrigin={{
+					vertical: "bottom",
+					horizontal: "center",
+				}}
+				sx={{
+					mt: 4,
+				}}
+			>
+				<MenuItem onClick={handleRedirectToDashboard}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Dashboard
+					</Typography>
+				</MenuItem>
+				<MenuItem onClick={() => {}}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Products
+					</Typography>
+				</MenuItem>
+				<MenuItem onClick={() => {}}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Order
+					</Typography>
+				</MenuItem>
+				<MenuItem onClick={() => {}}>
+					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+						Support
 					</Typography>
 				</MenuItem>
 			</Menu>
@@ -252,6 +355,7 @@ function MainHeader() {
 			</Box>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<SignInButton isDarkMode={isDarkMode} />
+				<AdminAccessButton isDarkMode={isDarkMode} />
 				<IconButton onClick={toggleCartDrawer} sx={{ mr: 1 }}>
 					<Badge badgeContent={cartItemsCount} color="secondary">
 						<ShoppingCartIcon

@@ -34,7 +34,10 @@ export interface RootState {
 		theme: string;
 	};
 	user: {
-		userInfo: any;
+		userInfo: object;
+	};
+	summary: {
+		dashboard: object;
 	};
 }
 
