@@ -144,7 +144,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 			<CardActions
 				sx={{
 					display: "flex",
-					justifyContent: countInStock === 0 ? "center" : "space-between",
+					justifyContent: countInStock === 0 || xs ? "center" : "space-between",
+					gap: xs ? "20px" : 0,
 					padding: theme.spacing(1, 2),
 				}}
 			>

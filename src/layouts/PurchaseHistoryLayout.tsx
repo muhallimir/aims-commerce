@@ -3,7 +3,7 @@ import {
 	setFromPurchaseHistory,
 	useGetOrdersHistoryMutation,
 } from "@store/order.slice";
-import { isEmpty, isUndefined } from "lodash";
+import { isEmpty, isNull } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
@@ -32,25 +32,27 @@ const PurchaseHistoryLayout: React.FC = () => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const { data: resPurchaseHistoryData } = resPurchaseHistory;
-	const [withPurchaseHistory, setWithPurchaseHistory] = useState(true);
-
-	console.log({ resPurchaseHistoryData });
+	const [withPurchaseHistory, setWithPurchaseHistory] = useState<
+		boolean | null
+	>(null);
 
 	useEffect(() => {
-		if (isEmpty(orderList) && isUndefined(resPurchaseHistoryData)) {
+		if (isNull(withPurchaseHistory)) {
 			reqPurchaseHistory({});
 			dispatch(clearOrderData());
 			dispatch(setFromPurchaseHistory(true));
 		}
-	}, [reqPurchaseHistory, orderList]);
+	}, [reqPurchaseHistory, withPurchaseHistory]);
 
 	useEffect(() => {
-		if (resPurchaseHistory.isSuccess && isEmpty(resPurchaseHistoryData)) {
-			setWithPurchaseHistory(false);
-		} else {
-			setWithPurchaseHistory(true);
+		if (resPurchaseHistory.isSuccess) {
+			if (isEmpty(resPurchaseHistoryData)) {
+				setWithPurchaseHistory(false);
+			} else {
+				setWithPurchaseHistory(true);
+			}
 		}
-	}, [resPurchaseHistory]);
+	}, [resPurchaseHistory, resPurchaseHistoryData]);
 
 	useEffect(() => {
 		dispatch(clearOrderData());

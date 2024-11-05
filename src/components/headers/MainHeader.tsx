@@ -39,6 +39,10 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 		setAnchorEl(null);
 	};
 
+	const handleRedirectToProfile = () => {
+		router.push("/profile");
+	};
+
 	const redirectToPurchases = () => {
 		handleMenuClose();
 		router.push("/purchases");
@@ -50,9 +54,9 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 	};
 
 	const truncatedName =
-		isAuthenticated && userInfo.name.length > 6
-			? `${userInfo.name.slice(0, 6)}...`
-			: userInfo.name;
+		isAuthenticated && userInfo?.name.length > 6
+			? `${userInfo?.name.slice(0, 6)}...`
+			: userInfo?.name;
 
 	return (
 		<>
@@ -112,7 +116,7 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 					horizontal: "center",
 				}}
 			>
-				<MenuItem onClick={handleMenuClose}>
+				<MenuItem onClick={handleRedirectToProfile}>
 					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
 						Profile
 					</Typography>

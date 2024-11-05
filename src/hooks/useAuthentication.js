@@ -1,6 +1,6 @@
 import { resetCartState } from "@store/cart.slice";
 import { clearOrderData } from "@store/order.slice";
-import { clearUserInfo, updateUserInfo, usePostRegistrationMutation, usePostSignInMutation } from "@store/user.slice";
+import { clearUserInfo, updateUserInfo, usePostRegistrationMutation, usePostSignInMutation, useUpdateProfileMutation } from "@store/user.slice";
 import isEmpty from "lodash/isEmpty";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -11,6 +11,7 @@ const useAuthentication = () => {
     const { isCheckingOut } = useSelector(({ cart }) => cart)
     const [reqSignIn, resSignIn] = usePostSignInMutation();
     const [reqRegister, resRegister] = usePostRegistrationMutation();
+    const [reqUpdateProfile, resUpdateProfile] = useUpdateProfileMutation();
     const dispatch = useDispatch()
     const isAuthenticated = !isEmpty(userInfo)
     const isAdmin = userInfo?.isAdmin
@@ -29,19 +30,18 @@ const useAuthentication = () => {
     };
 
     useEffect(() => {
-        if (resSignIn.isSuccess || resRegister.isSuccess) {
-            dispatch(updateUserInfo(resSignIn.data || resRegister.data));
+        if (resSignIn.isSuccess || resRegister.isSuccess || resUpdateProfile.isSuccess) {
+            dispatch(updateUserInfo(resSignIn.data || resRegister.data || resUpdateProfile.data));
             const token = resSignIn?.data?.token || resRegister?.data?.token;
             const targetRoute = isCheckingOut ? '/store/shipping' : '/store';
             if (token) {
                 localStorage.setItem('token', token);
+                router.push(targetRoute);
             }
-
-            router.push(targetRoute);
         }
-    }, [resSignIn, resRegister]);
+    }, [resSignIn, resRegister, resUpdateProfile]);
 
-    return { userInfo, reqSignIn, resSignIn, reqRegister, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut }
+    return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut }
 }
 
 export default useAuthentication;

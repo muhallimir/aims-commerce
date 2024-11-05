@@ -16,6 +16,8 @@ import useCartHandling from "src/hooks/useCartHandling";
 import useThemeMode from "src/hooks/useThemeMode";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
 import { CartItem } from "@common/interface";
+import { useRouter } from "next/router";
+import { ShoppingCart } from "@mui/icons-material";
 
 const CartPageLayout: React.FC = () => {
 	const { xs } = useScreenSize();
@@ -29,6 +31,11 @@ const CartPageLayout: React.FC = () => {
 		proceedToCheckout,
 	} = useCartHandling();
 	const { isDarkMode } = useThemeMode();
+	const router = useRouter();
+
+	const handleRedirectToStore = () => {
+		router.push("/store");
+	};
 
 	return (
 		<>
@@ -44,16 +51,34 @@ const CartPageLayout: React.FC = () => {
 					variant="h4"
 					gutterBottom
 					sx={{
-						...(!isDarkMode && { color: "var(--color-text-secondary)" }),
+						color: isDarkMode
+							? "var(--color-text-secondary)"
+							: "var(--color-text-primary)",
 					}}
 				>
 					Shopping Cart
 				</Typography>
 				<Divider sx={{ mb: 2 }} />
 				{cartItems.length === 0 ? (
-					<Typography variant="body1" sx={{ textAlign: "center" }}>
-						Your cart is empty.
-					</Typography>
+					<>
+						<Typography
+							variant="body1"
+							color="status.error"
+							sx={{ textAlign: "center" }}
+						>
+							Your cart is empty.
+						</Typography>
+						<Box textAlign="center">
+							<Button
+								variant="outlined"
+								startIcon={<ShoppingCart />}
+								sx={{ mt: 2 }}
+								onClick={handleRedirectToStore}
+							>
+								Go to Store
+							</Button>
+						</Box>
+					</>
 				) : (
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={8}>
@@ -163,6 +188,7 @@ const CartPageLayout: React.FC = () => {
 											color="error"
 											size="small"
 											onClick={() => removeItem(item._id)}
+											sx={{ display: xs ? "none" : "block" }}
 										>
 											Remove
 										</Button>
