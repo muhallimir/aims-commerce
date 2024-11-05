@@ -258,9 +258,9 @@ function MainHeader() {
 				</IconButton>
 				<IconButton onClick={toggleTheme}>
 					{isDarkMode ? (
-						<NightsStayIcon sx={{ color: "common.white" }} />
+						<WbSunnyIcon sx={{ color: "common.white" }} />
 					) : (
-						<WbSunnyIcon sx={{ color: "common.black" }} />
+						<NightsStayIcon sx={{ color: "common.black" }} />
 					)}
 				</IconButton>
 				<IconButton
