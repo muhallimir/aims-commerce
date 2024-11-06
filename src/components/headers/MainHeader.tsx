@@ -386,7 +386,6 @@ function MainHeader() {
 				</IconButton>
 			</Box>
 			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
-			<CartDrawer open={cartDrawerOpen} onClose={toggleCartDrawer} />
 			<Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
 				<Box
 					sx={{

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
 import useScreenSize from "src/hooks/useScreenSize";
@@ -14,17 +14,25 @@ import {
 	CardMedia,
 } from "@mui/material";
 import { Product } from "@common/interface";
+import { updateCartList } from "@store/cart.slice";
+import useCartHandling from "src/hooks/useCartHandling";
 
 const ProductDetailSection: React.FC = ({}) => {
 	const { currentProduct: product } = useSelector(
 		(state: any) => state.productLists,
 	) as { currentProduct: Product };
+	const dispatch = useDispatch();
 
 	const [open, setOpen] = useState<boolean>(false);
 	const { xs } = useScreenSize();
+	const { viewCartPage } = useCartHandling();
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
+
+	const handleAddToCart = () => {
+		dispatch(updateCartList(product));
+	};
 
 	return (
 		<Box
@@ -178,6 +186,7 @@ const ProductDetailSection: React.FC = ({}) => {
 							color="primary"
 							size="large"
 							sx={{ flex: 1 }}
+							onClick={handleAddToCart}
 						>
 							Add to Cart
 						</Button>
@@ -186,8 +195,9 @@ const ProductDetailSection: React.FC = ({}) => {
 							color="secondary"
 							size="large"
 							sx={{ flex: 1 }}
+							onClick={viewCartPage}
 						>
-							Buy Now
+							View Cart
 						</Button>
 					</Stack>
 				</Box>

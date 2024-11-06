@@ -17,12 +17,10 @@ import {
 	Typography,
 	Pagination,
 	Grid,
+	Skeleton,
 } from "@mui/material";
 import { ViewList, ShoppingCart } from "@mui/icons-material";
 import { AppState, Order } from "@common/interface";
-import LoadingOverlay from "src/components/loaders/TextLoader";
-import { LOADERTEXT } from "@common/constants";
-import SearchBar from "src/components/bars/SearchBar";
 
 const PurchaseHistoryLayout: React.FC = () => {
 	const { loading } = useSelector((state: { app: AppState }) => state.app);
@@ -33,11 +31,13 @@ const PurchaseHistoryLayout: React.FC = () => {
 		useGetOrdersHistoryMutation();
 	const router = useRouter();
 	const dispatch = useDispatch();
-	const { data: resPurchaseHistoryData } = resPurchaseHistory;
+	const {
+		data: resPurchaseHistoryData,
+		isLoading: resPurchaseHistoryDataLoading,
+	} = resPurchaseHistory;
 	const [withPurchaseHistory, setWithPurchaseHistory] = useState<
 		boolean | null
 	>(null);
-	const [filteredOrders, setFilteredOrders] = useState<Order[]>(orderList);
 
 	useEffect(() => {
 		if (isNull(withPurchaseHistory)) {
@@ -49,11 +49,7 @@ const PurchaseHistoryLayout: React.FC = () => {
 
 	useEffect(() => {
 		if (resPurchaseHistory.isSuccess) {
-			if (isEmpty(resPurchaseHistoryData)) {
-				setWithPurchaseHistory(false);
-			} else {
-				setWithPurchaseHistory(true);
-			}
+			setWithPurchaseHistory(!isEmpty(resPurchaseHistoryData));
 		}
 	}, [resPurchaseHistory, resPurchaseHistoryData]);
 
@@ -61,26 +57,10 @@ const PurchaseHistoryLayout: React.FC = () => {
 		dispatch(clearOrderData());
 	}, []);
 
-	const handleSearch = (query: string) => {
-		if (query.trim() === "") {
-			setFilteredOrders(orderList);
-		} else {
-			const filtered = orderList.filter(
-				(order: Order) =>
-					order._id.toLowerCase().includes(query.toLowerCase()) ||
-					new Date(order.createdAt)
-						.toLocaleDateString()
-						.toLowerCase()
-						.includes(query.toLowerCase()),
-			);
-			setFilteredOrders(filtered);
-		}
-	};
-
 	const indexOfLastOrder = currentPage * ordersPerPage;
 	const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
 
-	const sortedOrders = [...filteredOrders].sort((a: Order, b: Order) => {
+	const sortedOrders = [...orderList].sort((a: Order, b: Order) => {
 		return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 	});
 
@@ -101,22 +81,53 @@ const PurchaseHistoryLayout: React.FC = () => {
 		router.push("/store");
 	};
 
-	if (loading) {
-		return (
-			<LoadingOverlay variant="overlay" loadingMessage={LOADERTEXT.DEFAULT} />
-		);
-	}
-
 	return (
 		<Box sx={{ maxWidth: "100%", mx: "auto", p: 2 }}>
 			<Typography variant="h4" gutterBottom color="primary">
 				Purchase History
 			</Typography>
-			<SearchBar
-				onSearch={handleSearch}
-				placeholder="Search purchase history..."
-			/>
-			{withPurchaseHistory && currentOrders.length > 0 ? (
+			{loading || resPurchaseHistoryDataLoading ? (
+				<Grid
+					container
+					spacing={2}
+					justifyContent="center"
+					sx={{ maxWidth: 1200, mx: "auto" }}
+				>
+					{Array.from(new Array(6)).map((_, index) => (
+						<Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+							<Card sx={{ borderRadius: 2, boxShadow: 2 }}>
+								<CardContent>
+									<Skeleton variant="text" height={30} width="80%" />
+									<Skeleton variant="text" height={20} width="60%" />
+									<Skeleton variant="text" height={20} width="40%" />
+									<Skeleton
+										variant="rectangular"
+										height={40}
+										width="100%"
+										sx={{ my: 1 }}
+									/>
+									<Divider sx={{ my: 2 }} />
+									<Skeleton variant="rectangular" height={36} width="100%" />
+								</CardContent>
+							</Card>
+						</Grid>
+					))}
+				</Grid>
+			) : !withPurchaseHistory && currentOrders.length === 0 ? (
+				<Box textAlign="center">
+					<Typography variant="body1" color="textSecondary" align="center">
+						No purchase history available.
+					</Typography>
+					<Button
+						variant="outlined"
+						startIcon={<ShoppingCart />}
+						sx={{ mt: 2 }}
+						onClick={handleRedirectToStore}
+					>
+						Go to Store
+					</Button>
+				</Box>
+			) : (
 				<Grid
 					container
 					spacing={2}
@@ -159,26 +170,12 @@ const PurchaseHistoryLayout: React.FC = () => {
 						</Grid>
 					))}
 				</Grid>
-			) : (
-				<Box textAlign="center">
-					<Typography variant="body1" color="textSecondary" align="center">
-						No purchase history available.
-					</Typography>
-					<Button
-						variant="outlined"
-						startIcon={<ShoppingCart />}
-						sx={{ mt: 2 }}
-						onClick={handleRedirectToStore}
-					>
-						Go to Store
-					</Button>
-				</Box>
 			)}
 			{withPurchaseHistory && currentOrders.length > 0 && (
 				<>
 					<Divider sx={{ my: 2 }} />
 					<Pagination
-						count={Math.ceil(filteredOrders.length / ordersPerPage)}
+						count={Math.ceil(orderList.length / ordersPerPage)}
 						page={currentPage}
 						onChange={handlePageChange}
 						variant="outlined"
