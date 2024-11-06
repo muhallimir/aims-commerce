@@ -178,7 +178,7 @@ const PurchaseHistoryLayout: React.FC = () => {
 				<>
 					<Divider sx={{ my: 2 }} />
 					<Pagination
-						count={Math.ceil(filteredOrders.length / ordersPerPage)} // Use filteredOrders for pagination
+						count={Math.ceil(filteredOrders.length / ordersPerPage)}
 						page={currentPage}
 						onChange={handlePageChange}
 						variant="outlined"

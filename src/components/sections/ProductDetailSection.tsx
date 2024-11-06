@@ -31,7 +31,7 @@ const ProductDetailSection: React.FC = ({}) => {
 			sx={{
 				padding: { xs: "10px", sm: "20px" },
 				maxWidth: "1200px",
-				minWidth: { md: "900px", lg: "1160px" },
+				minWidth: { sm: "600px", md: "900px", lg: "1160px" },
 				margin: "auto",
 			}}
 		>
