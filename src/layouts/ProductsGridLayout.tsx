@@ -7,6 +7,7 @@ import ProductCardSkeleton from "src/components/loaders/ProductCardSkeleton";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { setFromPurchaseHistory } from "@store/order.slice";
+import SearchBar from "src/components/bars/SearchBar";
 
 const ProductsGridLayout: React.FC = () => {
 	const { theme: mode, loading } = useSelector((state: any) => state.app);
@@ -14,7 +15,9 @@ const ProductsGridLayout: React.FC = () => {
 	const { xs } = useScreenSize();
 	const [showOverlay, setShowOverlay] = useState<boolean>(false);
 	const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
 	const dispatch = useDispatch();
+
 	useEffect(() => {
 		if (loading) {
 			setLoadingStartTime(Date.now());
@@ -40,10 +43,22 @@ const ProductsGridLayout: React.FC = () => {
 		dispatch(setFromPurchaseHistory(false));
 	}, []);
 
+	const handleSearch = (query: string) => {
+		setSearchQuery(query);
+	};
+
+	const filteredProducts = products.filter((product: any) =>
+		[product.title, product.category, product.description]
+			.join(" ")
+			.toLowerCase()
+			.includes(searchQuery.toLowerCase()),
+	);
+
 	return (
 		<Container
 			sx={{ py: 4, width: "100vw", minHeight: "100vh", position: "relative" }}
 		>
+			<SearchBar onSearch={handleSearch} />
 			{showOverlay && (
 				<LoadingOverlay
 					variant="transparent"
@@ -60,15 +75,12 @@ const ProductsGridLayout: React.FC = () => {
 								md={4}
 								lg={3}
 								key={index}
-								sx={{
-									display: "flex",
-									justifyContent: "center",
-								}}
+								sx={{ display: "flex", justifyContent: "center" }}
 							>
 								<ProductCardSkeleton darkMode={mode === "dark"} isMobile={xs} />
 							</Grid>
 					  ))
-					: products.map((product: any) => (
+					: filteredProducts.map((product: any) => (
 							<Grid
 								item
 								xs={12}

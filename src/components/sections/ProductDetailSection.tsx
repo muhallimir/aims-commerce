@@ -31,6 +31,7 @@ const ProductDetailSection: React.FC = ({}) => {
 			sx={{
 				padding: { xs: "10px", sm: "20px" },
 				maxWidth: "1200px",
+				minWidth: { md: "900px", lg: "1160px" },
 				margin: "auto",
 			}}
 		>
@@ -46,7 +47,6 @@ const ProductDetailSection: React.FC = ({}) => {
 					backgroundColor: "var(--background-light)",
 				}}
 			>
-				{/* Product Image with Magnification */}
 				<Box
 					sx={{
 						flex: 1,
@@ -88,7 +88,6 @@ const ProductDetailSection: React.FC = ({}) => {
 					)}
 				</Box>
 
-				{/* Modal for Image Magnification */}
 				{!xs && (
 					<Modal open={open} onClose={handleClose}>
 						<Box
@@ -131,7 +130,6 @@ const ProductDetailSection: React.FC = ({}) => {
 					</Modal>
 				)}
 
-				{/* Product Details */}
 				<Box sx={{ flex: 2 }}>
 					<Typography
 						variant="h4"
@@ -163,7 +161,6 @@ const ProductDetailSection: React.FC = ({}) => {
 						</Typography>
 					</Stack>
 
-					{/* Product Description */}
 					<Typography
 						variant="body1"
 						sx={{
@@ -175,7 +172,6 @@ const ProductDetailSection: React.FC = ({}) => {
 						{product?.description}
 					</Typography>
 
-					{/* Action Buttons */}
 					<Stack direction="row" spacing={2} sx={{ mt: 4 }}>
 						<Button
 							variant="contained"
