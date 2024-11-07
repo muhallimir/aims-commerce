@@ -24,9 +24,12 @@ export interface Product {
 }
 
 export interface Review {
+	_id: string;
 	name: string;
 	rating: number;
 	comment: string;
+	updatedAt: string;
+	createdAt: string;
 }
 
 export interface RootState {
@@ -34,7 +37,12 @@ export interface RootState {
 		theme: string;
 	};
 	user: {
-		userInfo: object;
+		userInfo: {
+			_id: string;
+			name: string;
+			email: string;
+			isAdmin: boolean;
+		};
 	};
 	summary: {
 		dashboard: object;
@@ -67,6 +75,7 @@ export interface AppState {
 
 export interface ProductListState {
 	products: Product[];
+	currentProduct: Product;
 }
 
 export interface ProductCardSkeletonProps {

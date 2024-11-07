@@ -38,13 +38,9 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         GetOrder: builder.mutation({
             query: (args) => {
-                const authToken = localStorage.getItem('token');
                 return {
                     url: `/api/orders/${args.orderId}`,
                     method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
                 };
             },
             async onQueryStarted(_id, { dispatch, queryFulfilled }) {
@@ -61,13 +57,9 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         }),
         GetOrdersHistory: builder.mutation({
             query: () => {
-                const authToken = localStorage.getItem('token');
                 return {
                     url: '/api/orders/purchase',
                     method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
                 };
             },
             async onQueryStarted(_id, { dispatch, queryFulfilled }) {
@@ -84,14 +76,10 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         }),
         PostPlaceOrder: builder.mutation({
             query: (args) => {
-                const authToken = localStorage.getItem('token');
                 return {
                     url: '/api/orders',
                     method: 'POST',
                     body: args,
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
                 };
             },
         }),
@@ -103,14 +91,10 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         }),
         CreateOrder: builder.mutation({
             query: (args) => {
-                const authToken = localStorage.getItem('token');
                 return {
                     url: `/api/orders/${args.orderId}/pay`,
                     method: 'PUT',
                     body: args,
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
                 };
             },
         }),

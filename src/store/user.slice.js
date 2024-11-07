@@ -44,13 +44,9 @@ export const userApiSlice = apiSlice.injectEndpoints({
         }),
         UpdateProfile: builder.mutation({
             query: (args) => {
-                const token = localStorage.getItem("token")
                 return {
                     url: '/api/users/profile',
                     method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                     body: args,
                 }
             }

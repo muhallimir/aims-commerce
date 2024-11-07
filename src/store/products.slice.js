@@ -48,10 +48,44 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }
       },
     }),
+    GetProduct: builder.mutation({
+      query: (args) => ({
+        url: `/api/products/${args.productId}`,
+        method: 'GET',
+      }),
+      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCurrentProduct(data));
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    PostProductReview: builder.mutation({
+      query: (args) => ({
+        url: `/api/products/${args.productId}/reviews`,
+        method: 'POST',
+        body: args
+      }),
+      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          await queryFulfilled;
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetProductListMutation } = productApiSlice;
+export const { useGetProductListMutation, useGetProductMutation, usePostProductReviewMutation } = productApiSlice;
 
 
 

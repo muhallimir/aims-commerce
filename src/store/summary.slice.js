@@ -27,13 +27,9 @@ export const summaryApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         GetStoreSummary: builder.mutation({
             query: () => {
-                const authToken = localStorage.getItem('token');
                 return {
                     url: `/api/orders/summary`,
                     method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
                 };
             },
             async onQueryStarted(_, { dispatch, queryFulfilled }) {

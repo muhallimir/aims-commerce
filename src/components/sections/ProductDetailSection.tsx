@@ -12,17 +12,18 @@ import {
 	IconButton,
 	Modal,
 	CardMedia,
+	Skeleton,
 } from "@mui/material";
-import { Product } from "@common/interface";
+import { AppState, ProductListState } from "@common/interface";
 import { updateCartList } from "@store/cart.slice";
 import useCartHandling from "src/hooks/useCartHandling";
 
 const ProductDetailSection: React.FC = ({}) => {
 	const { currentProduct: product } = useSelector(
-		(state: any) => state.productLists,
-	) as { currentProduct: Product };
+		(state: { productLists: ProductListState }) => state.productLists,
+	);
+	const { loading } = useSelector((state: { app: AppState }) => state.app);
 	const dispatch = useDispatch();
-
 	const [open, setOpen] = useState<boolean>(false);
 	const { xs } = useScreenSize();
 	const { viewCartPage } = useCartHandling();
@@ -66,20 +67,32 @@ const ProductDetailSection: React.FC = ({}) => {
 						justifyContent: "center",
 					}}
 				>
-					<CardMedia
-						component="img"
-						image={product?.image}
-						alt={product?.name}
-						sx={{
-							height: { xs: "250px", md: "400px" },
-							width: "auto",
-							objectFit: "contain",
-							borderRadius: "10px",
-							boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-							cursor: "zoom-in",
-						}}
-						onClick={handleOpen}
-					/>
+					{loading ? (
+						<Skeleton
+							variant="rectangular"
+							sx={{
+								borderRadius: "10px",
+								boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+								height: { xs: "250px", md: "400px" },
+								width: "100%",
+							}}
+						/>
+					) : (
+						<CardMedia
+							component="img"
+							image={product?.image}
+							alt={product?.name}
+							sx={{
+								height: { xs: "250px", md: "400px" },
+								width: "auto",
+								objectFit: "contain",
+								borderRadius: "10px",
+								boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+								cursor: "zoom-in",
+							}}
+							onClick={handleOpen}
+						/>
+					)}
 					{!xs && (
 						<IconButton
 							onClick={handleOpen}
@@ -139,67 +152,98 @@ const ProductDetailSection: React.FC = ({}) => {
 				)}
 
 				<Box sx={{ flex: 2 }}>
-					<Typography
-						variant="h4"
-						color="primary"
-						gutterBottom
-						sx={{ fontWeight: "bold" }}
-					>
-						{product?.name}
-					</Typography>
-					<Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-						{product?.category} • {product?.brand}
-					</Typography>
-					<Typography
-						variant="h5"
-						color="var(--color-text-accent)"
-						sx={{ my: 2, fontWeight: "500" }}
-					>
-						${product?.price?.toFixed(2)}
-					</Typography>
-					<Stack
-						direction="row"
-						spacing={1}
-						alignItems="center"
-						justifyContent="center"
-					>
-						<Rating value={product?.rating} readOnly precision={0.5} />
-						<Typography variant="body2" color="textSecondary">
-							({product?.numReviews} reviews)
-						</Typography>
-					</Stack>
-
-					<Typography
-						variant="body1"
-						sx={{
-							mt: 2,
-							lineHeight: 1.6,
-							color: "var(--color-text-secondary)",
-						}}
-					>
-						{product?.description}
-					</Typography>
-
-					<Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-						<Button
-							variant="contained"
+					{loading ? (
+						<Skeleton variant="text" width="60%" height={40} sx={{ mb: 1 }} />
+					) : (
+						<Typography
+							variant="h4"
 							color="primary"
-							size="large"
-							sx={{ flex: 1 }}
-							onClick={handleAddToCart}
+							gutterBottom
+							sx={{ fontWeight: "bold" }}
 						>
-							Add to Cart
-						</Button>
-						<Button
-							variant="outlined"
-							color="secondary"
-							size="large"
-							sx={{ flex: 1 }}
-							onClick={viewCartPage}
+							{product?.name}
+						</Typography>
+					)}
+					{loading ? (
+						<Skeleton variant="text" width="40%" height={30} sx={{ mb: 2 }} />
+					) : (
+						<Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+							{product?.category} • {product?.brand}
+						</Typography>
+					)}
+					{loading ? (
+						<Skeleton variant="text" width="30%" height={40} sx={{ mb: 2 }} />
+					) : (
+						<Typography
+							variant="h5"
+							color="var(--color-text-accent)"
+							sx={{ my: 2, fontWeight: "500" }}
 						>
-							View Cart
-						</Button>
-					</Stack>
+							${product?.price?.toFixed(2)}
+						</Typography>
+					)}
+					{loading ? (
+						<Skeleton
+							variant="rectangular"
+							width="30%"
+							height={30}
+							sx={{ mb: 2 }}
+						/>
+					) : (
+						<Stack
+							direction="row"
+							spacing={1}
+							alignItems="center"
+							justifyContent="center"
+						>
+							<Rating value={product?.rating} readOnly precision={0.5} />
+							<Typography variant="body2" color="textSecondary">
+								({product?.numReviews} reviews)
+							</Typography>
+						</Stack>
+					)}
+
+					{loading ? (
+						<Skeleton variant="text" width="100%" height={60} sx={{ mb: 4 }} />
+					) : (
+						<Typography
+							variant="body1"
+							sx={{
+								mt: 2,
+								lineHeight: 1.6,
+								color: "var(--color-text-secondary)",
+							}}
+						>
+							{product?.description}
+						</Typography>
+					)}
+
+					{loading ? (
+						<Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+							<Skeleton variant="rectangular" width="100%" height={50} />
+						</Stack>
+					) : (
+						<Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+							<Button
+								variant="contained"
+								color="primary"
+								size="large"
+								sx={{ flex: 1 }}
+								onClick={handleAddToCart}
+							>
+								Add to Cart
+							</Button>
+							<Button
+								variant="outlined"
+								color="secondary"
+								size="large"
+								sx={{ flex: 1 }}
+								onClick={viewCartPage}
+							>
+								View Cart
+							</Button>
+						</Stack>
+					)}
 				</Box>
 			</Box>
 		</Box>

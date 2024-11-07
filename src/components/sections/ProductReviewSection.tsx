@@ -7,25 +7,33 @@ import {
 	Divider,
 	Avatar,
 	TextField,
+	Skeleton,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash";
-import { useState } from "react";
-import { Product, RootState } from "@common/interface";
+import { useEffect, useState } from "react";
+import { AppState, Product, Review, RootState } from "@common/interface";
+import {
+	useGetProductMutation,
+	usePostProductReviewMutation,
+} from "@store/products.slice";
+import useThemeMode from "src/hooks/useThemeMode";
 
 export default function ProductReviewSection() {
 	const { currentProduct: product } = useSelector(
 		(state: any) => state.productLists,
 	) as { currentProduct: Product };
-	const theme = useTheme();
-	const { theme: mode } = useSelector((state: RootState) => state.app);
+	const { loading } = useSelector((state: { app: AppState }) => state.app);
 	const { userInfo } = useSelector((state: RootState) => state.user);
+	const { isDarkMode } = useThemeMode();
+
 	const router = useRouter();
 
 	const [comment, setComment] = useState<string>("");
 	const [rating, setRating] = useState<number | null>(0);
+	const [reqPostReview, resPostReview] = usePostProductReviewMutation();
+	const [reqGetProduct] = useGetProductMutation();
 
 	const handleSignIn = () => {
 		router.push("/signin");
@@ -33,12 +41,71 @@ export default function ProductReviewSection() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Todo: Handle the submission of the comment and rating here
-		console.log("Comment submitted:", comment, "Rating:", rating);
-		// Todo: Reset the form after submission
-		setComment("");
-		setRating(0);
+		const payload = {
+			name: userInfo?.name,
+			comment,
+			rating: rating?.toString(),
+		};
+		reqPostReview({ productId: product?._id, ...payload });
 	};
+
+	useEffect(() => {
+		if (resPostReview.isSuccess) {
+			reqGetProduct({ productId: product?._id });
+			setComment("");
+			setRating(0);
+		}
+	}, [resPostReview]);
+
+	const sortedReviews = [...(product?.reviews || [])]?.sort(
+		(a: any, b: any) => {
+			const dateA = new Date(a.updatedAt);
+			const dateB = new Date(b.updatedAt);
+
+			return dateB.getTime() - dateA.getTime();
+		},
+	);
+
+	if (loading) {
+		return (
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					placeSelf: "center",
+					px: { xs: 2, md: 4 },
+					py: 4,
+					mb: 4,
+					borderRadius: "12px",
+					boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
+					width: "100%",
+					maxWidth: 1300,
+					backgroundColor: "var(--background-light)",
+					border: isDarkMode ? "1px solid gold" : "1px solid transparent",
+				}}
+			>
+				<Skeleton variant="text" width="40%" height={40} sx={{ mb: 3 }} />
+				<Skeleton
+					variant="rectangular"
+					width="100%"
+					height={200}
+					sx={{ mb: 2 }}
+				/>
+				<Skeleton
+					variant="rectangular"
+					width="100%"
+					height={50}
+					sx={{ mb: 2 }}
+				/>
+				<Skeleton
+					variant="rectangular"
+					width="100%"
+					height={50}
+					sx={{ mb: 2 }}
+				/>
+			</Box>
+		);
+	}
 
 	return (
 		<Box
@@ -54,7 +121,7 @@ export default function ProductReviewSection() {
 				width: "100%",
 				maxWidth: 1300,
 				backgroundColor: "var(--background-light)",
-				border: mode === "dark" ? "1px solid gold" : "1px solid transparent",
+				border: isDarkMode ? "1px solid gold" : "1px solid transparent",
 			}}
 		>
 			<Typography
@@ -63,7 +130,7 @@ export default function ProductReviewSection() {
 					fontWeight: "bold",
 					color: "var(--primary-aims-main)",
 					mb: 3,
-					borderBottom: `2px solid ${theme.palette.divider}`,
+					borderBottom: "2px solid var(--background-dark)",
 					pb: 1,
 				}}
 			>
@@ -78,7 +145,7 @@ export default function ProductReviewSection() {
 					<Button
 						variant="contained"
 						onClick={handleSignIn}
-						color="secondary"
+						color="primary"
 						sx={{
 							borderRadius: "20px",
 							textTransform: "capitalize",
@@ -93,7 +160,7 @@ export default function ProductReviewSection() {
 					<Stack spacing={2} sx={{ mb: 4 }}>
 						<Rating
 							value={rating}
-							onChange={(event, newValue) => {
+							onChange={(_, newValue) => {
 								setRating(newValue);
 							}}
 							size="large"
@@ -107,7 +174,7 @@ export default function ProductReviewSection() {
 							onChange={(e) => setComment(e.target.value)}
 							variant="outlined"
 							fullWidth
-							sx={{ bgcolor: "white" }} // Optional: Change background color
+							sx={{ bgcolor: "white" }}
 						/>
 						<Button
 							type="submit"
@@ -125,8 +192,8 @@ export default function ProductReviewSection() {
 				</form>
 			)}
 
-			{product?.reviews?.length > 0 ? (
-				product.reviews.map((review, index) => (
+			{!isEmpty(sortedReviews) ? (
+				sortedReviews.map((review, index) => (
 					<Box key={index}>
 						<Stack
 							direction="row"
@@ -148,7 +215,7 @@ export default function ProductReviewSection() {
 								<Typography
 									variant="subtitle1"
 									fontWeight="bold"
-									sx={{ color: theme.palette.text.primary }}
+									color="primary"
 								>
 									{review.name}
 								</Typography>
@@ -157,8 +224,8 @@ export default function ProductReviewSection() {
 						</Stack>
 						<Typography
 							variant="body2"
+							color="grey.medium"
 							sx={{
-								color: theme.palette.text.secondary,
 								ml: 9,
 								lineHeight: 1.8,
 								fontStyle: "italic",
@@ -168,14 +235,14 @@ export default function ProductReviewSection() {
 							{review.comment}
 						</Typography>
 						{index < product.reviews.length - 1 && (
-							<Divider sx={{ my: 2, borderColor: theme.palette.divider }} />
+							<Divider sx={{ my: 2, borderColor: "background.dark" }} />
 						)}
 					</Box>
 				))
 			) : (
 				<Typography
 					variant="body1"
-					color="textSecondary"
+					color="error"
 					sx={{ textAlign: "center", my: 4 }}
 				>
 					No reviews available for this product
