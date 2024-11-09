@@ -23,6 +23,7 @@ import {
 	ProductListState,
 } from "@common/interface";
 import useCartAnimation from "src/hooks/useCartAnimation";
+import { getImageUrl } from "@helpers/commonFn";
 
 const CardsContent: React.FC<CardsContentProps> = ({
 	product,
@@ -60,7 +61,7 @@ const CardsContent: React.FC<CardsContentProps> = ({
 			<Box display="flex" alignItems="center" justifyContent="center">
 				<Rating value={rating} readOnly precision={0.5} size="small" />
 				<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-					({numReviews} reviews)
+					({numReviews} {numReviews > 1 ? "reviews" : "review"})
 				</Typography>
 			</Box>
 		</CardContent>
@@ -129,7 +130,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 					}}
 				>
 					<Image
-						src={image}
+						src={getImageUrl(image)}
 						alt={name}
 						fill
 						style={{ objectFit: "contain" }}

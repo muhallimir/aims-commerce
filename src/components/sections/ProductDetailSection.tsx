@@ -17,6 +17,7 @@ import {
 import { AppState, ProductListState } from "@common/interface";
 import { updateCartList } from "@store/cart.slice";
 import useCartHandling from "src/hooks/useCartHandling";
+import { getImageUrl } from "@helpers/commonFn";
 
 const ProductDetailSection: React.FC = ({}) => {
 	const { currentProduct: product } = useSelector(
@@ -80,7 +81,7 @@ const ProductDetailSection: React.FC = ({}) => {
 					) : (
 						<CardMedia
 							component="img"
-							image={product?.image}
+							image={getImageUrl(product?.image)}
 							alt={product?.name}
 							sx={{
 								height: { xs: "250px", md: "400px" },
@@ -124,7 +125,7 @@ const ProductDetailSection: React.FC = ({}) => {
 						>
 							<CardMedia
 								component="img"
-								image={product?.image}
+								image={getImageUrl(product?.image)}
 								alt={product?.name}
 								sx={{
 									maxHeight: "80vh",
@@ -224,15 +225,33 @@ const ProductDetailSection: React.FC = ({}) => {
 						</Stack>
 					) : (
 						<Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-							<Button
-								variant="contained"
-								color="primary"
-								size="large"
-								sx={{ flex: 1 }}
-								onClick={handleAddToCart}
-							>
-								Add to Cart
-							</Button>
+							{product.countInStock === 0 ? (
+								<Button
+									variant="contained"
+									size="large"
+									sx={{
+										flex: 1,
+										"&.Mui-disabled": {
+											color: "status.outOfStock",
+											opacity: 1,
+											backgroundColor: "grey.light",
+										},
+									}}
+									disabled
+								>
+									Out of Stock
+								</Button>
+							) : (
+								<Button
+									variant="contained"
+									color="primary"
+									size="large"
+									sx={{ flex: 1 }}
+									onClick={handleAddToCart}
+								>
+									Add to Cart
+								</Button>
+							)}
 							<Button
 								variant="outlined"
 								color="secondary"

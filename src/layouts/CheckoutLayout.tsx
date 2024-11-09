@@ -12,6 +12,7 @@ import { getErrorMessage } from "@helpers/getErrorMessage";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { resetCartState } from "@store/cart.slice";
+import { getImageUrl } from "@helpers/commonFn";
 
 const CheckoutLayout: React.FC = () => {
 	const { loading: appLoading } = useSelector((state: any) => state.app);
@@ -88,10 +89,7 @@ const CheckoutLayout: React.FC = () => {
 	return (
 		<Box sx={{ maxWidth: "lg", mx: "auto", p: 3, textAlign: "left" }}>
 			{(isLoading || appLoading) && (
-				<LoadingOverlay
-					variant="overlay"
-					loadingMessage={LOADERTEXT.ORDER_PLACEMENT}
-				/>
+				<LoadingOverlay loadingMessage={LOADERTEXT.ORDER_PLACEMENT} />
 			)}
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={8}>
@@ -147,7 +145,7 @@ const CheckoutLayout: React.FC = () => {
 								}}
 							>
 								<Image
-									src={item.image}
+									src={getImageUrl(item.image)}
 									alt={item.name}
 									width={50}
 									height={50}

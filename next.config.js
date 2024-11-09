@@ -16,6 +16,10 @@ module.exports = async () => {
     images: {
       remotePatterns: [
         {
+          protocol: "http",
+          hostname: "**",
+        },
+        {
           protocol: "https",
           hostname: "**",
         },

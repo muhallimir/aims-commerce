@@ -43,14 +43,13 @@ const ProductCardSkeleton: React.FC<ProductCardSkeletonProps> = ({
 					height: isMobile ? 160 : 180,
 				}}
 			>
-				<Skeleton height={20} /> {/* Title */}
-				<Skeleton height={16} width="80%" /> {/* Category & Brand */}
-				<Skeleton height={20} width="40%" /> {/* Price */}
-				<Skeleton height={16} width="60%" /> {/* Description */}
+				<Skeleton height={20} />
+				<Skeleton height={16} width="80%" />
+				<Skeleton height={20} width="40%" />
+				<Skeleton height={16} width="60%" />
 				<Box display="flex" alignItems="center">
-					<Skeleton height={20} width="50px" /> {/* Rating */}
+					<Skeleton height={20} width="50px" />
 					<Skeleton height={20} width="50px" sx={{ ml: 1 }} />{" "}
-					{/* Review count */}
 				</Box>
 			</CardContent>
 			<CardActions

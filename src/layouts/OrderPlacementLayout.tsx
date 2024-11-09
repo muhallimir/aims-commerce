@@ -19,6 +19,7 @@ import {
 import { isEmpty } from "lodash";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
+import { getImageUrl } from "@helpers/commonFn";
 
 const formatDate = (date: string | undefined) => {
 	if (!date) return new Date().toLocaleString();
@@ -117,9 +118,7 @@ const OrderPlacementLayout: React.FC = () => {
 	};
 
 	if (loading || isLoading) {
-		return (
-			<LoadingOverlay variant="overlay" loadingMessage={LOADERTEXT.DEFAULT} />
-		);
+		return <LoadingOverlay loadingMessage={LOADERTEXT.DEFAULT} />;
 	}
 
 	return (
@@ -202,7 +201,7 @@ const OrderPlacementLayout: React.FC = () => {
 								}}
 							>
 								<Image
-									src={item.image}
+									src={getImageUrl(item.image)}
 									alt={item.name}
 									width={50}
 									height={50}

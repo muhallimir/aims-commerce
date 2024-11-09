@@ -131,38 +131,6 @@ const typography = {
             lineHeight: '1.5rem',
         },
     },
-    menu_xs: {
-        fontWeight: 400,
-        fontSize: '12px',
-        lineHeight: '15px',
-    },
-    auth1: {
-        fontWeight: 600,
-        fontSize: '16px',
-        lineHeight: '24px',
-    },
-    hero_headline: {
-        fontWeight: 300,
-        fontSize: '56px',
-        lineHeight: '67px',
-        [theme.breakpoints.down('md')]: {
-            fontSize: '48px',
-            lineHeight: '58px',
-        },
-        [theme.breakpoints.down('sm')]: {
-            fontSize: '32px',
-            lineHeight: '40px',
-        },
-    },
-    tc_text: {
-        fontWeight: 400,
-        fontSize: '12px',
-        lineHeight: '18px',
-        [theme.breakpoints.up('sm')]: {
-            fontSize: '14px',
-            lineHeight: '20px',
-        },
-    },
 };
 
 export default typography;

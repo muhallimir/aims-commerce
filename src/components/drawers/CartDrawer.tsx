@@ -15,6 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CartDrawerProps } from "@common/interface";
 import useCartHandling from "src/hooks/useCartHandling";
+import { getImageUrl } from "@helpers/commonFn";
 
 const truncatedName = (name: string, maxLength: number) => {
 	if (name.length > maxLength) {
@@ -92,7 +93,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 										}}
 									>
 										<Image
-											src={item.image}
+											src={getImageUrl(item.image)}
 											alt={item.name}
 											width={55}
 											height={50}

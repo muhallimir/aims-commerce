@@ -18,6 +18,7 @@ import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
 import { CartItem } from "@common/interface";
 import { useRouter } from "next/router";
 import { ShoppingCart } from "@mui/icons-material";
+import { getImageUrl } from "@helpers/commonFn";
 
 const CartPageLayout: React.FC = () => {
 	const { xs } = useScreenSize();
@@ -100,7 +101,7 @@ const CartPageLayout: React.FC = () => {
 										}}
 									>
 										<Image
-											src={item.image}
+											src={getImageUrl(item.image)}
 											alt={item.name}
 											width={100}
 											height={100}

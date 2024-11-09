@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 
 export interface LoadingOverLayProps {
-	variant: "transparent" | "overlay";
 	loadingMessage?: string;
 }
 
@@ -21,6 +20,8 @@ export interface Product {
 	image: string;
 	countInStock: number;
 	reviews: Review[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Review {
@@ -176,4 +177,18 @@ export interface Order {
 	createdAt: string;
 	paidAt?: string;
 	deliveredAt?: string;
+}
+
+export interface ConfirmModalProps {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+	message: string;
+}
+
+export interface SuccessModalProps {
+	open: boolean;
+	onClose: () => void;
+	title: string;
+	subTitle: string;
 }

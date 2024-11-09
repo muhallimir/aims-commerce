@@ -37,12 +37,7 @@ const RegistrationForm: React.FC = () => {
 
 	return (
 		<Container maxWidth="sm">
-			{isLoading && (
-				<LoadingOverlay
-					variant="overlay"
-					loadingMessage={LOADERTEXT.REGISTER}
-				/>
-			)}
+			{isLoading && <LoadingOverlay loadingMessage={LOADERTEXT.REGISTER} />}
 			<Box
 				component="form"
 				onSubmit={formik.handleSubmit}

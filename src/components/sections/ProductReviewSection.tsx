@@ -12,8 +12,8 @@ import {
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash";
-import { useEffect, useState } from "react";
-import { AppState, Product, Review, RootState } from "@common/interface";
+import { useState } from "react";
+import { AppState, Product, RootState } from "@common/interface";
 import {
 	useGetProductMutation,
 	usePostProductReviewMutation,
@@ -32,30 +32,36 @@ export default function ProductReviewSection() {
 
 	const [comment, setComment] = useState<string>("");
 	const [rating, setRating] = useState<number | null>(0);
-	const [reqPostReview, resPostReview] = usePostProductReviewMutation();
+	const [reqPostReview] = usePostProductReviewMutation();
 	const [reqGetProduct] = useGetProductMutation();
+	const [errorMessage, setErrorMessage] = useState<string | null>(null); // Add error state
 
 	const handleSignIn = () => {
 		router.push("/signin");
 	};
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const payload = {
 			name: userInfo?.name,
 			comment,
 			rating: rating?.toString(),
 		};
-		reqPostReview({ productId: product?._id, ...payload });
+		await reqPostReview({ productId: product?._id, ...payload })
+			.unwrap()
+			.then(async () => {
+				await reqGetProduct({ productId: product?._id });
+				setComment("");
+				setRating(0);
+				setErrorMessage(null);
+			})
+			.catch((error) => {
+				setErrorMessage(
+					error?.data?.message ||
+						"An error occurred while submitting the review.",
+				);
+			});
 	};
-
-	useEffect(() => {
-		if (resPostReview.isSuccess) {
-			reqGetProduct({ productId: product?._id });
-			setComment("");
-			setRating(0);
-		}
-	}, [resPostReview]);
 
 	const sortedReviews = [...(product?.reviews || [])]?.sort(
 		(a: any, b: any) => {
@@ -136,6 +142,16 @@ export default function ProductReviewSection() {
 			>
 				Customer Reviews
 			</Typography>
+
+			{errorMessage && (
+				<Typography
+					variant="body1"
+					color="error"
+					sx={{ textAlign: "center", my: 4 }}
+				>
+					{errorMessage}
+				</Typography>
+			)}
 
 			{isEmpty(userInfo) ? (
 				<Box sx={{ textAlign: "center", my: 4 }}>

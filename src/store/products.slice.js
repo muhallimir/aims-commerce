@@ -36,7 +36,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         url: '/api/products',
         method: 'GET',
       }),
-      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
@@ -53,7 +53,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         url: `/api/products/${args.productId}`,
         method: 'GET',
       }),
-      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
@@ -71,7 +71,81 @@ export const productApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: args
       }),
-      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          await queryFulfilled;
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    CreateNewProduct: builder.mutation({
+      query: (args) => ({
+        url: `/api/products`,
+        method: 'POST',
+        body: args,
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCurrentProduct(data));
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    UpdateProduct: builder.mutation({
+      query: (args) => ({
+        url: `/api/products/${args.productId}`,
+        method: 'PUT',
+        body: args,
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCurrentProduct(data));
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    DeleteProduct: builder.mutation({
+      query: (args) => ({
+        url: `/api/products/${args.productId}`,
+        method: 'DELETE',
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(setLoading(true));
+        try {
+          await queryFulfilled;
+        } catch ({ error }) {
+          dispatch(setAppError(error.status));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    UploadProductImage: builder.mutation({
+      query: (file) => {
+        const bodyFormData = new FormData();
+        bodyFormData.append('image', file);
+        return {
+          url: '/api/uploads',
+          method: 'POST',
+          body: bodyFormData,
+          responseHandler: 'text'
+        };
+      },
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         dispatch(setLoading(true));
         try {
           await queryFulfilled;
@@ -85,7 +159,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetProductListMutation, useGetProductMutation, usePostProductReviewMutation } = productApiSlice;
+export const { useGetProductListMutation, useGetProductMutation, usePostProductReviewMutation, useDeleteProductMutation, useCreateNewProductMutation, useUpdateProductMutation, useUploadProductImageMutation } = productApiSlice;
 
 
 

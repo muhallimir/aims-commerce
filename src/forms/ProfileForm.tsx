@@ -75,12 +75,7 @@ const ProfileForm: React.FC = () => {
 
 	return (
 		<Container maxWidth="sm">
-			{isLoading && (
-				<LoadingOverlay
-					variant="overlay"
-					loadingMessage="Updating Profile..."
-				/>
-			)}
+			{isLoading && <LoadingOverlay loadingMessage="Updating Profile..." />}
 			<Box
 				component="form"
 				onSubmit={formik.handleSubmit}

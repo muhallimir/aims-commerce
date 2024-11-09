@@ -8,6 +8,7 @@ import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { setFromPurchaseHistory } from "@store/order.slice";
 import SearchBar from "src/components/bars/SearchBar";
+import { useGetProductListMutation } from "@store/products.slice";
 
 const ProductsGridLayout: React.FC = () => {
 	const { theme: mode, loading } = useSelector((state: any) => state.app);
@@ -15,8 +16,15 @@ const ProductsGridLayout: React.FC = () => {
 	const { xs } = useScreenSize();
 	const [showOverlay, setShowOverlay] = useState<boolean>(false);
 	const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
+	const [reqProductList] = useGetProductListMutation() as unknown as [
+		() => Promise<void>,
+	];
 	const [searchQuery, setSearchQuery] = useState("");
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		reqProductList();
+	}, []);
 
 	useEffect(() => {
 		if (loading) {
@@ -60,10 +68,7 @@ const ProductsGridLayout: React.FC = () => {
 		>
 			<SearchBar onSearch={handleSearch} />
 			{showOverlay && (
-				<LoadingOverlay
-					variant="transparent"
-					loadingMessage={LOADERTEXT.INITIAL_LOAD}
-				/>
+				<LoadingOverlay loadingMessage={LOADERTEXT.INITIAL_LOAD} />
 			)}
 			<Grid container spacing={3} justifyContent="center">
 				{loading

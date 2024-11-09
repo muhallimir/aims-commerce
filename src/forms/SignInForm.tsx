@@ -42,9 +42,7 @@ const SignInForm: React.FC = () => {
 
 	return (
 		<Container maxWidth="sm">
-			{isLoading && (
-				<LoadingOverlay variant="overlay" loadingMessage={LOADERTEXT.SIGN_IN} />
-			)}
+			{isLoading && <LoadingOverlay loadingMessage={LOADERTEXT.SIGN_IN} />}
 			<Box
 				component="form"
 				onSubmit={formik.handleSubmit}

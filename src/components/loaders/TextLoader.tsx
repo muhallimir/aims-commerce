@@ -2,10 +2,7 @@ import { Typography, Box, useTheme } from "@mui/material";
 import { keyframes } from "@emotion/react";
 import { LoadingOverLayProps } from "@common/interface";
 
-const LoadingOverlay: React.FC<LoadingOverLayProps> = ({
-	variant,
-	loadingMessage,
-}) => {
+const LoadingOverlay: React.FC<LoadingOverLayProps> = ({ loadingMessage }) => {
 	const theme = useTheme();
 	const bounce = keyframes`0%, 100% { transform: translateY(0); }  50% { transform: translateY(-10px); }`;
 	const gradientShift = keyframes`0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }`;
@@ -23,7 +20,7 @@ const LoadingOverlay: React.FC<LoadingOverLayProps> = ({
 				alignItems: "center",
 				justifyContent: "center",
 				zIndex: 9999,
-				backgroundColor: variant === "transparent" ? "" : "background.modal",
+				backdropFilter: "blur(2px)",
 			}}
 		>
 			<Typography
