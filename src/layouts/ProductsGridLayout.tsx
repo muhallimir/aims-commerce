@@ -70,12 +70,12 @@ const ProductsGridLayout: React.FC = () => {
 			{showOverlay && (
 				<LoadingOverlay loadingMessage={LOADERTEXT.INITIAL_LOAD} />
 			)}
-			<Grid container spacing={3} justifyContent="center">
+			<Grid container spacing={{ xs: 1, sm: 3 }} justifyContent="center">
 				{loading
 					? Array.from(new Array(15)).map((_, index) => (
 							<Grid
 								item
-								xs={12}
+								xs={6}
 								sm={5}
 								md={4}
 								lg={3}
@@ -88,7 +88,7 @@ const ProductsGridLayout: React.FC = () => {
 					: filteredProducts.map((product: any) => (
 							<Grid
 								item
-								xs={12}
+								xs={6}
 								sm={5}
 								md={4}
 								lg={3}

@@ -24,6 +24,7 @@ import useAuthentication from "src/hooks/useAuthentication";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import WbSunnyIcon from "@mui/icons-material/WbSunny"; // Sun icon
 import NightsStayIcon from "@mui/icons-material/NightsStay"; // Moon icon
+import useScreenSize from "src/hooks/useScreenSize";
 
 const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 	const { userInfo, isAuthenticated, handleSignIn, handleSignOut } =
@@ -266,6 +267,7 @@ function MainHeader() {
 	const { isDarkMode, toggleTheme } = useThemeMode();
 	const router = useRouter();
 	const [cartItemsCount, setCartItemsCount] = useState<number>(0);
+	const { xs } = useScreenSize();
 
 	const toggleDrawer = () => {
 		setDrawerOpen(!drawerOpen);
@@ -329,8 +331,8 @@ function MainHeader() {
 				<Image
 					alt="main-logo"
 					src={isDarkMode ? mainDarkLogo : mainLogo}
-					width={100}
-					height={40}
+					width={xs ? 80 : 100}
+					height={xs ? 30 : 40}
 					priority
 				/>
 			</Box>

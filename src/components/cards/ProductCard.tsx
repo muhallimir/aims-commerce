@@ -53,16 +53,20 @@ const CardsContent: React.FC<CardsContentProps> = ({
 			<Typography variant="body1" color="text.primary" fontWeight="medium">
 				${price.toFixed(2)}
 			</Typography>
-			<Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
-				{description.length > 15
-					? `${description.substring(0, isMobile ? 40 : 15)}...`
-					: description}
-			</Typography>
+			{!isMobile && (
+				<Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
+					{description.length > 15
+						? `${description.substring(0, isMobile ? 40 : 15)}...`
+						: description}
+				</Typography>
+			)}
 			<Box display="flex" alignItems="center" justifyContent="center">
 				<Rating value={rating} readOnly precision={0.5} size="small" />
-				<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-					({numReviews} {numReviews > 1 ? "reviews" : "review"})
-				</Typography>
+				{!isMobile && (
+					<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+						({numReviews} {numReviews > 1 ? "reviews" : "review"})
+					</Typography>
+				)}
 			</Box>
 		</CardContent>
 	);
@@ -146,7 +150,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 				sx={{
 					display: "flex",
 					justifyContent: countInStock === 0 || xs ? "center" : "space-between",
-					gap: xs ? "20px" : 0,
+					gap: xs ? "20px" : "1px",
 					padding: theme.spacing(1, 2),
 				}}
 			>
@@ -156,8 +160,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 					color="primary"
 					buttonText={countInStock > 0 ? "Add to Cart" : "Out of Stock"}
 					disabled={countInStock === 0}
+					sx={{
+						...(xs && { fontSize: "0.75rem", padding: "6px" }),
+					}}
 				/>
-				{countInStock > 0 && (
+				{countInStock > 0 && !xs && (
 					<Typography variant="body2" color="common.black">
 						In stock: {countInStock}
 					</Typography>
