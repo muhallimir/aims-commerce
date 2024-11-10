@@ -23,7 +23,7 @@ import {
 	useGetProductListMutation,
 } from "@store/products.slice";
 import ConfirmModal from "src/components/modals/ConfirmModal";
-import ProductManagementSkeleton from "src/components/loaders/ProductManagmentSkeleton";
+import AdminManagementSkeleton from "src/components/loaders/AdminManagementSkeleton";
 
 const ProductManagementLayout: React.FC = () => {
 	const { loading } = useSelector((state: { app: AppState }) => state.app);
@@ -117,7 +117,7 @@ const ProductManagementLayout: React.FC = () => {
 	};
 
 	if (loading) {
-		return <ProductManagementSkeleton />;
+		return <AdminManagementSkeleton title="Product Management" />;
 	}
 
 	return (

@@ -192,3 +192,17 @@ export interface SuccessModalProps {
 	title: string;
 	subTitle: string;
 }
+
+export interface User {
+	isAdmin: boolean;
+	_id: string;
+	name: string;
+	email: string;
+	password: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface AdminManagementSkeletonProps {
+	title: string;
+}

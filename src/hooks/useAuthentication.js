@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const useAuthentication = () => {
-    const { userInfo } = useSelector(({ user }) => user)
+    const { userInfo, adminUsersData: { isRegisteringNewUser } } = useSelector(({ user }) => user)
     const { isCheckingOut } = useSelector(({ cart }) => cart)
     const [reqSignIn, resSignIn] = usePostSignInMutation();
     const [reqRegister, resRegister] = usePostRegistrationMutation();
@@ -31,18 +31,22 @@ const useAuthentication = () => {
 
     useEffect(() => {
         if (resSignIn.isSuccess || resRegister.isSuccess || resUpdateProfile.isSuccess) {
-            dispatch(updateUserInfo(resSignIn.data || resRegister.data || resUpdateProfile.data));
-            const token = resSignIn?.data?.token || resRegister?.data?.token;
-            const targetRoute = isCheckingOut ? '/store/shipping' : '/store';
-            if (token) {
-                localStorage.setItem('token', token);
-                router.push(targetRoute);
+            if (isRegisteringNewUser) {
+                router.push("/admin/users")
+            } else {
+                dispatch(updateUserInfo(resSignIn.data || resRegister.data || resUpdateProfile.data));
+                const token = resSignIn?.data?.token || resRegister?.data?.token;
+                const targetRoute = isCheckingOut ? "/store/shipping" : "/store";
+                if (token) {
+                    localStorage.setItem('token', token);
+                    router.push(targetRoute);
+                }
             }
+
         }
     }, [resSignIn, resRegister, resUpdateProfile]);
 
-
-    return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut }
+    return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut, isRegisteringNewUser }
 }
 
 export default useAuthentication;

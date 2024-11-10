@@ -7,6 +7,7 @@ import useAuthentication from "src/hooks/useAuthentication";
 import { LOADERTEXT } from "@common/constants";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { getErrorMessage } from "@helpers/getErrorMessage";
+import { setIsRegisteringNewUser } from "@store/user.slice";
 
 const validationSchema = yup.object({
 	name: yup.string().required("Name is required"),
@@ -25,13 +26,21 @@ const validationSchema = yup.object({
 });
 
 const RegistrationForm: React.FC = () => {
-	const { reqRegister, resRegister } = useAuthentication();
+	const { reqRegister, resRegister, isRegisteringNewUser } =
+		useAuthentication();
 	const { isLoading, isError, error } = resRegister;
+
 	const formik = useFormik<RegistrationFormValues>({
 		initialValues: { name: "", email: "", password: "", confirmPassword: "" },
 		validationSchema: validationSchema,
 		onSubmit: (values) => {
-			reqRegister(values);
+			reqRegister(values)
+				.unwrap()
+				.then(() => {
+					if (isRegisteringNewUser) {
+						setIsRegisteringNewUser(false);
+					}
+				});
 		},
 	});
 

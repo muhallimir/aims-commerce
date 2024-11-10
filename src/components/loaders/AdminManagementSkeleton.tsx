@@ -1,3 +1,4 @@
+import { AdminManagementSkeletonProps } from "@common/interface";
 import {
 	Box,
 	Card,
@@ -8,7 +9,9 @@ import {
 	Grid,
 } from "@mui/material";
 
-const ProductManagementSkeleton: React.FC = () => {
+const AdminManagementSkeleton: React.FC<AdminManagementSkeletonProps> = ({
+	title,
+}) => {
 	const skeletonCards = Array.from({ length: 6 }).map((_, index) => (
 		<Grid item xs={12} sm={6} md={4} key={index}>
 			<Card sx={{ borderRadius: 2, boxShadow: 2, height: "100%" }}>
@@ -39,7 +42,7 @@ const ProductManagementSkeleton: React.FC = () => {
 	return (
 		<Box sx={{ maxWidth: 1000, mx: "auto", p: 2 }}>
 			<Typography variant="h4" gutterBottom color="primary">
-				Product Management
+				{title}
 			</Typography>
 			<Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
 				<Skeleton variant="rectangular" width={200} height={40} />
@@ -58,4 +61,4 @@ const ProductManagementSkeleton: React.FC = () => {
 	);
 };
 
-export default ProductManagementSkeleton;
+export default AdminManagementSkeleton;

@@ -1,8 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiSlice } from "./api.slice";
+import { setAppError, setLoading } from "./app.slice";
 
 const initialState = {
     userInfo: {},
+    adminUsersData: {
+        allUsers: [],
+        userInView: {},
+        isRegisteringNewUser: false
+    }
 };
 
 export const userSlice = createSlice({
@@ -12,17 +18,26 @@ export const userSlice = createSlice({
         updateUserInfo: (state, action) => {
             state.userInfo = action.payload;
         },
-        clearUserInfo(state) {
-            state.userInfo = {};
+        clearUserInfo() {
+            return initialState;
+        },
+        setAllUsers: (state, action) => {
+            state.adminUsersData.allUsers = action.payload;
+        },
+        setUserInview(state, action) {
+            state.adminUsersData.userInView = action.payload;
+        },
+        setIsRegisteringNewUser(state, action) {
+            state.adminUsersData.isRegisteringNewUser = action.payload;
         },
     },
     extraReducers: () => { },
 });
 
-export const { updateUserInfo, clearUserInfo } = userSlice.actions;
+export const { updateUserInfo, clearUserInfo, setAllUsers,
+    setUserInview, setIsRegisteringNewUser } = userSlice.actions;
 
 export default userSlice.reducer;
-
 
 /* ------------------------------ API ----------------------------- */
 
@@ -43,18 +58,57 @@ export const userApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         UpdateProfile: builder.mutation({
-            query: (args) => {
-                return {
-                    url: '/api/users/profile',
-                    method: 'PUT',
-                    body: args,
+            query: (args) => ({
+                url: '/api/users/profile',
+                method: 'PUT',
+                body: args,
+            })
+        }),
+        GetUsers: builder.mutation({
+            query: () => ({
+                url: '/api/users',
+                method: 'GET',
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                dispatch(setLoading(true));
+                try {
+                    const { data } = await queryFulfilled;
+                    dispatch(setAllUsers(data));
+                } catch ({ error }) {
+                    dispatch(setAppError(error?.status));
+                } finally {
+                    dispatch(setLoading(false));
                 }
-            }
+            },
+        }),
+        GetUserToManage: builder.mutation({
+            query: (args) => ({
+                url: `/api/users/${args.userId}`,
+                method: 'GET',
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                dispatch(setLoading(true));
+                try {
+                    const { data } = await queryFulfilled;
+                    dispatch(setUserInview(data));
+                } catch ({ error }) {
+                    dispatch(setAppError(error?.status));
+                } finally {
+                    dispatch(setLoading(false));
+                }
+            },
+        }),
+        UpdateUser: builder.mutation({
+            query: (args) => ({
+                url: `/api/users/${args.userId}`,
+                method: 'PUT',
+                body: args.userInfo
+            }),
         }),
     }),
 });
 
-export const { usePostSignInMutation, usePostRegistrationMutation, useUpdateProfileMutation } = userApiSlice;
+export const { usePostSignInMutation, usePostRegistrationMutation, useUpdateProfileMutation, useGetUsersMutation, useGetUserToManageMutation, useUpdateUserMutation } = userApiSlice;
 
 
 
