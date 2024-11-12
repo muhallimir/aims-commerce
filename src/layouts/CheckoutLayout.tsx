@@ -25,7 +25,7 @@ const CheckoutLayout: React.FC = () => {
 
 	const handlePlaceOrder = () => {
 		const itemsPrice = cartItems.reduce(
-			(acc, item) => acc + item.price * item.quantity,
+			(acc: any, item: any) => acc + item.price * item.quantity,
 			0,
 		);
 		const shippingPrice = 0;
@@ -37,7 +37,7 @@ const CheckoutLayout: React.FC = () => {
 			contact: shippingAddress.contactNo,
 		};
 
-		const orderItems = cartItems.map((item) => ({
+		const orderItems = cartItems.map((item: any) => ({
 			product: item._id,
 			qty: item.quantity,
 			price: item.price,
@@ -79,7 +79,10 @@ const CheckoutLayout: React.FC = () => {
 	}, [resPlaceOrder, reqGetOrder]);
 
 	const calculateSubtotal = () => {
-		return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+		return cartItems.reduce(
+			(acc: any, item: any) => acc + item.price * item.quantity,
+			0,
+		);
 	};
 
 	const subtotal = calculateSubtotal();
@@ -133,7 +136,7 @@ const CheckoutLayout: React.FC = () => {
 						<Typography variant="h6" gutterBottom fontWeight="bold">
 							Order Items
 						</Typography>
-						{cartItems.map((item) => (
+						{cartItems.map((item: any) => (
 							<Box
 								key={item._id}
 								sx={{

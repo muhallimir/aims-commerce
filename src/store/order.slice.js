@@ -6,6 +6,9 @@ const initialState = {
     orderData: {},
     orderList: [],
     fromPurchaseHistory: false,
+    allOrders: {
+        orders: []
+    }
 };
 
 export const orderSlice = createSlice({
@@ -24,11 +27,14 @@ export const orderSlice = createSlice({
         clearOrderData: () => {
             return initialState;
         },
+        setToManageOrders: (state, action) => {
+            state.allOrders.orders = action.payload;
+        },
     },
     extraReducers: () => { },
 });
 
-export const { updateOrderData, clearOrderData, updateOrderList, setFromPurchaseHistory } = orderSlice.actions;
+export const { updateOrderData, clearOrderData, updateOrderList, setFromPurchaseHistory, setToManageOrders } = orderSlice.actions;
 
 export default orderSlice.reducer;
 
@@ -98,7 +104,26 @@ export const orderApiSlice = apiSlice.injectEndpoints({
                 };
             },
         }),
+        GetAllOrders: builder.mutation({
+            query: () => {
+                return {
+                    url: `/api/orders`,
+                    method: 'GET',
+                };
+            },
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                dispatch(setLoading(true));
+                try {
+                    const { data } = await queryFulfilled;
+                    dispatch(setToManageOrders(data))
+                } catch ({ error }) {
+                    dispatch(setAppError(error.status));
+                } finally {
+                    dispatch(setLoading(false));
+                }
+            },
+        }),
     }),
 });
 
-export const { useGetOrderMutation, useGetOrdersHistoryMutation, usePostPlaceOrderMutation, useGetPayPalPaymentConfigMutation, useCreateOrderMutation } = orderApiSlice;
+export const { useGetOrderMutation, useGetOrdersHistoryMutation, usePostPlaceOrderMutation, useGetPayPalPaymentConfigMutation, useCreateOrderMutation, useGetAllOrdersMutation } = orderApiSlice;

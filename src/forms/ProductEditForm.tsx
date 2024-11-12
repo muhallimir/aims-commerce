@@ -32,7 +32,6 @@ const ProductEditForm: React.FC = () => {
 	const [reqUpdateProduct] = useUpdateProductMutation();
 	const [reqUploadProductImage] = useUploadProductImageMutation();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
-	const [isImageReadOnly, setIsImageReadOnly] = useState(false);
 	const productId = router?.query?._id;
 
 	useEffect(() => {
@@ -93,7 +92,6 @@ const ProductEditForm: React.FC = () => {
 			.unwrap()
 			.then((imageUrl) => {
 				formik.setFieldValue("image", imageUrl);
-				setIsImageReadOnly(true);
 			});
 	};
 

@@ -69,7 +69,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 					</Typography>
 				) : (
 					<Grid container spacing={2}>
-						{cartItems.map((item) => (
+						{cartItems.map((item: any) => (
 							<Grid item xs={12} key={item._id}>
 								<Box
 									sx={{

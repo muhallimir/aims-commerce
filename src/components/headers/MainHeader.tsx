@@ -166,6 +166,11 @@ const AdminAccessButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 		router.push("/admin/products");
 	};
 
+	const handleRedirectToOrders = () => {
+		handleMenuClose();
+		router.push("/admin/orders");
+	};
+
 	return (
 		<>
 			<Button
@@ -240,9 +245,9 @@ const AdminAccessButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 						Users
 					</Typography>
 				</MenuItem>
-				<MenuItem onClick={() => {}}>
+				<MenuItem onClick={handleRedirectToOrders}>
 					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Order
+						Orders
 					</Typography>
 				</MenuItem>
 				<MenuItem onClick={() => {}}>

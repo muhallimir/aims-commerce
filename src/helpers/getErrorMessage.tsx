@@ -1,5 +1,4 @@
 export const getErrorMessage = (error: any) => {
-	console.log({ error });
 	if ("data" in error) {
 		return error.data?.message || "An unknown error occurred.";
 	} else if ("message" in error) {

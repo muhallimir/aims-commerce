@@ -1,8 +1,7 @@
 import { useMediaQuery, useTheme } from "@mui/material";
-import { Theme } from "@mui/material/styles/createTheme";
 
 const useScreenSize = () => {
-    const theme: Theme = useTheme();
+    const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down("sm"));
     const sm = useMediaQuery(theme.breakpoints.down("md"));
     const md = useMediaQuery(theme.breakpoints.down("lg"));

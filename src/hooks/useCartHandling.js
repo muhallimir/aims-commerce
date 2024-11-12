@@ -1,4 +1,3 @@
-import { CartItem, Product, ProductListState, ShippingFormValues } from "@common/interface";
 import { decreaseItemQuantity, increaseItemQuantity, removeItemFromCart, setIsCheckingOut } from "@store/cart.slice";
 import { setCurrentProduct } from "@store/products.slice";
 import { useRouter } from "next/router";
@@ -6,45 +5,34 @@ import { useDispatch, useSelector } from "react-redux";
 import useAuthentication from "./useAuthentication";
 import { isEmpty } from "lodash";
 
-interface CartState {
-	cartItems: CartItem[];
-	shippingAddress: ShippingFormValues;
-	isCheckingOut: boolean;
-	paymentMethod: string,
-}
-
-const useCartHandling = (onClose?: () => void) => {
+const useCartHandling = (onClose) => {
 	const { isAuthenticated } = useAuthentication();
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const { products } = useSelector(
-		(state: { productLists: ProductListState }) => state.productLists,
-	);
+	const { products } = useSelector(({ productLists }) => productLists)
 
-	const { cartItems, shippingAddress, paymentMethod }: CartState = useSelector(
-		({ cart }: { cart: CartState }) => cart,
-	);
+	const { cartItems, shippingAddress, paymentMethod } = useSelector(({ cart }) => cart);
 
 	const totalPrice = cartItems.reduce(
 		(total, item) => total + item.price * item.quantity,
 		0,
 	);
 
-	const increaseQuantity = (itemId: string) => {
+	const increaseQuantity = (itemId) => {
 		dispatch(increaseItemQuantity(itemId));
 	};
 
-	const decreaseQuantity = (itemId: string) => {
+	const decreaseQuantity = (itemId) => {
 		dispatch(decreaseItemQuantity(itemId));
 	};
 
-	const removeItem = (itemId: string) => {
+	const removeItem = (itemId) => {
 		dispatch(removeItemFromCart(itemId));
 	};
 
-	const viewItem = (itemId: string) => {
+	const viewItem = (itemId) => {
 		const currentProduct =
-			products.find((p: Product) => p?._id === itemId) || null;
+			products.find((p) => p?._id === itemId) || null;
 		dispatch(setCurrentProduct(currentProduct));
 		router.push(`/store/product/${itemId}`);
 		if (typeof onClose === 'function') {
