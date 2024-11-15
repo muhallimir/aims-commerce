@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const useAuthentication = () => {
-    const { userInfo, adminUsersData: { isRegisteringNewUser } } = useSelector(({ user }) => user)
+    const { userInfo, adminUsersData } = useSelector(({ user }) => user)
     const { isCheckingOut } = useSelector(({ cart }) => cart)
     const [reqSignIn, resSignIn] = usePostSignInMutation();
     const [reqRegister, resRegister] = usePostRegistrationMutation();
@@ -16,6 +16,7 @@ const useAuthentication = () => {
     const isAuthenticated = !isEmpty(userInfo)
     const isAdmin = userInfo?.isAdmin
     const router = useRouter()
+    const isRegisteringNewUser = adminUsersData?.isRegisteringNewUser
 
     const handleSignIn = () => {
         router.push("/signin")

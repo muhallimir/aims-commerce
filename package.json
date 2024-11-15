@@ -53,6 +53,7 @@
     "react-transition-group": "^4.4.5",
     "recharts": "^2.13.3",
     "redux-persist": "^6.0.0",
+    "sharp": "^0.33.5",
     "swiper": "8.4.2",
     "yup": "0.32.11"
   },
