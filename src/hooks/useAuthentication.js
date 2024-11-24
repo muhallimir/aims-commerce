@@ -22,12 +22,16 @@ const useAuthentication = () => {
         router.push("/signin")
     };
 
+    const redirectToHome = () => {
+        router.push("/store")
+    }
+
     const handleSignOut = () => {
         localStorage.removeItem('token');
         dispatch(clearUserInfo())
         dispatch(resetCartState())
         dispatch(clearOrderData())
-        router.push("/store")
+        redirectToHome()
     };
 
     useEffect(() => {
@@ -40,14 +44,13 @@ const useAuthentication = () => {
                 const targetRoute = isCheckingOut ? "/store/shipping" : "/store";
                 if (token) {
                     localStorage.setItem('token', token);
-                    router.push(targetRoute);
+                    router.replace(targetRoute);
                 }
             }
-
         }
     }, [resSignIn, resRegister, resUpdateProfile]);
 
-    return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut, isRegisteringNewUser }
+    return { userInfo, reqSignIn, resSignIn, reqRegister, reqUpdateProfile, resUpdateProfile, resRegister, isAuthenticated, isAdmin, handleSignIn, handleSignOut, isRegisteringNewUser, redirectToHome }
 }
 
 export default useAuthentication;

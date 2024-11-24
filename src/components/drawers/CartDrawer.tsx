@@ -69,74 +69,80 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 					</Typography>
 				) : (
 					<Grid container spacing={2}>
-						{cartItems.map((item: any) => (
-							<Grid item xs={12} key={item._id}>
-								<Box
-									sx={{
-										display: "flex",
-										alignItems: "center",
-										mb: 1,
-										border: "1px solid #e0e0e0",
-										borderRadius: "4px",
-										padding: 1,
-										justifyContent: "space-between",
-									}}
-								>
+						{cartItems.map((item: any) => {
+							const maxItemsReached = item.quantity === item.countInStock;
+							return (
+								<Grid item xs={12} key={item._id}>
 									<Box
 										sx={{
 											display: "flex",
-											flexDirection: "column",
 											alignItems: "center",
-											justifyContent: "center",
-											mt: 1.5,
-											mr: 0.2,
+											mb: 1,
+											border: "1px solid #e0e0e0",
+											borderRadius: "4px",
+											padding: 1,
+											justifyContent: "space-between",
 										}}
 									>
-										<Image
-											src={getImageUrl(item.image)}
-											alt={item.name}
-											width={55}
-											height={50}
-											style={{ borderRadius: "4px" }}
-										/>
-										<IconButton onClick={() => viewItem(item._id)}>
-											<Typography variant="body2" color="primary">
-												View Item
-											</Typography>
-										</IconButton>
-									</Box>
-
-									<Box sx={{ flexGrow: 1 }}>
-										<Typography variant="body2">
-											{truncatedName(item.name, 20)}
-										</Typography>
-										<Box sx={{ display: "flex", alignItems: "center" }}>
-											<IconButton
-												onClick={() =>
-													item.quantity === 1
-														? removeItem(item._id)
-														: decreaseQuantity(item._id)
-												}
-											>
-												<RemoveIcon />
-											</IconButton>
-											<Typography variant="body2" sx={{ mx: 1 }}>
-												{item.quantity}
-											</Typography>
-											<IconButton onClick={() => increaseQuantity(item._id)}>
-												<AddIcon />
+										<Box
+											sx={{
+												display: "flex",
+												flexDirection: "column",
+												alignItems: "center",
+												justifyContent: "center",
+												mt: 1.5,
+												mr: 0.2,
+											}}
+										>
+											<Image
+												src={getImageUrl(item.image)}
+												alt={item.name}
+												width={55}
+												height={50}
+												style={{ borderRadius: "4px" }}
+											/>
+											<IconButton onClick={() => viewItem(item._id)}>
+												<Typography variant="body2" color="primary">
+													View Item
+												</Typography>
 											</IconButton>
 										</Box>
-										<Typography variant="body2" color="text.secondary">
-											Price: ${item.price.toFixed(2)}
-										</Typography>
+
+										<Box sx={{ flexGrow: 1 }}>
+											<Typography variant="body2">
+												{truncatedName(item.name, 20)}
+											</Typography>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<IconButton
+													onClick={() =>
+														item.quantity === 1
+															? removeItem(item._id)
+															: decreaseQuantity(item._id)
+													}
+												>
+													<RemoveIcon />
+												</IconButton>
+												<Typography variant="body2" sx={{ mx: 1 }}>
+													{item.quantity}
+												</Typography>
+												<IconButton
+													disabled={maxItemsReached}
+													onClick={() => increaseQuantity(item._id)}
+												>
+													<AddIcon />
+												</IconButton>
+											</Box>
+											<Typography variant="body2" color="text.secondary">
+												Price: ${item.price.toFixed(2)}
+											</Typography>
+										</Box>
+										<IconButton onClick={() => removeItem(item._id)}>
+											<DeleteIcon color="error" />
+										</IconButton>
 									</Box>
-									<IconButton onClick={() => removeItem(item._id)}>
-										<DeleteIcon color="error" />
-									</IconButton>
-								</Box>
-							</Grid>
-						))}
+								</Grid>
+							);
+						})}
 					</Grid>
 				)}
 				<Divider sx={{ my: 2 }} />

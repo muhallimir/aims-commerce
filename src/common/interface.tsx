@@ -146,6 +146,7 @@ export interface OrderItem {
 
 export interface OrderData {
 	_id: string;
+	user: string;
 	shippingAddress: ShippingAddress;
 	orderItems: OrderItem[];
 	paymentMethod: string;

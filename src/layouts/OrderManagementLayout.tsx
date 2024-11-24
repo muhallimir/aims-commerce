@@ -8,17 +8,21 @@ import {
 	Pagination,
 	Skeleton,
 } from "@mui/material";
+import { ViewList } from "@mui/icons-material";
 import useOrderManagement from "src/hooks/useOrderManagement";
 import { Order } from "@common/interface";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const OrderManagementLayout: React.FC = ({}) => {
+	const { loading } = useSelector((state: any) => state.app);
 	const [reqAllOrders, orders] = useOrderManagement();
 	const [page, setPage] = useState(1);
 	const [ordersPerPage] = useState(6);
-	const [loading, setLoading] = useState(true);
+	const router = useRouter();
 
 	useEffect(() => {
-		reqAllOrders().finally(() => setLoading(false));
+		reqAllOrders();
 	}, []);
 
 	const handleChangePage = (
@@ -46,6 +50,10 @@ const OrderManagementLayout: React.FC = ({}) => {
 		return new Date(date).toLocaleDateString("en-US", options);
 	};
 
+	const handleViewOrder = (orderId: string) => {
+		router.push(`${router.asPath}/${orderId}`);
+	};
+
 	return (
 		<Box sx={{ p: 2 }}>
 			<Typography
@@ -57,7 +65,16 @@ const OrderManagementLayout: React.FC = ({}) => {
 			</Typography>
 			<Grid container spacing={3}>
 				{currentOrders.map((order: any, index) => (
-					<Grid item xs={12} sm={6} md={4} key={order._id || index}>
+					<Grid
+						item
+						xs={12}
+						sm={6}
+						md={4}
+						key={order._id || index}
+						sx={{
+							minHeight: "260px",
+						}}
+					>
 						<Paper
 							sx={{
 								p: 3,
@@ -96,13 +113,35 @@ const OrderManagementLayout: React.FC = ({}) => {
 									noWrap
 									sx={{
 										fontWeight: "bold",
-										color: "#333",
+										color: "var(--primary-aims-dark)",
 										overflow: "hidden",
 										textOverflow: "ellipsis",
 										whiteSpace: "nowrap",
 									}}
 								>
 									Order ID: {order._id}
+								</Typography>
+							)}
+							{loading ? (
+								<Skeleton
+									variant="text"
+									width="70%"
+									height={28}
+									sx={{ mb: 1 }}
+								/>
+							) : (
+								<Typography
+									variant="h6"
+									noWrap
+									color="textSecondary"
+									sx={{
+										fontWeight: "bold",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap",
+									}}
+								>
+									Ordered By: {order?.shippingAddress?.fullName.toUpperCase()}
 								</Typography>
 							)}
 							{loading ? (
@@ -216,13 +255,11 @@ const OrderManagementLayout: React.FC = ({}) => {
 								) : (
 									<Button
 										variant="contained"
-										color="primary"
-										sx={{ width: "100%" }}
-										onClick={() => {
-											window.location.href = `/order/${order._id}`;
-										}}
+										startIcon={<ViewList />}
+										sx={{ bgcolor: "primary.main", color: "white" }}
+										onClick={() => handleViewOrder(order._id)}
 									>
-										View Order
+										View Details
 									</Button>
 								)}
 							</Box>

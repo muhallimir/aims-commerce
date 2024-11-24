@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid, Paper, Alert, Chip } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Grid,
+	Paper,
+	Alert,
+	Chip,
+	Button,
+} from "@mui/material";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
@@ -20,6 +28,7 @@ import { isEmpty } from "lodash";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { getImageUrl } from "@helpers/commonFn";
+import useAuthentication from "src/hooks/useAuthentication";
 
 const formatDate = (date: string | undefined) => {
 	if (!date) return new Date().toLocaleString();
@@ -37,13 +46,17 @@ const formatDate = (date: string | undefined) => {
 
 const OrderPlacementLayout: React.FC = () => {
 	const router = useRouter();
+	const { isAdmin, userInfo } = useAuthentication();
 	const { orderData, fromPurchaseHistory } = useSelector(
 		(state: {
 			order: { orderData: OrderData; fromPurchaseHistory: boolean };
 		}) => state.order,
 	);
 	const { loading } = useSelector((state: { app: AppState }) => state.app);
-	const orderId = router.query.orderId as string | undefined;
+	const orderId =
+		(router.query._id as string | undefined) ||
+		(router.query.orderId as string | undefined);
+
 	const {
 		shippingAddress,
 		orderItems,
@@ -54,6 +67,7 @@ const OrderPlacementLayout: React.FC = () => {
 		totalPrice,
 		isPaid,
 		isDelivered,
+		user: userId,
 	} = orderData || {};
 
 	const [reqCreateOrder] = useCreateOrderMutation();
@@ -65,6 +79,7 @@ const OrderPlacementLayout: React.FC = () => {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
+	const isPaymentVisible = userId === userInfo?._id;
 
 	useEffect(() => {
 		if (!loadedOrderId && orderId) {
@@ -76,12 +91,19 @@ const OrderPlacementLayout: React.FC = () => {
 		if (isEmpty(orderData) && loadedOrderId) {
 			reqGetOrder({ orderId: loadedOrderId });
 		}
-	}, [reqGetOrder, loadedOrderId, orderData]);
+	}, [reqGetOrder, loadedOrderId, orderData, isAdmin]);
+
+	// side effect for admin orders viewing
+	useEffect(() => {
+		if (isAdmin && orderId !== orderData?._id) {
+			reqGetOrder({ orderId });
+		}
+	}, [orderId, orderData._id]);
 
 	useEffect(() => {
 		const handlePopState = (e: PopStateEvent) => {
 			e.preventDefault();
-			if (!fromPurchaseHistory) {
+			if (!fromPurchaseHistory && !router.asPath.includes("/admin/orders")) {
 				router.push("/store");
 			}
 		};
@@ -256,12 +278,36 @@ const OrderPlacementLayout: React.FC = () => {
 							</Typography>
 						</Box>
 						<Box>
-							{!isPaid && (
+							{isAdmin && !isPaid && !isPaymentVisible && (
+								<Button
+									variant="contained"
+									color="primary"
+									sx={{ width: "100%" }}
+									onClick={() => {
+										router.push("/services");
+									}}
+								>
+									Remind Buyer for Payment
+								</Button>
+							)}
+							{!isPaid && isPaymentVisible && (
 								<PayPalButton
 									amount={totalPrice?.toFixed(2)}
 									onSuccess={handleSuccessPayment}
 									onError={handlePaymentError}
 								/>
+							)}
+							{isPaid && (
+								<Button
+									variant="contained"
+									color="primary"
+									sx={{ width: "100%" }}
+									onClick={() => {
+										router.push("/services");
+									}}
+								>
+									Track Order
+								</Button>
 							)}
 						</Box>
 					</Paper>

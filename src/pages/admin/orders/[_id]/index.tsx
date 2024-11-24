@@ -1,8 +1,8 @@
 import React from "react";
 import OrderPlacementLayout from "src/layouts/OrderPlacementLayout";
 
-const OrderPayment: React.FC = () => {
+const Order: React.FC = () => {
 	return <OrderPlacementLayout />;
 };
 
-export default OrderPayment;
+export default Order;
