@@ -1,17 +1,6 @@
-import { AdminManagementSkeletonProps } from "@common/interface";
-import {
-	Box,
-	Card,
-	CardContent,
-	Typography,
-	Skeleton,
-	Divider,
-	Grid,
-} from "@mui/material";
+import { Box, Card, CardContent, Skeleton, Divider, Grid } from "@mui/material";
 
-const AdminManagementSkeleton: React.FC<AdminManagementSkeletonProps> = ({
-	title,
-}) => {
+const AdminManagementSkeleton: React.FC = ({}) => {
 	const skeletonCards = Array.from({ length: 6 }).map((_, index) => (
 		<Grid item xs={12} sm={6} md={4} key={index}>
 			<Card sx={{ borderRadius: 2, boxShadow: 2, height: "100%" }}>
@@ -41,9 +30,6 @@ const AdminManagementSkeleton: React.FC<AdminManagementSkeletonProps> = ({
 
 	return (
 		<Box sx={{ maxWidth: 1000, mx: "auto", p: 2 }}>
-			<Typography variant="h4" gutterBottom color="primary">
-				{title}
-			</Typography>
 			<Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
 				<Skeleton variant="rectangular" width={200} height={40} />
 			</Box>

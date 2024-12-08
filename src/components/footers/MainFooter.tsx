@@ -46,6 +46,7 @@ const Footer: React.FC = () => {
 						borderRadius: "5px",
 						animation: isDarkMode ? "pulse 1.5s infinite" : "none",
 						cursor: "pointer",
+						bgcolor: isDarkMode ? "common.black" : "common.white",
 					}}
 				>
 					<Image
@@ -54,6 +55,7 @@ const Footer: React.FC = () => {
 						width={100}
 						height={40}
 						priority
+						style={{ marginTop: "8px" }}
 					/>
 				</Box>
 

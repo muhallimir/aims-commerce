@@ -204,6 +204,22 @@ export interface User {
 	updatedAt: string;
 }
 
+export interface SearchBarProps {
+	// eslint-disable-next-line no-unused-vars
+	onSearch: (query: string) => void;
+	placeholder?: string;
+	value?: string;
+}
+
 export interface AdminManagementSkeletonProps {
 	title: string;
+}
+
+export interface AdminSideDrawerProps {
+	isSidebarOpen: boolean;
+	setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface AdminHeaderProps {
+	children: any;
 }

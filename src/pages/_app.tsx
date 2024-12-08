@@ -10,6 +10,7 @@ import createEmotionCache from "@helpers/createEmotionCache";
 import MainLayout from "src/layouts/MainLayout";
 import MainHeader from "src/components/headers/MainHeader";
 import Footer from "src/components/footers/MainFooter";
+import { useRouter } from "next/router";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -22,6 +23,9 @@ const MyApp = ({
 	emotionCache = clientSideEmotionCache,
 	pageProps,
 }: MyAppProps) => {
+	const router = useRouter();
+	const isAdminView = router.pathname.includes("/admin");
+
 	return (
 		<CacheProvider value={emotionCache}>
 			<Head>
@@ -33,11 +37,17 @@ const MyApp = ({
 			<ThemeProvider theme={Theme}>
 				{setGlobalStyles(Theme)}
 				<CssBaseline />
-				<MainLayout>
-					<MainHeader />
+				{isAdminView ? (
 					<Component {...pageProps} />
-				</MainLayout>
-				<Footer />
+				) : (
+					<>
+						<MainLayout>
+							<MainHeader />
+							<Component {...pageProps} />
+						</MainLayout>
+						<Footer />
+					</>
+				)}
 			</ThemeProvider>
 		</CacheProvider>
 	);

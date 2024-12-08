@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import { TextField, InputAdornment, Box } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import useThemeMode from "src/hooks/useThemeMode";
-
-interface SearchBarProps {
-	// eslint-disable-next-line no-unused-vars
-	onSearch: (query: string) => void;
-	placeholder?: string;
-	value?: string;
-}
+import { SearchBarProps } from "@common/interface";
 
 const SearchBar: React.FC<SearchBarProps> = ({
 	onSearch,

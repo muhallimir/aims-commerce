@@ -9,7 +9,7 @@ import {
 	MenuItem,
 	Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import mainLogo from "@public/assets/aims-logo.png";
 import mainDarkLogo from "@public/assets/aims-logo-dark.png";
@@ -22,9 +22,10 @@ import useThemeMode from "src/hooks/useThemeMode";
 import { SignInProps } from "@common/interface";
 import useAuthentication from "src/hooks/useAuthentication";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import WbSunnyIcon from "@mui/icons-material/WbSunny"; // Sun icon
-import NightsStayIcon from "@mui/icons-material/NightsStay"; // Moon icon
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
 import useScreenSize from "src/hooks/useScreenSize";
+import { switchSection } from "@store/admin.slice";
 
 const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 	const { userInfo, isAuthenticated, handleSignIn, handleSignOut } =
@@ -138,128 +139,6 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 	);
 };
 
-const AdminAccessButton: React.FC<SignInProps> = ({ isDarkMode }) => {
-	const { isAdmin, isAuthenticated } = useAuthentication();
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	const router = useRouter();
-
-	const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleMenuClose = () => {
-		setAnchorEl(null);
-	};
-
-	const handleRedirectToDashboard = () => {
-		handleMenuClose();
-		router.push("/admin/dashboard");
-	};
-
-	const handleRedirectToUsers = () => {
-		handleMenuClose();
-		router.push("/admin/users");
-	};
-
-	const handleRedirectToProducts = () => {
-		handleMenuClose();
-		router.push("/admin/products");
-	};
-
-	const handleRedirectToOrders = () => {
-		handleMenuClose();
-		router.push("/admin/orders");
-	};
-
-	return (
-		<>
-			<Button
-				variant="text"
-				onClick={handleMenuOpen}
-				sx={{
-					ml: 2,
-					color: isDarkMode ? "common.white" : "common.black",
-					display: isAdmin ? "flex" : "none",
-					flexDirection: "column",
-					alignItems: "flex-start",
-					textTransform: "none",
-					p: 0,
-					minWidth: "auto",
-					"&:hover": {
-						backgroundColor: "transparent",
-					},
-				}}
-			>
-				<Typography variant="caption" sx={{ lineHeight: 1 }}>
-					Admin
-				</Typography>
-				<Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-					<Typography
-						variant="body2"
-						sx={{
-							fontWeight: "bold",
-							fontSize: "0.9rem",
-							lineHeight: { xs: 1, md: isAuthenticated ? 0.5 : 1 },
-						}}
-					>
-						Access
-					</Typography>
-					{isAuthenticated && (
-						<Box
-							onClick={handleMenuOpen}
-							sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
-						>
-							<ArrowDropDownIcon fontSize="small" />
-						</Box>
-					)}
-				</Box>
-			</Button>
-			<Menu
-				anchorEl={anchorEl}
-				open={Boolean(anchorEl)}
-				onClose={handleMenuClose}
-				anchorOrigin={{
-					vertical: "top",
-					horizontal: "center",
-				}}
-				transformOrigin={{
-					vertical: "bottom",
-					horizontal: "center",
-				}}
-				sx={{
-					mt: 4,
-				}}
-			>
-				<MenuItem onClick={handleRedirectToDashboard}>
-					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Dashboard
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={handleRedirectToProducts}>
-					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Products
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={handleRedirectToUsers}>
-					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Users
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={handleRedirectToOrders}>
-					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Orders
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={() => {}}>
-					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-						Support
-					</Typography>
-				</MenuItem>
-			</Menu>
-		</>
-	);
-};
-
 function MainHeader() {
 	const { cartItems } = useSelector(
 		(state: { cart: { cartItems: any[] } }) => state.cart,
@@ -273,6 +152,9 @@ function MainHeader() {
 	const router = useRouter();
 	const [cartItemsCount, setCartItemsCount] = useState<number>(0);
 	const { xs } = useScreenSize();
+	const { isAdmin } = useAuthentication();
+	const isAdminView = router.pathname.includes("/admin");
+	const dispatch = useDispatch();
 
 	const toggleDrawer = () => {
 		setDrawerOpen(!drawerOpen);
@@ -282,7 +164,7 @@ function MainHeader() {
 		setCartDrawerOpen(!cartDrawerOpen);
 	};
 
-	const menuItems = ["Store", "Services"];
+	const menuItems = ["Store", "Services", "Admin"];
 
 	useEffect(() => {
 		reqProductList();
@@ -297,6 +179,7 @@ function MainHeader() {
 	}, [cartItems]);
 
 	const handleNavigate = (route: string) => {
+		dispatch(switchSection("dashboard"));
 		router.push(`/${route}`);
 	};
 
@@ -321,26 +204,29 @@ function MainHeader() {
 				zIndex: 1000,
 			}}
 		>
-			<Box
-				sx={{
-					position: "relative",
-					padding: "1px",
-					borderRadius: "5px",
-					border: `1px solid transparent`,
-					backgroundColor: isDarkMode ? "transparent" : "none",
-					animation: isDarkMode ? "pulse 1.5s infinite" : "none",
-					boxShadow: isDarkMode ? "0 0 5px gold, 0 0 10px gold" : "none",
-				}}
-				onClick={() => router.push("/store")}
-			>
-				<Image
-					alt="main-logo"
-					src={isDarkMode ? mainDarkLogo : mainLogo}
-					width={xs ? 80 : 100}
-					height={xs ? 30 : 40}
-					priority
-				/>
-			</Box>
+			{!isAdminView && (
+				<Box
+					sx={{
+						position: "relative",
+						padding: "1px",
+						borderRadius: "5px",
+						border: `1px solid transparent`,
+						backgroundColor: isDarkMode ? "transparent" : "none",
+						animation: isDarkMode ? "pulse 1.5s infinite" : "none",
+						boxShadow: isDarkMode ? "0 0 5px gold, 0 0 10px gold" : "none",
+					}}
+					onClick={() => router.push("/store")}
+				>
+					<Image
+						alt="main-logo"
+						src={isDarkMode ? mainDarkLogo : mainLogo}
+						width={xs ? 80 : 100}
+						height={xs ? 30 : 40}
+						priority
+						style={{ marginTop: "8px" }}
+					/>
+				</Box>
+			)}
 			<Box
 				sx={{
 					display: { xs: "none", sm: "flex" },
@@ -348,7 +234,7 @@ function MainHeader() {
 					justifyContent: "center",
 				}}
 			>
-				{menuItems.map((item) => (
+				{menuItems.slice(0, isAdmin ? 3 : 2).map((item) => (
 					<Button
 						key={item}
 						sx={{
@@ -377,7 +263,6 @@ function MainHeader() {
 			</Box>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<SignInButton isDarkMode={isDarkMode} />
-				<AdminAccessButton isDarkMode={isDarkMode} />
 				<IconButton onClick={toggleCartDrawer} sx={{ mr: 1 }}>
 					<Badge badgeContent={cartItemsCount} color="secondary">
 						<ShoppingCartIcon

@@ -9,9 +9,10 @@ import {
 	Card,
 	CardContent,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useUpdateUserMutation } from "@store/user.slice";
 import { useRouter } from "next/router";
+import { switchSection } from "@store/admin.slice";
 
 const AdminEditUserForm: React.FC = () => {
 	const { adminUsersData } = useSelector(({ user }: any) => user);
@@ -20,6 +21,7 @@ const AdminEditUserForm: React.FC = () => {
 	const [email, setEmail] = useState(user.email);
 	const [isAdmin, setIsAdmin] = useState(user.isAdmin);
 	const [reqUpdateUser] = useUpdateUserMutation();
+	const dispatch = useDispatch();
 
 	const router = useRouter();
 
@@ -35,7 +37,8 @@ const AdminEditUserForm: React.FC = () => {
 		await reqUpdateUser({ userId, userInfo })
 			.unwrap()
 			.then(() => {
-				router.push("/admin/users");
+				dispatch(switchSection("users"));
+				router.push("/admin");
 			});
 	};
 

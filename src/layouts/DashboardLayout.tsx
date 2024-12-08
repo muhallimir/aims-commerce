@@ -15,6 +15,7 @@ import {
 import { useSelector } from "react-redux";
 import { useGetStoreSummaryMutation } from "@store/summary.slice";
 import { RootState } from "@common/interface";
+import CountUp from "react-countup";
 
 interface User {
 	_id: string | null;
@@ -76,15 +77,7 @@ const DashboardLayout: React.FC = () => {
 	const totalSales = dashboard?.orders?.[0]?.totalSales ?? 0;
 
 	return (
-		<Box sx={{ padding: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
-			<Typography
-				variant="h4"
-				gutterBottom
-				sx={{ fontWeight: "bold", color: "#333" }}
-			>
-				Dashboard
-			</Typography>
-
+		<Box sx={{ backgroundColor: "transparent", paddingTop: "20px" }}>
 			<Grid container spacing={3}>
 				<Grid item xs={12} md={4}>
 					<Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
@@ -92,36 +85,46 @@ const DashboardLayout: React.FC = () => {
 							Total Users
 						</Typography>
 						<Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
-							{totalUsers}
+							<CountUp start={0} end={totalUsers} duration={2} separator="," />
 						</Typography>
 					</Paper>
 				</Grid>
 
 				<Grid item xs={12} md={4}>
 					<Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
-						<Typography variant="h6" color="primary">
+						<Typography variant="h6" color="secondary">
 							Total Orders
 						</Typography>
 						<Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
-							{totalOrders}
+							<CountUp start={0} end={totalOrders} duration={2} separator="," />
 						</Typography>
 					</Paper>
 				</Grid>
 
 				<Grid item xs={12} md={4}>
 					<Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
-						<Typography variant="h6" color="primary">
+						<Typography variant="h6" color="status.success">
 							Total Sales
 						</Typography>
-						<Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
-							${totalSales.toFixed(2)}
+						<Typography
+							variant="h4"
+							sx={{ fontWeight: "bold", color: "common.black" }}
+						>
+							$
+							<CountUp
+								start={0}
+								end={totalSales}
+								duration={2}
+								decimals={2}
+								separator=","
+							/>
 						</Typography>
 					</Paper>
 				</Grid>
 
 				<Grid item xs={12} md={8}>
 					<Paper elevation={3} sx={{ padding: 2 }}>
-						<Typography variant="h6" color="primary" gutterBottom>
+						<Typography variant="h6" color="secondary" gutterBottom>
 							Daily Sales
 						</Typography>
 						<ResponsiveContainer width="100%" height={300}>

@@ -13,6 +13,9 @@ import useOrderManagement from "src/hooks/useOrderManagement";
 import { Order } from "@common/interface";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import SearchBar from "src/components/bars/SearchBar";
+import LoadingOverlay from "src/components/loaders/TextLoader";
+import useScreenSize from "src/hooks/useScreenSize";
 
 const OrderManagementLayout: React.FC = ({}) => {
 	const { loading } = useSelector((state: any) => state.app);
@@ -20,6 +23,8 @@ const OrderManagementLayout: React.FC = ({}) => {
 	const [page, setPage] = useState(1);
 	const [ordersPerPage] = useState(6);
 	const router = useRouter();
+	const [searchQuery, setSearchQuery] = useState("");
+	const { xs } = useScreenSize();
 
 	useEffect(() => {
 		reqAllOrders();
@@ -32,13 +37,34 @@ const OrderManagementLayout: React.FC = ({}) => {
 		setPage(value);
 	};
 
+	const handleSearch = (query: string) => {
+		setSearchQuery(query);
+		setPage(1);
+	};
+
 	const sortedOrders = [...orders].sort((a: Order, b: Order) => {
 		return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 	});
 
+	const filteredOrders = sortedOrders.filter((order: any) =>
+		[
+			order?._id,
+			order?.user?.name,
+			order?.shippingAddress?.address,
+			order?.shippingAddress?.city,
+			order?.shippingAddress?.postalCode,
+		]
+			.join(" ")
+			.toLowerCase()
+			.includes(searchQuery.toLowerCase()),
+	);
+
 	const indexOfLastOrder = page * ordersPerPage;
 	const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-	const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+	const currentOrders = filteredOrders.slice(
+		indexOfFirstOrder,
+		indexOfLastOrder,
+	);
 
 	const formatDate = (date: string) => {
 		const options: Intl.DateTimeFormatOptions = {
@@ -51,20 +77,18 @@ const OrderManagementLayout: React.FC = ({}) => {
 	};
 
 	const handleViewOrder = (orderId: string) => {
-		router.push(`${router.asPath}/${orderId}`);
+		router.push(`admin/orders/${orderId}`);
 	};
+
+	if (xs && loading) {
+		return <LoadingOverlay loadingMessage="" />;
+	}
 
 	return (
 		<Box sx={{ p: 2 }}>
-			<Typography
-				variant="h4"
-				gutterBottom
-				sx={{ fontWeight: "bold", color: "primary.main" }}
-			>
-				Order Management
-			</Typography>
-			<Grid container spacing={3}>
-				{currentOrders.map((order: any, index) => (
+			<SearchBar onSearch={handleSearch} placeholder="Search order..." />
+			<Grid container spacing={3} textAlign="center">
+				{currentOrders.map((order: any, index: any) => (
 					<Grid
 						item
 						xs={12}
@@ -141,7 +165,7 @@ const OrderManagementLayout: React.FC = ({}) => {
 										whiteSpace: "nowrap",
 									}}
 								>
-									Ordered By: {order?.shippingAddress?.fullName.toUpperCase()}
+									Ordered By: {order?.user?.name.toUpperCase()}
 								</Typography>
 							)}
 							{loading ? (
@@ -269,8 +293,9 @@ const OrderManagementLayout: React.FC = ({}) => {
 			</Grid>
 			<Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
 				<Pagination
-					count={Math.ceil(orders.length / ordersPerPage)}
+					count={Math.ceil(filteredOrders.length / ordersPerPage)}
 					page={page}
+					size={xs ? "small" : "medium"}
 					onChange={handleChangePage}
 					color="primary"
 				/>
