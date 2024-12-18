@@ -8,6 +8,7 @@ import ProductManagementLayout from "./ProductManagementLayout";
 import UserManagementLayout from "./UserManagementLayout";
 import OrderManagementLayout from "./OrderManagementLayout";
 import { useSelector } from "react-redux";
+import AdminSupportLayout from "./AdminSupportLayout";
 
 const AdminDashboardLayout: React.FC = () => {
 	const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -30,9 +31,7 @@ const AdminDashboardLayout: React.FC = () => {
 			case "orders":
 				return <OrderManagementLayout />;
 			case "support":
-				return <Box>Support Section (Coming Soon)</Box>;
-			default:
-				return <Box>Select a section to view its content.</Box>;
+				return <AdminSupportLayout />;
 		}
 	};
 

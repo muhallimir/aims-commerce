@@ -1,9 +1,13 @@
 import { MainLayoutProps } from "@common/interface";
-import { Box } from "@mui/material";
+import { Box, Fab } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useAuthentication from "src/hooks/useAuthentication";
+// import ChatIcon from "@mui/icons-material/Chat";
+import CustomerChatBox from "src/components/messaging/CustomerChatbox";
+import { isEmpty } from "lodash";
+// import { isEmpty } from "lodash";
 
 export default function MainLayout({ children }: MainLayoutProps) {
 	const { theme: mode } = useSelector((state: any) => state.app);
@@ -29,9 +33,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
 				paddingTop: "59px",
 				minHeight: "80vh",
 				height: "100%",
+				position: "relative",
 			}}
 		>
 			<Box>{children}</Box>
+			{!isAdmin && !isEmpty(userInfo) && <Box
+				sx={{
+					position: "fixed",
+					bottom: { xs: "80px", md: "100px" },
+					right: { xs: "16px", md: "32px" },
+					width: { xs: "90%", md: "400px" },
+					maxWidth: "100%",
+					zIndex: 1000,
+					boxShadow: 5,
+				}}
+			>
+				<CustomerChatBox />
+			</Box>}
 		</Box>
 	);
 }
