@@ -223,3 +223,26 @@ export interface AdminSideDrawerProps {
 export interface AdminHeaderProps {
 	children: any;
 }
+
+export interface ChatUsersListProps {
+	socket: any;
+	users: Array<any>;
+	setUsers: React.Dispatch<React.SetStateAction<Array<any>>>;
+	allUsers: Array<any>;
+	allSelectedUser: any;
+	selectedUser: any;
+	setSelectedUser: React.Dispatch<React.SetStateAction<any>>;
+}
+
+export interface ChatWindowProps {
+	selectedUser: {
+		_id: string;
+		name: string;
+	};
+	uiMessagesRef: any;
+	messages: Array<{ name: string; body: string }>;
+	// eslint-disable-next-line no-unused-vars
+	submitHandler: (event: React.FormEvent) => void;
+	messageBody: string;
+	setMessageBody: React.Dispatch<React.SetStateAction<string>>;
+}
