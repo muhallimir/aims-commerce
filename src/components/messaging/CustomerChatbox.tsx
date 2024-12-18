@@ -29,7 +29,7 @@ const CustomerChatBox: React.FC = () => {
 		{ name: "Admin", body: "Hi! Please input your inquiry." },
 	]);
 	const uiMessagesRef = useRef<HTMLUListElement | null>(null);
-	const [endpoint, setEndpoint] = useState("");
+	const [endpoint, setEndpoint] = useState<string | any>("");
 	const [emojiPickerAnchor, setEmojiPickerAnchor] =
 		useState<HTMLElement | null>(null);
 
@@ -37,7 +37,7 @@ const CustomerChatBox: React.FC = () => {
 		setEndpoint(
 			window?.location?.host?.indexOf("localhost") >= 0
 				? "http://localhost:5003"
-				: window.location.hostname,
+				: process.env.NEXT_PUBLIC_MONGODB_URI,
 		);
 	}, []);
 

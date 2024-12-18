@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
@@ -27,7 +29,7 @@ const AdminSupportLayout: React.FC = () => {
 		) {
 			setEndpoint("http://localhost:5003");
 		} else {
-			setEndpoint(window.location.hostname);
+			setEndpoint(process.env.NEXT_PUBLIC_MONGODB_URI);
 		}
 	}, []);
 
