@@ -52,7 +52,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 					Select a user to start a chat
 				</Typography>
 			) : (
-				<Stack spacing={2} height="100%">
+				<Stack
+					spacing={2}
+					sx={{
+						height: "80vh",
+						overflowY: "auto",
+					}}
+				>
 					<Typography
 						variant="h6"
 						sx={{

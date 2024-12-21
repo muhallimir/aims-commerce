@@ -51,14 +51,19 @@ const ChatUsersList: React.FC<ChatUsersListProps> = ({
 			{users.filter((x) => x._id !== userInfo._id).length === 0 ? (
 				<Typography>No Online User Found</Typography>
 			) : (
-				<List sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
+				<List
+					sx={{
+						bgcolor: "background.paper",
+						borderRadius: 1,
+						height: "80vh",
+						overflowY: "auto",
+					}}
+				>
 					{users
 						.filter((x) => x._id !== userInfo._id)
 						.map((user) => (
 							<ListItem
 								key={user._id}
-								button
-								selected={user._id === selectedUser._id}
 								onClick={() => selectUser(user)}
 								sx={{
 									"&:hover": {
@@ -71,9 +76,7 @@ const ChatUsersList: React.FC<ChatUsersListProps> = ({
 								}}
 							>
 								<Badge
-									color={
-										user.unread ? "error" : user.online ? "success" : "default"
-									}
+									color={user.online ? "success" : "default"}
 									variant="dot"
 								>
 									<Avatar sx={{ bgcolor: "primary.main", borderRadius: 4 }}>

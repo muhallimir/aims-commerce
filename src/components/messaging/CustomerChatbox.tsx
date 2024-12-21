@@ -15,6 +15,7 @@ import SendIcon from "@mui/icons-material/Send";
 import ChatIcon from "@mui/icons-material/Chat";
 import useAuthentication from "src/hooks/useAuthentication";
 import isEmpty from "lodash/isEmpty";
+
 interface Message {
 	name: string;
 	body: string;
@@ -30,8 +31,6 @@ const CustomerChatBox: React.FC = () => {
 	]);
 	const uiMessagesRef = useRef<HTMLUListElement | null>(null);
 	const [endpoint, setEndpoint] = useState<string | any>("");
-	const [emojiPickerAnchor, setEmojiPickerAnchor] =
-		useState<HTMLElement | null>(null);
 
 	useEffect(() => {
 		setEndpoint(
@@ -45,7 +44,9 @@ const CustomerChatBox: React.FC = () => {
 		if (uiMessagesRef.current) {
 			uiMessagesRef.current.scrollTop = uiMessagesRef.current.scrollHeight;
 		}
+	}, [messages]);
 
+	useEffect(() => {
 		if (socket) {
 			socket.emit("onLogin", {
 				_id: userInfo._id,
@@ -53,15 +54,24 @@ const CustomerChatBox: React.FC = () => {
 				isAdmin: userInfo.isAdmin,
 			});
 
-			socket.on("message", (data: Message) => {
+			const handleMessage = (data: Message) => {
 				setMessages((prevMessages) => [...prevMessages, data]);
-			});
+			};
+
+			socket.on("message", handleMessage);
+
+			return () => {
+				socket.off("message", handleMessage);
+			};
 		}
-	}, [messages, isOpen, socket, userInfo]);
+	}, [socket, userInfo]);
 
 	const supportHandler = () => {
 		setIsOpen(true);
-		setSocket(socketIOClient(endpoint));
+		if (!socket) {
+			const newSocket = socketIOClient(endpoint);
+			setSocket(newSocket);
+		}
 	};
 
 	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -74,28 +84,19 @@ const CustomerChatBox: React.FC = () => {
 				name: isAdmin ? "Admin" : userInfo.name,
 			};
 			setMessages((prevMessages) => [...prevMessages, newMessage]);
+			socket?.emit("onMessage", {
+				body: messageBody,
+				name: isAdmin ? "Admin" : userInfo.name,
+				isAdmin: userInfo.isAdmin,
+				_id: userInfo._id,
+			});
 			setMessageBody("");
-
-			setTimeout(() => {
-				socket?.emit("onMessage", {
-					body: messageBody,
-					name: isAdmin ? "Admin" : userInfo.name,
-					isAdmin: userInfo.isAdmin,
-					_id: userInfo._id,
-				});
-			}, 500);
 		}
 	};
 
 	const closeHandler = () => {
 		setIsOpen(false);
 	};
-
-	useEffect(() => {
-		if (emojiPickerAnchor) {
-			setEmojiPickerAnchor(emojiPickerAnchor);
-		}
-	}, [emojiPickerAnchor]);
 
 	return (
 		<Box sx={{ position: "fixed", bottom: 16, right: 16 }}>

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
@@ -21,6 +19,15 @@ const AdminSupportLayout: React.FC = () => {
 	const [users, setUsers] = useState<any[]>([]);
 	const { userInfo } = useSelector(({ user }: any) => user);
 	const [endpoint, setEndpoint] = useState<any>("");
+
+	useEffect(() => {
+		if (!isEmpty(selectedUser) && selectedUser.unread) {
+			const interval = setInterval(() => {
+				socket?.emit("onUserSelected", selectedUser);
+			}, 10);
+			return () => clearInterval(interval);
+		}
+	}, [selectedUser, socket]);
 
 	useEffect(() => {
 		if (
