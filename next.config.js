@@ -10,7 +10,7 @@ module.exports = async () => {
       {
         source: "/",
         destination: "/store",
-        permanent: true,
+        permanent: false,
       },
     ],
     images: {
