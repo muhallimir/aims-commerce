@@ -6,6 +6,7 @@ import {
 	Typography,
 	Container,
 	Link,
+	Divider,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -100,6 +101,14 @@ const SignInForm: React.FC = () => {
 					Sign In
 				</Button>
 
+				<Divider sx={{ my: 2 }}>
+					<Typography variant="body2" color="textSecondary">
+						OR
+					</Typography>
+				</Divider>
+
+				<Box id="google-signin-btn" />
+
 				{isError && (
 					<Typography
 						variant="body2"
@@ -109,19 +118,18 @@ const SignInForm: React.FC = () => {
 						{getErrorMessage(error)}
 					</Typography>
 				)}
-
-				<Box sx={{ mt: 2, textAlign: "center" }}>
-					<Typography variant="body2" color="textSecondary">
-						New to Aims-Commerce?{" "}
-						<Link
-							component="button"
-							onClick={() => router.push("/register")}
-							color="primary"
-						>
-							Create your account
-						</Link>
-					</Typography>
-				</Box>
+			</Box>
+			<Box sx={{ mt: 2, textAlign: "center" }}>
+				<Typography variant="body2" color="textSecondary">
+					New to Aims-Commerce?{" "}
+					<Link
+						component="button"
+						onClick={() => router.push("/register")}
+						color="primary"
+					>
+						Create your account
+					</Link>
+				</Typography>
 			</Box>
 		</Container>
 	);

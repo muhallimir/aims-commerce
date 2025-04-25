@@ -46,12 +46,17 @@ const useCartHandling = (onClose) => {
 	};
 
 	const proceedToCheckout = () => {
-		const targetRoute = isAuthenticated
-			? (isEmpty(cartItems) ? '/store/cart' : '/store/shipping')
-			: '/signin';
+		const isCartEmpty = isEmpty(cartItems);
+		const targetRoute = isCartEmpty ? '/store/cart' : '/store/shipping';
+
+		if (!isAuthenticated) {
+			window.location.href = "/signin";
+			return;
+		}
 
 		router.push(targetRoute);
-		if (!isEmpty(cartItems)) {
+
+		if (!isCartEmpty) {
 			dispatch(setIsCheckingOut(true));
 		}
 		onClose?.();

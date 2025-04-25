@@ -2,15 +2,17 @@ import { AppProps } from "next/app";
 import { CacheProvider, ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
 import Head from "next/head";
+import Script from "next/script";
 import setGlobalStyles from "@styles/setGlobalStyles";
 import Theme from "@styles/theme";
-import { wrapper } from "@store/index"; // Import the wrapper and persistor
+import { wrapper } from "@store/index";
 import "../styles/globals.css";
 import createEmotionCache from "@helpers/createEmotionCache";
 import MainLayout from "src/layouts/MainLayout";
 import MainHeader from "src/components/headers/MainHeader";
 import Footer from "src/components/footers/MainFooter";
 import { useRouter } from "next/router";
+import { useGoogleAuth } from "src/hooks/useGoogleAuth";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -25,6 +27,7 @@ const MyApp = ({
 }: MyAppProps) => {
 	const router = useRouter();
 	const isAdminView = router.pathname.includes("/admin");
+	const { initializeGoogle } = useGoogleAuth();
 
 	return (
 		<CacheProvider value={emotionCache}>
@@ -34,6 +37,16 @@ const MyApp = ({
 					content="width=device-width, initial-scale=1, maximum-scale=1"
 				/>
 			</Head>
+			<Script
+				src="https://accounts.google.com/gsi/client"
+				strategy="afterInteractive"
+				onLoad={() => {
+					initializeGoogle();
+				}}
+				onError={() => {
+					console.error("Failed to load Google Sign-In script");
+				}}
+			/>
 			<ThemeProvider theme={Theme}>
 				{setGlobalStyles(Theme)}
 				<CssBaseline />
