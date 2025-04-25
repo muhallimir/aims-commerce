@@ -19,7 +19,7 @@ const useAuthentication = () => {
     const isRegisteringNewUser = adminUsersData?.isRegisteringNewUser
 
     const handleSignIn = () => {
-        router.push("/signin")
+        window.location.href = "/signin";
     };
 
     const redirectToHome = () => {

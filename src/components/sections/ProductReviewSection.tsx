@@ -37,7 +37,7 @@ export default function ProductReviewSection() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null); // Add error state
 
 	const handleSignIn = () => {
-		router.push("/signin");
+		window.location.href = "/signin";
 	};
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -58,7 +58,7 @@ export default function ProductReviewSection() {
 			.catch((error) => {
 				setErrorMessage(
 					error?.data?.message ||
-						"An error occurred while submitting the review.",
+					"An error occurred while submitting the review.",
 				);
 			});
 	};

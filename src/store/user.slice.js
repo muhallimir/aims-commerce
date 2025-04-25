@@ -105,16 +105,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: args.userInfo
             }),
         }),
+        GoogleSignIn: builder.mutation({
+            query: (args) => ({
+                url: "/api/users/google-auth",
+                method: "POST",
+                body: args,
+            }),
+        }),
     }),
 });
 
-export const { usePostSignInMutation, usePostRegistrationMutation, useUpdateProfileMutation, useGetUsersMutation, useGetUserToManageMutation, useUpdateUserMutation } = userApiSlice;
-
-
-
-
-
-
-
-
-
+export const { usePostSignInMutation, usePostRegistrationMutation, useUpdateProfileMutation, useGetUsersMutation, useGetUserToManageMutation, useUpdateUserMutation, useGoogleSignInMutation } = userApiSlice;
