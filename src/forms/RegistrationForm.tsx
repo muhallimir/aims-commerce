@@ -55,7 +55,7 @@ const RegistrationForm: React.FC = () => {
 					p: 3,
 					boxShadow: 3,
 					borderRadius: 2,
-					backgroundColor: "background.light",
+					backgroundColor: "common.white",
 				}}
 			>
 				<Typography

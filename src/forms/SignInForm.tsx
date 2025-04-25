@@ -52,7 +52,7 @@ const SignInForm: React.FC = () => {
 					p: 3,
 					boxShadow: 3,
 					borderRadius: 2,
-					backgroundColor: "background.light",
+					backgroundColor: "common.white",
 				}}
 			>
 				<Typography
@@ -107,7 +107,14 @@ const SignInForm: React.FC = () => {
 					</Typography>
 				</Divider>
 
-				<Box id="google-signin-btn" />
+				<Box
+					id="google-signin-btn"
+					sx={{
+						width: '100%',
+						display: 'flex',
+						justifyContent: 'center',
+					}}
+				/>
 
 				{isError && (
 					<Typography
