@@ -13,6 +13,7 @@ import MainHeader from "src/components/headers/MainHeader";
 import Footer from "src/components/footers/MainFooter";
 import { useRouter } from "next/router";
 import { useGoogleAuth } from "src/hooks/useGoogleAuth";
+import { Analytics } from '@vercel/analytics/next';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -62,6 +63,7 @@ const MyApp = ({
 					</>
 				)}
 			</ThemeProvider>
+			<Analytics />
 		</CacheProvider>
 	);
 };
