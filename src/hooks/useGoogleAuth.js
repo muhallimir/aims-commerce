@@ -1,6 +1,7 @@
 import { useCallback, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateUserInfo, useGoogleSignInMutation } from "@store/user.slice";
+import Cookies from "js-cookie";
 
 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -24,7 +25,7 @@ export const useGoogleAuth = () => {
 						try {
 							const result = await googleSignIn({ credential }).unwrap();
 							dispatch(updateUserInfo(result));
-							localStorage.setItem("token", result.token);
+							Cookies.set("token", result.token, { path: "/" });
 						} catch (err) {
 							console.error("Google Sign-In failed", err);
 						}

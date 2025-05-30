@@ -5,6 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
 
 const useAuthentication = () => {
     const { userInfo, adminUsersData } = useSelector(({ user }) => user)
@@ -27,7 +28,7 @@ const useAuthentication = () => {
     }
 
     const handleSignOut = () => {
-        localStorage.removeItem('token');
+        Cookies.remove("token");
         dispatch(clearUserInfo())
         dispatch(resetCartState())
         dispatch(clearOrderData())
@@ -43,7 +44,7 @@ const useAuthentication = () => {
                 const token = resSignIn?.data?.token || resRegister?.data?.token;
                 const targetRoute = isCheckingOut ? "/store/shipping" : "/store";
                 if (token) {
-                    localStorage.setItem('token', token);
+                    Cookies.set("token", token, { path: "/" });
                     router.replace(targetRoute);
                 }
             }
