@@ -123,7 +123,7 @@ const ProductEditForm: React.FC = () => {
 	);
 
 	if (loading) {
-		return <LoadingOverlay loadingMessage={LOADERTEXT.DEFAULT} />;
+		return <LoadingOverlay loadingMessage={LOADERTEXT.ONGOING} />;
 	}
 
 	return (

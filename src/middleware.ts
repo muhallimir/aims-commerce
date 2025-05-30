@@ -16,6 +16,13 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/store", request.url));
         }
 
+        const { pathname } = request.nextUrl;
+
+        const redirectPaths = ["/admin/products", "/admin/users", "/admin/orders", "/admin/support"];
+        if (redirectPaths.includes(pathname)) {
+            return NextResponse.redirect(new URL("/admin", request.url));
+        }
+
         return NextResponse.next();
     } catch (err) {
         console.error("JWT decode failed:", err);
