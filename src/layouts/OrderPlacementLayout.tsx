@@ -29,6 +29,11 @@ import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { getImageUrl } from "@helpers/commonFn";
 import useAuthentication from "src/hooks/useAuthentication";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import StripePaymentForm from "src/forms/StripePaymentForm";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 const formatDate = (date: string | undefined) => {
 	if (!date) return new Date().toLocaleString();
@@ -140,7 +145,7 @@ const OrderPlacementLayout: React.FC = () => {
 	};
 
 	if (loading || isLoading) {
-		return <LoadingOverlay loadingMessage={LOADERTEXT.ONGOING} />;
+		return <LoadingOverlay loadingMessage={LOADERTEXT.ORDER_PLACEMENT} />;
 	}
 
 	return (
@@ -291,11 +296,21 @@ const OrderPlacementLayout: React.FC = () => {
 								</Button>
 							)}
 							{!isPaid && isPaymentVisible && (
-								<PayPalButton
-									amount={totalPrice?.toFixed(2)}
-									onSuccess={handleSuccessPayment}
-									onError={handlePaymentError}
-								/>
+								<>
+									{paymentMethod === "paypal" && (
+										<PayPalButton
+											amount={totalPrice?.toFixed(2)}
+											onSuccess={handleSuccessPayment}
+											onError={handlePaymentError}
+										/>)}
+									{paymentMethod === "stripe" && (
+										<Elements stripe={stripePromise}>
+											<StripePaymentForm
+												amount={totalPrice || 0}
+												onSuccess={handleSuccessPayment}
+											/>
+										</Elements>)}
+								</>
 							)}
 							{isPaid && (
 								<Button

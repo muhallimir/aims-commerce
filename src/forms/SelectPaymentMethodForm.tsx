@@ -58,24 +58,34 @@ const SelectPaymentMethodForm: React.FC = () => {
 						aria-label="paymentMethod"
 						name="paymentMethod"
 						value={formik.values.paymentMethod}
-						onChange={formik.handleChange}
+						onChange={(e) => formik.setFieldValue("paymentMethod", e.target.value)}
 					>
 						<FormControlLabel
 							value="paypal"
 							control={<Radio />}
 							label={
-								<Typography color="primary">PayPal</Typography> // Use primary color for PayPal text
+								<Typography color={formik.values.paymentMethod === "paypal" ? "primary" : "text.primary"}>
+									PayPal
+								</Typography>
 							}
 						/>
 						<FormControlLabel
-							value="creditCard"
-							control={<Radio disabled />}
-							label="Credit Card (Coming Soon)"
+							value="stripe"
+							control={<Radio />}
+							label={
+								<Typography color={formik.values.paymentMethod === "stripe" ? "primary" : "text.primary"}>
+									Stripe
+								</Typography>
+							}
 						/>
 						<FormControlLabel
 							value="bankTransfer"
 							control={<Radio disabled />}
-							label="Bank Transfer (Coming Soon)"
+							label={
+								<Typography color={formik.values.paymentMethod === "bankTransfer" ? "primary" : ""}>
+									Bank Transfer (Coming Soon)
+								</Typography>
+							}
 						/>
 					</RadioGroup>
 					{formik.touched.paymentMethod && formik.errors.paymentMethod && (

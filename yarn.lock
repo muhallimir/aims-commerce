@@ -2581,6 +2581,18 @@
     "@types/express" "^4.7.0"
     file-system-cache "2.3.0"
 
+"@stripe/react-stripe-js@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-3.7.0.tgz#ebebf87718875be08c68b3412cab785d0e9064d6"
+  integrity sha512-PYls/2S9l0FF+2n0wHaEJsEU8x7CmBagiH7zYOsxbBlLIHEsqUIQ4MlIAbV9Zg6xwT8jlYdlRIyBTHmO3yM7kQ==
+  dependencies:
+    prop-types "^15.7.2"
+
+"@stripe/stripe-js@^7.3.1":
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-7.3.1.tgz#f57af650477205a939e21a6c7e45a764d17d3d7c"
+  integrity sha512-pTzb864TQWDRQBPLgSPFRoyjSDUqpCkbEgTzpsjiTjGz1Z5SxZNXJek28w1s6Dyry4CyW4/Izj5jHE/J9hCJYQ==
+
 "@svgr/babel-plugin-add-jsx-attribute@8.0.0":
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-8.0.0.tgz#4001f5d5dd87fa13303e36ee106e3ff3a7eb8b22"
@@ -2973,6 +2985,11 @@
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
+
+"@types/js-cookie@^3.0.6":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.6.tgz#a04ca19e877687bd449f5ad37d33b104b71fdf95"
+  integrity sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==
 
 "@types/js-levenshtein@^1.1.1":
   version "1.1.3"
