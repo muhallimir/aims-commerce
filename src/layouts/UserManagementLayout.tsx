@@ -79,7 +79,7 @@ const UserManagementLayout: React.FC = () => {
 
 	const handleRegisterNewUser = () => {
 		dispatch(setIsRegisteringNewUser(true));
-		router.push("/register");
+		router.push("/admin/users/register");
 	};
 
 	useEffect(() => {
