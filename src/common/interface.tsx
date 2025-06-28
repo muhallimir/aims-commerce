@@ -43,6 +43,7 @@ export interface RootState {
 			name: string;
 			email: string;
 			isAdmin: boolean;
+			isSeller: boolean;
 		};
 	};
 	summary: {
@@ -196,6 +197,7 @@ export interface SuccessModalProps {
 
 export interface User {
 	isAdmin: boolean;
+	isSeller: boolean;
 	_id: string;
 	name: string;
 	email: string;

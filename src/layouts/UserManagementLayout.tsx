@@ -161,8 +161,8 @@ const UserManagementLayout: React.FC = () => {
 											Email: {user.email}
 										</Typography>
 										<Chip
-											label={user.isAdmin ? "Admin" : "Customer"}
-											color={user.isAdmin ? "success" : "secondary"}
+											label={user.isAdmin ? "Admin" : user.isSeller ? "Seller" : "Customer"}
+											color={user.isAdmin ? "success" : user.isSeller ? "warning" : "secondary"}
 											sx={{ mt: 1 }}
 										/>
 										<Divider sx={{ my: 2 }} />

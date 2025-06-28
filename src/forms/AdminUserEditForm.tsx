@@ -8,6 +8,7 @@ import {
 	Typography,
 	Card,
 	CardContent,
+	Stack,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateUserMutation } from "@store/user.slice";
@@ -20,6 +21,8 @@ const AdminEditUserForm: React.FC = () => {
 	const [name, setName] = useState(user.name);
 	const [email, setEmail] = useState(user.email);
 	const [isAdmin, setIsAdmin] = useState(user.isAdmin);
+	const [isSeller, setIsSeller] = useState<boolean>(user.isSeller || false);
+
 	const [reqUpdateUser] = useUpdateUserMutation();
 	const dispatch = useDispatch();
 
@@ -33,7 +36,9 @@ const AdminEditUserForm: React.FC = () => {
 			name,
 			email,
 			isAdmin,
+			isSeller,
 		};
+
 		await reqUpdateUser({ userId, userInfo })
 			.unwrap()
 			.then(() => {
@@ -82,18 +87,30 @@ const AdminEditUserForm: React.FC = () => {
 						variant="outlined"
 					/>
 
-					<FormControlLabel
-						control={
-							<Switch
-								checked={isAdmin}
-								onChange={(e) => setIsAdmin(e.target.checked)}
-								color="primary"
-							/>
-						}
-						label="Admin Rights"
-						labelPlacement="start"
-						sx={{ justifyContent: "center", m: 0 }}
-					/>
+					<Stack direction="row" spacing={3} justifyContent="center">
+						<FormControlLabel
+							control={
+								<Switch
+									checked={isAdmin}
+									onChange={(e) => setIsAdmin(e.target.checked)}
+									color="primary"
+								/>
+							}
+							label="Admin"
+							labelPlacement="end"
+						/>
+						<FormControlLabel
+							control={
+								<Switch
+									checked={isSeller}
+									onChange={(e) => setIsSeller(e.target.checked)}
+									color="secondary"
+								/>
+							}
+							label="Seller"
+							labelPlacement="end"
+						/>
+					</Stack>
 
 					<Box sx={{ mt: 2, color: "text.secondary" }}>
 						<Typography variant="body2">
