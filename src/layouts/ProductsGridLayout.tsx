@@ -9,6 +9,7 @@ import { LOADERTEXT } from "@common/constants";
 import { setFromPurchaseHistory } from "@store/order.slice";
 import SearchBar from "src/components/bars/SearchBar";
 import { useGetProductListMutation } from "@store/products.slice";
+import { useRouter } from "next/router";
 
 const ProductsGridLayout: React.FC = () => {
 	const { theme: mode, loading } = useSelector((state: any) => state.app);
@@ -19,8 +20,16 @@ const ProductsGridLayout: React.FC = () => {
 	const [reqProductList] = useGetProductListMutation() as unknown as [
 		() => Promise<void>,
 	];
-	const [searchQuery, setSearchQuery] = useState("");
+	const router = useRouter();
+	const initialSearchQuery = (router.query.search as string) || "";
+	const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery || "");
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (initialSearchQuery) {
+			setSearchQuery(initialSearchQuery);
+		}
+	}, [initialSearchQuery]);
 
 	useEffect(() => {
 		reqProductList();
@@ -53,7 +62,13 @@ const ProductsGridLayout: React.FC = () => {
 
 	const handleSearch = (query: string) => {
 		setSearchQuery(query);
+		const url = {
+			pathname: router.pathname,
+			query: { ...router.query, search: query || undefined }
+		};
+		router.push(url, undefined, { shallow: true });
 	};
+
 
 	const filteredProducts = products.filter((product: any) =>
 		[product.title, product.category, product.description]
@@ -66,42 +81,42 @@ const ProductsGridLayout: React.FC = () => {
 		<Container
 			sx={{ py: 4, width: "100vw", minHeight: "100vh", position: "relative" }}
 		>
-			<SearchBar onSearch={handleSearch} />
+			<SearchBar onSearch={handleSearch} value={searchQuery} />
 			{showOverlay && (
 				<LoadingOverlay loadingMessage={LOADERTEXT.INITIAL_LOAD} />
 			)}
 			<Grid container spacing={{ xs: 1, sm: 3 }} justifyContent="center">
 				{loading
 					? Array.from(new Array(15)).map((_, index) => (
-							<Grid
-								item
-								xs={6}
-								sm={5}
-								md={4}
-								lg={3}
-								key={index}
-								sx={{ display: "flex", justifyContent: "center" }}
-							>
-								<ProductCardSkeleton darkMode={mode === "dark"} isMobile={xs} />
-							</Grid>
-					  ))
+						<Grid
+							item
+							xs={6}
+							sm={5}
+							md={4}
+							lg={3}
+							key={index}
+							sx={{ display: "flex", justifyContent: "center" }}
+						>
+							<ProductCardSkeleton darkMode={mode === "dark"} isMobile={xs} />
+						</Grid>
+					))
 					: filteredProducts.map((product: any) => (
-							<Grid
-								item
-								xs={6}
-								sm={5}
-								md={4}
-								lg={3}
-								key={product._id}
-								sx={{
-									display: "flex",
-									justifyContent: "center",
-									transition: "transform 0.3s ease",
-								}}
-							>
-								<ProductCard product={product} />
-							</Grid>
-					  ))}
+						<Grid
+							item
+							xs={6}
+							sm={5}
+							md={4}
+							lg={3}
+							key={product._id}
+							sx={{
+								display: "flex",
+								justifyContent: "center",
+								transition: "transform 0.3s ease",
+							}}
+						>
+							<ProductCard product={product} />
+						</Grid>
+					))}
 			</Grid>
 		</Container>
 	);

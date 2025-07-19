@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, InputAdornment, Box } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import useThemeMode from "src/hooks/useThemeMode";
@@ -10,13 +10,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	value = "",
 }) => {
 	const { isDarkMode } = useThemeMode();
-	const [searchQuery, setSearchQuery] = useState(value);
+	const [searchQuery, setSearchQuery] = useState<string>(value || "");
 
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const query = event.target.value;
 		setSearchQuery(query);
 		onSearch(query);
 	};
+
+	useEffect(() => {
+		setSearchQuery(value);
+	}, [value]);
 
 	return (
 		<Box
