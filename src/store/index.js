@@ -53,7 +53,7 @@ export const makeStore = ({ isServer, ...props }) => {
       }).concat(
         apiSlice.middleware,
       ),
-      devTools: true,
+      devTools: process.env.NODE_ENV !== 'production',
       ...props,
     });
   } else {
@@ -66,7 +66,7 @@ export const makeStore = ({ isServer, ...props }) => {
       }).concat(
         apiSlice.middleware,
       ),
-      devTools: true,
+      devTools: process.env.NODE_ENV !== 'production',
       ...props,
     });
     store.__persistor = persistStore(store);
