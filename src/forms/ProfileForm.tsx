@@ -106,7 +106,7 @@ const ProfileForm: React.FC = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					error={formik.touched.name && Boolean(formik.errors.name)}
-					helperText={formik.touched.name && formik.errors.name}
+					helperText={formik.touched.name && (formik.errors.name as string)}
 					InputProps={{ autoComplete: "off" }}
 				/>
 
@@ -120,7 +120,7 @@ const ProfileForm: React.FC = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					error={formik.touched.email && Boolean(formik.errors.email)}
-					helperText={formik.touched.email && formik.errors.email}
+					helperText={formik.touched.email && (formik.errors.email as string)}
 					InputProps={{ autoComplete: "off" }}
 				/>
 
@@ -137,7 +137,7 @@ const ProfileForm: React.FC = () => {
 					error={
 						formik.touched.newPassword && Boolean(formik.errors.newPassword)
 					}
-					helperText={formik.touched.newPassword && formik.errors.newPassword}
+					helperText={formik.touched.newPassword && (formik.errors.newPassword as string)}
 					InputProps={{ autoComplete: "off" }}
 				/>
 

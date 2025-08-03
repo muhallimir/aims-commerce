@@ -8,6 +8,7 @@ import productReducer from "./products.slice";
 import orderReducer from "./order.slice";
 import summaryReducer from "./summary.slice";
 import adminReducer from "./admin.slice";
+import sellerReducer from "./seller.slice";
 import { apiSlice } from "./api.slice";
 import { PERSIST, REGISTER, REHYDRATE, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -15,7 +16,7 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['app', 'user', 'productLists', 'cart', 'order', 'summary', 'admin'],
+  whitelist: ['app', 'user', 'productLists', 'cart', 'order', 'summary', 'admin', 'seller'],
 };
 
 const rootReducer = (state, action) => {
@@ -37,6 +38,7 @@ const rootReducerWithoutHydrate = combineReducers({
   cart: cartReducer,
   order: orderReducer,
   summary: summaryReducer,
+  seller: sellerReducer,
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 

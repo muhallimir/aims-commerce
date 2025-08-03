@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 export const apiSlice = createApi({
     reducerPath: 'api',
+    tagTypes: ['SellerProducts', 'SellerOrders', 'SellerAnalytics'],
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.NEXT_PUBLIC_MONGODB_URI,
         prepareHeaders: (headers) => {

@@ -28,6 +28,7 @@ const MyApp = ({
 }: MyAppProps) => {
 	const router = useRouter();
 	const isAdminView = router.pathname.includes("/admin");
+	const isSellerDashboard = router.pathname.includes("/seller/dashboard");
 	const { initializeGoogle } = useGoogleAuth();
 
 	return (
@@ -51,7 +52,7 @@ const MyApp = ({
 			<ThemeProvider theme={Theme}>
 				{setGlobalStyles(Theme)}
 				<CssBaseline />
-				{isAdminView ? (
+				{isAdminView || isSellerDashboard ? (
 					<Component {...pageProps} />
 				) : (
 					<>

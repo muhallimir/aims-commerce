@@ -28,8 +28,14 @@ import useScreenSize from "src/hooks/useScreenSize";
 import { switchSection } from "@store/admin.slice";
 
 const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
-	const { userInfo, isAuthenticated, handleSignIn, handleSignOut } =
-		useAuthentication();
+	const {
+		userInfo,
+		isAuthenticated,
+		handleSignIn,
+		handleSignOut,
+		isAdmin,
+		isSeller,
+	} = useAuthentication();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const router = useRouter();
 
@@ -51,9 +57,19 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 		router.push("/purchases");
 	};
 
+	const handleSellerDashboard = () => {
+		handleMenuClose();
+		router.push("/seller/dashboard");
+	};
+
 	const handleLogout = () => {
 		handleSignOut();
 		handleMenuClose();
+	};
+
+	const handleBecomeSeller = () => {
+		handleMenuClose();
+		router.push("/become-seller");
 	};
 
 	const truncatedName =
@@ -129,6 +145,20 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 						Purchases
 					</Typography>
 				</MenuItem>
+				{isAuthenticated && isSeller && (
+					<MenuItem onClick={handleSellerDashboard}>
+						<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+							Seller Dashboard
+						</Typography>
+					</MenuItem>
+				)}
+				{isAuthenticated && !isAdmin && !isSeller && (
+					<MenuItem onClick={handleBecomeSeller}>
+						<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+							Become a Seller
+						</Typography>
+					</MenuItem>
+				)}
 				<MenuItem onClick={handleLogout}>
 					<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
 						Logout
@@ -152,7 +182,7 @@ function MainHeader() {
 	const router = useRouter();
 	const [cartItemsCount, setCartItemsCount] = useState<number>(0);
 	const { xs } = useScreenSize();
-	const { isAdmin } = useAuthentication();
+	const { isAdmin, isSeller, isAuthenticated } = useAuthentication();
 	const isAdminView = router.pathname.includes("/admin");
 	const dispatch = useDispatch();
 
@@ -164,7 +194,16 @@ function MainHeader() {
 		setCartDrawerOpen(!cartDrawerOpen);
 	};
 
-	const menuItems = ["Store", "Services", "Admin"];
+	// Dynamic menu items based on user role
+	const getMenuItems = () => {
+		const items = ["Store", "Services"];
+		if (isSeller) items.push("Seller");
+		if (isAdmin) items.push("Admin");
+		if (isAuthenticated && !isAdmin && !isSeller) items.push("Become a Seller");
+		return items;
+	};
+
+	const menuItems = getMenuItems();
 
 	useEffect(() => {
 		reqProductList();
@@ -179,11 +218,23 @@ function MainHeader() {
 	}, [cartItems]);
 
 	const handleNavigate = (route: string) => {
-		dispatch(switchSection("dashboard"));
-		router.push(`/${route}`);
+		if (route === "seller") {
+			router.push("/seller/dashboard");
+		} else if (route === "become a seller") {
+			router.push("/become-seller");
+		} else {
+			dispatch(switchSection("dashboard"));
+			router.push(`/${route}`);
+		}
 	};
 
 	const isActive = (item: string) => {
+		if (item.toLowerCase() === "seller") {
+			return router.pathname.includes("/seller");
+		}
+		if (item.toLowerCase() === "become a seller") {
+			return router.pathname === "/become-seller";
+		}
 		return router.pathname.includes(item.toLowerCase());
 	};
 
@@ -234,7 +285,7 @@ function MainHeader() {
 					justifyContent: "center",
 				}}
 			>
-				{menuItems.slice(0, isAdmin ? 3 : 2).map((item) => (
+				{menuItems.map((item) => (
 					<Button
 						key={item}
 						sx={{
@@ -245,14 +296,14 @@ function MainHeader() {
 							color: isActive(item)
 								? "common.white"
 								: isDarkMode
-								? "common.white"
-								: "common.black",
+									? "common.white"
+									: "common.black",
 							"&:hover": {
 								backgroundColor: isActive(item)
 									? "secondary.main"
 									: isDarkMode
-									? "rgba(255, 255, 255, 0.1)"
-									: "rgba(0, 0, 0, 0.1)",
+										? "rgba(255, 255, 255, 0.1)"
+										: "rgba(0, 0, 0, 0.1)",
 							},
 						}}
 						onClick={() => handleNavigate(item.toLowerCase())}
@@ -313,14 +364,14 @@ function MainHeader() {
 								color: isActive(item)
 									? "common.white"
 									: isDarkMode
-									? "common.white"
-									: "common.black",
+										? "common.white"
+										: "common.black",
 								"&:hover": {
 									backgroundColor: isActive(item)
 										? "primary.main"
 										: isDarkMode
-										? "rgba(255, 255, 255, 0.1)"
-										: "rgba(0, 0, 0, 0.1)",
+											? "rgba(255, 255, 255, 0.1)"
+											: "rgba(0, 0, 0, 0.1)",
 								},
 							}}
 						>

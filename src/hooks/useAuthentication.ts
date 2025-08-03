@@ -8,8 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 
 const useAuthentication = () => {
-    const { userInfo, adminUsersData } = useSelector(({ user }) => user)
-    const { isCheckingOut } = useSelector(({ cart }) => cart)
+    const { userInfo, adminUsersData } = useSelector(({ user }: any) => user)
+    const { isCheckingOut } = useSelector(({ cart }: any) => cart)
     const [reqSignIn, resSignIn] = usePostSignInMutation();
     const [reqRegister, resRegister] = usePostRegistrationMutation();
     const [reqUpdateProfile, resUpdateProfile] = useUpdateProfileMutation();
