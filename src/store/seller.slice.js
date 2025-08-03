@@ -126,6 +126,14 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['SellerProducts', 'SellerAnalytics'],
         }),
+        updateSellerProfile: builder.mutation({
+            query: (profileData) => ({
+                url: "/api/sellers/profile",
+                method: "PUT",
+                body: profileData,
+            }),
+            invalidatesTags: ['SellerAnalytics'],
+        }),
         updateOrderStatus: builder.mutation({
             query: ({ orderId, ...args }) => ({
                 url: `/api/sellers/orders/${orderId}/status`,
@@ -146,6 +154,7 @@ export const {
     useCreateSellerProductMutation,
     useUpdateSellerProductMutation,
     useDeleteSellerProductMutation,
+    useUpdateSellerProfileMutation,
     useUpdateOrderStatusMutation
 } = sellerApiSlice;
 

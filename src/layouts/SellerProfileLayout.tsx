@@ -24,12 +24,12 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useUpdateSellerProfileMutation } from "@store/seller.slice";
 import { updateUserInfo } from "@store/user.slice";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const profileValidationSchema = yup.object({
     name: yup.string().required("Name is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
     storeName: yup.string().required("Store name is required"),
     storeDescription: yup.string(),
     phone: yup.string(),
@@ -42,6 +42,7 @@ const SellerProfileLayout: React.FC = () => {
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state: any) => state.user);
     const { loading } = useSelector((state: any) => state.app);
+    const [updateSellerProfile, { isLoading: isUpdating }] = useUpdateSellerProfileMutation();
 
     const [isEditing, setIsEditing] = useState(false);
     const [storeActive, setStoreActive] = useState(true);
@@ -60,11 +61,15 @@ const SellerProfileLayout: React.FC = () => {
         validationSchema: profileValidationSchema,
         onSubmit: async (values) => {
             try {
-                // This would be an API call to update seller profile
-                // await reqUpdateSellerProfile(values).unwrap();
-                dispatch(updateUserInfo({ ...userInfo, ...values }));
+                const { email, ...updateData } = values;
+                const payload = {
+                    userId: userInfo?._id,
+                    ...updateData
+                };
+                await updateSellerProfile(payload).unwrap();
+                dispatch(updateUserInfo({ ...userInfo, ...updateData }));
                 setIsEditing(false);
-                console.log("Profile updated:", values);
+                console.log("Profile updated:", payload);
             } catch (error) {
                 console.error("Error updating profile:", error);
             }
@@ -108,8 +113,8 @@ const SellerProfileLayout: React.FC = () => {
         },
     ];
 
-    if (loading) {
-        return <LoadingOverlay loadingMessage="Loading profile..." />;
+    if (loading || isUpdating) {
+        return <LoadingOverlay loadingMessage={isUpdating ? "Updating profile..." : "Loading profile..."} />;
     }
 
     return (
@@ -161,7 +166,7 @@ const SellerProfileLayout: React.FC = () => {
                                             onBlur={formik.handleBlur}
                                             error={Boolean(formik.touched.email && formik.errors.email)}
                                             helperText={formik.touched.email && (formik.errors.email as string)}
-                                            disabled={!isEditing}
+                                            disabled={true}
                                             InputProps={{
                                                 startAdornment: <Email sx={{ mr: 1, color: "action.active" }} />,
                                             }}
@@ -250,11 +255,11 @@ const SellerProfileLayout: React.FC = () => {
 
                                 {isEditing && (
                                     <Box display="flex" justifyContent="flex-end" gap={2} mt={3}>
-                                        <Button variant="outlined" onClick={handleCancel}>
+                                        <Button variant="outlined" onClick={handleCancel} disabled={isUpdating}>
                                             Cancel
                                         </Button>
-                                        <Button type="submit" variant="contained">
-                                            Save Changes
+                                        <Button type="submit" variant="contained" disabled={isUpdating}>
+                                            {isUpdating ? "Saving..." : "Save Changes"}
                                         </Button>
                                     </Box>
                                 )}
@@ -263,9 +268,7 @@ const SellerProfileLayout: React.FC = () => {
                     </Card>
                 </Grid>
 
-                {/* Profile Summary & Settings */}
                 <Grid item xs={12} md={4}>
-                    {/* Profile Picture & Summary */}
                     <Card sx={{ mb: 3 }}>
                         <CardContent sx={{ textAlign: "center" }}>
                             <Avatar
