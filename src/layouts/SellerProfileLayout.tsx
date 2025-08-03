@@ -24,14 +24,13 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useUpdateSellerProfileMutation } from "@store/seller.slice";
-import { updateUserInfo } from "@store/user.slice";
+import { useUpdateSellerProfileMutation, setSellerInfo } from "@store/seller.slice";
+import { updateUserInfo, useUpdateProfileMutation } from "@store/user.slice";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const profileValidationSchema = yup.object({
     name: yup.string().required("Name is required"),
     storeName: yup.string().required("Store name is required"),
-    storeDescription: yup.string(),
     phone: yup.string(),
     address: yup.string(),
     city: yup.string(),
@@ -41,8 +40,10 @@ const profileValidationSchema = yup.object({
 const SellerProfileLayout: React.FC = () => {
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state: any) => state.user);
+    const { sellerInfo } = useSelector((state: any) => state.seller);
     const { loading } = useSelector((state: any) => state.app);
     const [updateSellerProfile, { isLoading: isUpdating }] = useUpdateSellerProfileMutation();
+    const [updateProfile] = useUpdateProfileMutation();
 
     const [isEditing, setIsEditing] = useState(false);
     const [storeActive, setStoreActive] = useState(true);
@@ -51,25 +52,46 @@ const SellerProfileLayout: React.FC = () => {
         initialValues: {
             name: userInfo?.name || "",
             email: userInfo?.email || "",
-            storeName: userInfo?.storeName || "",
-            storeDescription: userInfo?.storeDescription || "",
-            phone: userInfo?.phone || "",
-            address: userInfo?.address || "",
-            city: userInfo?.city || "",
-            country: userInfo?.country || "",
+            storeName: userInfo?.storeName || sellerInfo?.storeName || "",
+            phone: userInfo?.phone || sellerInfo?.phone || "",
+            address: userInfo?.address || sellerInfo?.address || "",
+            city: userInfo?.city || sellerInfo?.city || "",
+            country: userInfo?.country || sellerInfo?.country || "",
         },
         validationSchema: profileValidationSchema,
         onSubmit: async (values) => {
             try {
                 const { email, ...updateData } = values;
-                const payload = {
+
+                // Prepare payloads for both APIs
+                const userPayload = {
+                    name: values.name,
+                    phone: values.phone,
+                    address: values.address,
+                    city: values.city,
+                    country: values.country,
+                };
+
+                const sellerPayload = {
                     userId: userInfo?._id,
                     ...updateData
                 };
-                await updateSellerProfile(payload).unwrap();
-                dispatch(updateUserInfo({ ...userInfo, ...updateData }));
+
+                // Call both APIs
+                await Promise.all([
+                    updateProfile(userPayload).unwrap(),
+                    updateSellerProfile(sellerPayload).unwrap()
+                ]);
+
+                // Update both states
+                const updatedUserInfo = { ...userInfo, ...userPayload };
+                const updatedSellerInfo = { ...sellerInfo, ...updateData };
+
+                dispatch(updateUserInfo(updatedUserInfo));
+                dispatch(setSellerInfo(updatedSellerInfo));
+
                 setIsEditing(false);
-                console.log("Profile updated:", payload);
+                console.log("Profile updated successfully:", { userPayload, sellerPayload });
             } catch (error) {
                 console.error("Error updating profile:", error);
             }
@@ -200,19 +222,6 @@ const SellerProfileLayout: React.FC = () => {
                                             InputProps={{
                                                 startAdornment: <Store sx={{ mr: 1, color: "action.active" }} />,
                                             }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            fullWidth
-                                            label="Store Description"
-                                            name="storeDescription"
-                                            multiline
-                                            rows={3}
-                                            value={formik.values.storeDescription}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            disabled={!isEditing}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>

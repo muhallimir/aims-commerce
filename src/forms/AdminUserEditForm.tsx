@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	TextField,
 	Switch,
@@ -9,24 +9,56 @@ import {
 	Card,
 	CardContent,
 	Stack,
+	Divider,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateUserMutation } from "@store/user.slice";
 import { useRouter } from "next/router";
 import { switchSection } from "@store/admin.slice";
+import { setSellerInfo, useUpdateSellerProfileMutation } from "@store/seller.slice";
 
 const AdminEditUserForm: React.FC = () => {
 	const { adminUsersData } = useSelector(({ user }: any) => user);
+	const { sellerInfo } = useSelector((state: any) => state.seller);
 	const { userInView: user } = adminUsersData || {};
 	const [name, setName] = useState(user.name);
 	const [email, setEmail] = useState(user.email);
 	const [isAdmin, setIsAdmin] = useState(user.isAdmin);
 	const [isSeller, setIsSeller] = useState<boolean>(user.isSeller || false);
+	const [storeName, setStoreName] = useState("");
+	const [storeDescription, setStoreDescription] = useState("");
+	const [phone, setPhone] = useState("");
+	const [address, setAddress] = useState("");
+	const [city, setCity] = useState("");
+	const [country, setCountry] = useState("");
 
 	const [reqUpdateUser] = useUpdateUserMutation();
+	const [updateSellerProfile] = useUpdateSellerProfileMutation();
 	const dispatch = useDispatch();
 
 	const router = useRouter();
+
+	useEffect(() => {
+		if (user?.isSeller) {
+			// If we have sellerInfo in state for this user, use it
+			if (sellerInfo && sellerInfo._id === user._id) {
+				setStoreName(sellerInfo.storeName || "");
+				setStoreDescription(sellerInfo.storeDescription || "");
+				setPhone(sellerInfo.phone || user.phone || "");
+				setAddress(sellerInfo.address || user.address || "");
+				setCity(sellerInfo.city || user.city || "");
+				setCountry(sellerInfo.country || user.country || "");
+			} else {
+				// Use user data as fallback
+				setStoreName(user.storeName || "");
+				setStoreDescription(user.storeDescription || "");
+				setPhone(user.phone || "");
+				setAddress(user.address || "");
+				setCity(user.city || "");
+				setCountry(user.country || "");
+			}
+		}
+	}, [user, sellerInfo]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -39,12 +71,40 @@ const AdminEditUserForm: React.FC = () => {
 			isSeller,
 		};
 
-		await reqUpdateUser({ userId, userInfo })
-			.unwrap()
-			.then(() => {
-				dispatch(switchSection("users"));
-				router.push("/admin");
-			});
+		try {
+			// Update user info
+			await reqUpdateUser({ userId, userInfo }).unwrap();
+
+			// If user is a seller, also update seller profile
+			if (isSeller) {
+				const sellerPayload = {
+					userId: userId,
+					name,
+					email,
+					storeName,
+					storeDescription,
+					phone,
+					address,
+					city,
+					country,
+				};
+
+				await updateSellerProfile(sellerPayload).unwrap();
+
+				// Update sellerInfo in state if this is the current seller
+				if (sellerInfo && sellerInfo._id === userId) {
+					dispatch(setSellerInfo({
+						...sellerInfo,
+						...sellerPayload
+					}));
+				}
+			}
+
+			dispatch(switchSection("users"));
+			router.push("/admin");
+		} catch (error) {
+			console.error("Error updating user:", error);
+		}
 	};
 
 	return (
@@ -111,6 +171,67 @@ const AdminEditUserForm: React.FC = () => {
 							labelPlacement="end"
 						/>
 					</Stack>
+
+					{/* Seller-specific fields */}
+					{isSeller && (
+						<>
+							<Divider sx={{ my: 2 }} />
+							<Typography variant="h6" gutterBottom>
+								Seller Information
+							</Typography>
+
+							<TextField
+								label="Store Name"
+								value={storeName}
+								onChange={(e) => setStoreName(e.target.value)}
+								fullWidth
+								variant="outlined"
+							/>
+
+							<TextField
+								label="Store Description"
+								value={storeDescription}
+								onChange={(e) => setStoreDescription(e.target.value)}
+								fullWidth
+								multiline
+								rows={3}
+								variant="outlined"
+							/>
+
+							<TextField
+								label="Phone"
+								value={phone}
+								onChange={(e) => setPhone(e.target.value)}
+								fullWidth
+								variant="outlined"
+							/>
+
+							<TextField
+								label="Address"
+								value={address}
+								onChange={(e) => setAddress(e.target.value)}
+								fullWidth
+								variant="outlined"
+							/>
+
+							<Box sx={{ display: "flex", gap: 2 }}>
+								<TextField
+									label="City"
+									value={city}
+									onChange={(e) => setCity(e.target.value)}
+									fullWidth
+									variant="outlined"
+								/>
+								<TextField
+									label="Country"
+									value={country}
+									onChange={(e) => setCountry(e.target.value)}
+									fullWidth
+									variant="outlined"
+								/>
+							</Box>
+						</>
+					)}
 
 					<Box sx={{ mt: 2, color: "text.secondary" }}>
 						<Typography variant="body2">

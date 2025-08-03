@@ -35,7 +35,25 @@ export const sellerSlice = createSlice({
             state.analytics = action.payload;
         },
     },
-    extraReducers: () => { },
+    extraReducers: (builder) => {
+        // Listen for user info updates and sync with sellerInfo if needed
+        builder.addCase('user/updateUserInfo', (state, action) => {
+            // If the user being updated is a seller and matches current sellerInfo
+            if (action.payload.isSeller && state.sellerInfo && state.sellerInfo._id === action.payload._id) {
+                state.sellerInfo = {
+                    ...state.sellerInfo,
+                    name: action.payload.name || state.sellerInfo.name,
+                    email: action.payload.email || state.sellerInfo.email,
+                    storeName: action.payload.storeName || state.sellerInfo.storeName,
+                    storeDescription: action.payload.storeDescription || state.sellerInfo.storeDescription,
+                    phone: action.payload.phone || state.sellerInfo.phone,
+                    address: action.payload.address || state.sellerInfo.address,
+                    city: action.payload.city || state.sellerInfo.city,
+                    country: action.payload.country || state.sellerInfo.country,
+                };
+            }
+        });
+    },
 });
 
 export const {

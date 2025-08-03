@@ -1,6 +1,7 @@
 import { resetCartState } from "@store/cart.slice";
 import { clearOrderData } from "@store/order.slice";
 import { clearUserInfo, updateUserInfo, usePostRegistrationMutation, usePostSignInMutation, useUpdateProfileMutation } from "@store/user.slice";
+import { setSellerInfo } from "@store/seller.slice";
 import isEmpty from "lodash/isEmpty";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -41,7 +42,27 @@ const useAuthentication = () => {
             if (isRegisteringNewUser) {
                 router.push("/admin/users")
             } else {
-                dispatch(updateUserInfo(resSignIn.data || resRegister.data || resUpdateProfile.data));
+                const userData = resSignIn.data || resRegister.data || resUpdateProfile.data;
+                dispatch(updateUserInfo(userData));
+
+                // If user is a seller, populate sellerInfo state with user data
+                if (userData?.isSeller) {
+                    dispatch(setSellerInfo({
+                        _id: userData._id,
+                        name: userData.name,
+                        email: userData.email,
+                        storeName: userData.storeName,
+                        storeDescription: userData.storeDescription,
+                        phone: userData.phone,
+                        address: userData.address,
+                        city: userData.city,
+                        country: userData.country,
+                        isSeller: userData.isSeller,
+                        createdAt: userData.createdAt,
+                        updatedAt: userData.updatedAt
+                    }));
+                }
+
                 const token = resSignIn?.data?.token || resRegister?.data?.token;
                 const targetRoute = isCheckingOut ? "/store/shipping" : "/store";
                 if (token) {

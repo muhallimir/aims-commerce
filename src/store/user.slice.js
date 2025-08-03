@@ -31,7 +31,25 @@ export const userSlice = createSlice({
             state.adminUsersData.isRegisteringNewUser = action.payload;
         },
     },
-    extraReducers: () => { },
+    extraReducers: (builder) => {
+        // Listen for seller info updates and sync with userInfo if needed
+        builder.addCase('seller/setSellerInfo', (state, action) => {
+            // If the seller being updated is the current user, sync the userInfo
+            if (state.userInfo._id === action.payload._id) {
+                state.userInfo = {
+                    ...state.userInfo,
+                    name: action.payload.name || state.userInfo.name,
+                    email: action.payload.email || state.userInfo.email,
+                    storeName: action.payload.storeName || state.userInfo.storeName,
+                    storeDescription: action.payload.storeDescription || state.userInfo.storeDescription,
+                    phone: action.payload.phone || state.userInfo.phone,
+                    address: action.payload.address || state.userInfo.address,
+                    city: action.payload.city || state.userInfo.city,
+                    country: action.payload.country || state.userInfo.country,
+                };
+            }
+        });
+    },
 });
 
 export const { updateUserInfo, clearUserInfo, setAllUsers,
