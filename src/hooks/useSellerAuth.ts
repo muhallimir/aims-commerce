@@ -15,7 +15,7 @@ const useSellerAuth = () => {
 
         // Check if user is a seller
         if (!userInfo.isSeller) {
-            router.push("/become-seller");
+            router.push("/start-selling");
             return;
         }
     }, [userInfo, router]);

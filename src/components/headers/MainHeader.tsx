@@ -67,9 +67,9 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 		handleMenuClose();
 	};
 
-	const handleBecomeSeller = () => {
+	const handleStartSelling = () => {
 		handleMenuClose();
-		router.push("/become-seller");
+		router.push("/start-selling");
 	};
 
 	const truncatedName =
@@ -153,9 +153,9 @@ const SignInButton: React.FC<SignInProps> = ({ isDarkMode }) => {
 					</MenuItem>
 				)}
 				{isAuthenticated && !isAdmin && !isSeller && (
-					<MenuItem onClick={handleBecomeSeller}>
+					<MenuItem onClick={handleStartSelling}>
 						<Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-							Become a Seller
+							Start Selling
 						</Typography>
 					</MenuItem>
 				)}
@@ -199,7 +199,7 @@ function MainHeader() {
 		const items = ["Store", "Services"];
 		if (isSeller) items.push("Seller");
 		if (isAdmin) items.push("Admin");
-		if (isAuthenticated && !isAdmin && !isSeller) items.push("Become a Seller");
+		if (isAuthenticated && !isAdmin && !isSeller) items.push("Start Selling");
 		return items;
 	};
 
@@ -220,8 +220,8 @@ function MainHeader() {
 	const handleNavigate = (route: string) => {
 		if (route === "seller") {
 			router.push("/seller/dashboard");
-		} else if (route === "become a seller") {
-			router.push("/become-seller");
+		} else if (route === "start selling") {
+			router.push("/start-selling");
 		} else {
 			dispatch(switchSection("dashboard"));
 			router.push(`/${route}`);
@@ -232,8 +232,8 @@ function MainHeader() {
 		if (item.toLowerCase() === "seller") {
 			return router.pathname.includes("/seller");
 		}
-		if (item.toLowerCase() === "become a seller") {
-			return router.pathname === "/become-seller";
+		if (item.toLowerCase() === "start selling") {
+			return router.pathname === "/start-selling";
 		}
 		return router.pathname.includes(item.toLowerCase());
 	};

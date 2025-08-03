@@ -45,9 +45,11 @@ const SellerOverviewLayout: React.FC = () => {
     const { userInfo } = useSelector((state: any) => state.user);
     const { loading } = useSelector((state: any) => state.app);
 
-    const { error: analyticsError } = useGetSellerAnalyticsQuery({});
-    const { error: productsError } = useGetSellerProductsQuery({});
-    const { error: ordersError } = useGetSellerOrdersQuery({});
+    const { error: analyticsError, isFetching: analyticsFetching } = useGetSellerAnalyticsQuery({});
+    const { error: productsError, isFetching: productsFetching } = useGetSellerProductsQuery({});
+    const { error: ordersError, isFetching: ordersFetching } = useGetSellerOrdersQuery({});
+
+    const isRefreshing = analyticsFetching || productsFetching || ordersFetching;
 
     const handleAddProduct = () => {
         router.push("/seller/products/new");
@@ -77,7 +79,7 @@ const SellerOverviewLayout: React.FC = () => {
     ) || [];
 
     // Show loading state
-    if (loading) {
+    if (loading || isRefreshing) {
         return <LoadingOverlay loadingMessage="Loading dashboard overview..." />;
     }
 

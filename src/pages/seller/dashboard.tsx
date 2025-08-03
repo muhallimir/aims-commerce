@@ -18,7 +18,7 @@ const SellerDashboard: React.FC = () => {
 
         // Check if user is a seller
         if (userInfo && !userInfo.isSeller) {
-            router.push("/become-seller");
+            router.push("/start-selling");
             return;
         }
     }, [userInfo, router, loading]);

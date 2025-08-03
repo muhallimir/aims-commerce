@@ -19,7 +19,7 @@ const SellerProducts = () => {
 		}
 
 		if (!userInfo.isSeller) {
-			router.push("/become-seller");
+			router.push("/start-selling");
 			return;
 		}
 	}, [userInfo, router]);

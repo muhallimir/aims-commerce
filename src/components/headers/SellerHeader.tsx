@@ -16,11 +16,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { clearUserInfo } from "@store/user.slice";
+import useAuthentication from "src/hooks/useAuthentication";
 
 const SellerHeader: React.FC = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { userInfo } = useSelector((state: any) => state.user);
+    const { handleSignOut } = useAuthentication();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,8 +34,7 @@ const SellerHeader: React.FC = () => {
     };
 
     const handleLogout = () => {
-        dispatch(clearUserInfo());
-        router.push("/signin");
+        handleSignOut();
         handleMenuClose();
     };
 

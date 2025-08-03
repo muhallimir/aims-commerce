@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 
             // Check if user is a seller
             if (!decoded?.isSeller) {
-                return NextResponse.redirect(new URL("/become-seller", request.url));
+                return NextResponse.redirect(new URL("/start-selling", request.url));
             }
 
             // Redirect seller root paths to dashboard
@@ -60,9 +60,33 @@ export function middleware(request: NextRequest) {
         }
     }
 
+    // Handle start-selling route - requires authentication
+    if (pathname === "/start-selling") {
+        if (!token) {
+            return NextResponse.redirect(new URL("/signin", request.url));
+        }
+
+        try {
+            const base64Payload = token.split(".")[1];
+            const jsonPayload = Buffer.from(base64Payload, "base64").toString();
+            const decoded = JSON.parse(jsonPayload);
+
+            // If user is already a seller, redirect to seller dashboard
+            if (decoded?.isSeller) {
+                return NextResponse.redirect(new URL("/seller/dashboard", request.url));
+            }
+
+            // If user is authenticated but not a seller, allow access to start-selling
+            return NextResponse.next();
+        } catch (err) {
+            console.error("JWT decode failed:", err);
+            return NextResponse.redirect(new URL("/signin", request.url));
+        }
+    }
+
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/seller/:path*"]
+    matcher: ["/admin/:path*", "/seller/:path*", "/start-selling"]
 };

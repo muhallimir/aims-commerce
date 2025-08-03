@@ -109,7 +109,7 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
                 method: "POST",
                 body: args,
             }),
-            invalidatesTags: ['SellerProducts'],
+            invalidatesTags: ['SellerProducts', 'SellerAnalytics'],
         }),
         updateSellerProduct: builder.mutation({
             query: ({ productId, ...args }) => ({
@@ -117,14 +117,14 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
                 method: "PUT",
                 body: args,
             }),
-            invalidatesTags: ['SellerProducts'],
+            invalidatesTags: ['SellerProducts', 'SellerAnalytics'],
         }),
         deleteSellerProduct: builder.mutation({
             query: ({ productId }) => ({
                 url: `/api/sellers/products/${productId}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ['SellerProducts'],
+            invalidatesTags: ['SellerProducts', 'SellerAnalytics'],
         }),
         updateOrderStatus: builder.mutation({
             query: ({ orderId, ...args }) => ({
@@ -132,7 +132,7 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
                 method: "PUT",
                 body: args,
             }),
-            invalidatesTags: ['SellerOrders'],
+            invalidatesTags: ['SellerOrders', 'SellerAnalytics'],
         }),
     }),
 });

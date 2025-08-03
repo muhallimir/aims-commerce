@@ -15,7 +15,7 @@ const validationSchema = yup.object({
 	storeName: yup.string(),
 });
 
-const BecomeSellerForm: React.FC = () => {
+const StartSellingForm: React.FC = () => {
 	const [becomeSeller, { isLoading, isError, error, isSuccess }] =
 		useBecomeSellerMutation();
 	const [getUser] = useGetUserToManageMutation();
@@ -134,4 +134,4 @@ const BecomeSellerForm: React.FC = () => {
 	);
 };
 
-export default BecomeSellerForm;
+export default StartSellingForm;
