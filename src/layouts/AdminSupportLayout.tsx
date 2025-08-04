@@ -118,24 +118,55 @@ const AdminSupportLayout: React.FC = () => {
 	};
 
 	return (
-		<Box display="flex" gap={2} p={2} height="100%">
-			<ChatUsersList
-				socket={socket}
-				users={users}
-				setUsers={setUsers}
-				allUsers={allUsers}
-				allSelectedUser={allSelectedUser}
-				selectedUser={selectedUser}
-				setSelectedUser={setSelectedUser}
-			/>
-			<ChatWindow
-				selectedUser={selectedUser}
-				uiMessagesRef={uiMessagesRef}
-				messages={messages}
-				submitHandler={submitHandler}
-				messageBody={messageBody}
-				setMessageBody={setMessageBody}
-			/>
+		<Box
+			sx={{
+				display: "flex",
+				height: "calc(100vh - 64px)",
+				bgcolor: "grey.50",
+				overflow: "hidden"
+			}}
+		>
+			{/* Sidebar */}
+			<Box
+				sx={{
+					width: 320,
+					bgcolor: "background.paper",
+					borderRight: "1px solid",
+					borderColor: "divider",
+					display: "flex",
+					flexDirection: "column",
+					boxShadow: "2px 0 8px rgba(0,0,0,0.08)"
+				}}
+			>
+				<ChatUsersList
+					socket={socket}
+					users={users}
+					setUsers={setUsers}
+					allUsers={allUsers}
+					allSelectedUser={allSelectedUser}
+					selectedUser={selectedUser}
+					setSelectedUser={setSelectedUser}
+				/>
+			</Box>
+
+			{/* Main Chat Area */}
+			<Box
+				sx={{
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					bgcolor: "background.default"
+				}}
+			>
+				<ChatWindow
+					selectedUser={selectedUser}
+					uiMessagesRef={uiMessagesRef}
+					messages={messages}
+					submitHandler={submitHandler}
+					messageBody={messageBody}
+					setMessageBody={setMessageBody}
+				/>
+			</Box>
 		</Box>
 	);
 };
