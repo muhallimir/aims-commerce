@@ -9,6 +9,7 @@ import {
     Button,
     Chip,
     Alert,
+    Skeleton,
 } from "@mui/material";
 import {
     TrendingUp,
@@ -34,7 +35,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const SellerOverviewLayout: React.FC = () => {
     const dispatch = useDispatch();
@@ -80,10 +80,86 @@ const SellerOverviewLayout: React.FC = () => {
 
     // Show loading state
     if (loading || isRefreshing) {
-        return <LoadingOverlay loadingMessage="Loading dashboard overview..." />;
-    }
+        return (
+            <Box>
+                <Typography variant="h4" color="primary" component="div" gutterBottom>
+                    <Skeleton width={300} height={40} />
+                </Typography>
+                <Typography variant="body1" component="div" gutterBottom>
+                    <Skeleton width={400} height={24} />
+                </Typography>
 
-    // Show error state if any API failed
+                <Grid container spacing={3} sx={{ mb: 4 }}>
+                    {Array(4).fill(0).map((_, index) => (
+                        <Grid item xs={12} sm={6} md={3} key={index}>
+                            <Card>
+                                <CardContent>
+                                    <Box display="flex" alignItems="center" justifyContent="space-between">
+                                        <Box>
+                                            <Skeleton variant="text" width={100} height={20} sx={{ mb: 1 }} />
+                                            <Skeleton variant="text" width={80} height={40} />
+                                        </Box>
+                                        <Skeleton variant="circular" width={40} height={40} />
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={8}>
+                        <Paper sx={{ p: 3 }}>
+                            <Skeleton variant="text" width={150} height={32} sx={{ mb: 2 }} />
+                            <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: 1 }} />
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12} md={4}>
+                        <Paper sx={{ p: 3, mb: 3 }}>
+                            <Skeleton variant="text" width={120} height={32} sx={{ mb: 2 }} />
+                            <Box display="flex" flexDirection="column" gap={2}>
+                                <Skeleton variant="rectangular" width="100%" height={36} sx={{ borderRadius: 1 }} />
+                                <Skeleton variant="rectangular" width="100%" height={36} sx={{ borderRadius: 1 }} />
+                                <Skeleton variant="rectangular" width="100%" height={36} sx={{ borderRadius: 1 }} />
+                            </Box>
+                        </Paper>
+
+                        {/* Low Stock Alert Skeleton */}
+                        <Paper sx={{ p: 3 }}>
+                            <Skeleton variant="text" width={130} height={32} sx={{ mb: 1 }} />
+                            <Skeleton variant="text" width={200} height={20} sx={{ mb: 2 }} />
+                            {Array(3).fill(0).map((_, index) => (
+                                <Box key={index} sx={{ mb: 1 }}>
+                                    <Skeleton variant="text" width="80%" height={20} sx={{ mb: 0.5 }} />
+                                    <Skeleton variant="rectangular" width={60} height={24} sx={{ borderRadius: 3 }} />
+                                </Box>
+                            ))}
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper sx={{ p: 3 }}>
+                            <Skeleton variant="text" width={150} height={32} sx={{ mb: 2 }} />
+                            <Grid container spacing={2}>
+                                {Array(3).fill(0).map((_, index) => (
+                                    <Grid item xs={12} sm={6} md={4} key={index}>
+                                        <Card variant="outlined">
+                                            <CardContent>
+                                                <Skeleton variant="text" width="70%" height={28} sx={{ mb: 1 }} />
+                                                <Skeleton variant="text" width="40%" height={20} sx={{ mb: 1 }} />
+                                                <Skeleton variant="rectangular" width={60} height={24} sx={{ borderRadius: 3 }} />
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </Box>
+        );
+    }    // Show error state if any API failed
     const hasErrors = analyticsError || productsError || ordersError;
     if (hasErrors) {
         return (
@@ -92,7 +168,7 @@ const SellerOverviewLayout: React.FC = () => {
                     Failed to load dashboard data. Please try refreshing the page.
                 </Alert>
                 {/* Still show basic UI even with errors */}
-                <Typography variant="h4" gutterBottom fontWeight="bold">
+                <Typography variant="h4" color="primary" gutterBottom fontWeight="bold">
                     Welcome back, {userInfo?.name || 'Seller'}!
                 </Typography>
             </Box>
@@ -101,7 +177,7 @@ const SellerOverviewLayout: React.FC = () => {
 
     return (
         <Box>
-            <Typography variant="h4" gutterBottom fontWeight="bold">
+            <Typography variant="h4" color="primary" gutterBottom fontWeight="bold">
                 Welcome back, {userInfo?.name}!
             </Typography>
             <Typography variant="body1" color="text.secondary" gutterBottom>
@@ -118,7 +194,7 @@ const SellerOverviewLayout: React.FC = () => {
                                     <Typography color="text.secondary" gutterBottom>
                                         Total Revenue
                                     </Typography>
-                                    <Typography variant="h4" component="div">
+                                    <Typography variant="h4" color="primary" component="div">
                                         $<CountUp end={analytics?.totalRevenue || 0} duration={2} />
                                     </Typography>
                                 </Box>
@@ -136,7 +212,7 @@ const SellerOverviewLayout: React.FC = () => {
                                     <Typography color="text.secondary" gutterBottom>
                                         Total Orders
                                     </Typography>
-                                    <Typography variant="h4" component="div">
+                                    <Typography variant="h4" color="primary" component="div">
                                         <CountUp end={analytics?.totalOrders || orders?.length || 0} duration={2} />
                                     </Typography>
                                 </Box>
@@ -154,7 +230,7 @@ const SellerOverviewLayout: React.FC = () => {
                                     <Typography color="text.secondary" gutterBottom>
                                         Total Products
                                     </Typography>
-                                    <Typography variant="h4" component="div">
+                                    <Typography variant="h4" color="primary" component="div">
                                         <CountUp end={analytics?.totalProducts || products?.length || 0} duration={2} />
                                     </Typography>
                                 </Box>
@@ -172,7 +248,7 @@ const SellerOverviewLayout: React.FC = () => {
                                     <Typography color="text.secondary" gutterBottom>
                                         Conversion Rate
                                     </Typography>
-                                    <Typography variant="h4" component="div">
+                                    <Typography variant="h4" color="primary" component="div">
                                         <CountUp end={3.2} duration={2} decimals={1} />%
                                     </Typography>
                                 </Box>

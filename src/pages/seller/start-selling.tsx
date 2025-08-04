@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import MainLayout from "src/layouts/MainLayout";
-import { Box, Button, Typography, Container, Grid, Card, CardContent } from "@mui/material";
+import { Box, Button, Typography, Container, Grid, Card, CardContent, Skeleton } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import LoadingOverlay from "src/components/loaders/TextLoader";
 import {
 	Dashboard as DashboardIcon,
 	Add as AddIcon,
@@ -31,12 +30,48 @@ const StartSellingPage: React.FC = () => {
 
 	// Show loading while checking authentication
 	if (loading || !userInfo) {
-		return <LoadingOverlay loadingMessage="Loading..." />;
+		return (
+			<MainLayout>
+				<Container maxWidth="lg" sx={{ py: 8 }}>
+					<Box textAlign="center" mb={6}>
+						<Skeleton variant="text" width={300} height={60} sx={{ mx: "auto", mb: 2 }} />
+						<Skeleton variant="text" width={500} height={24} sx={{ mx: "auto" }} />
+					</Box>
+
+					<Grid container spacing={4}>
+						{Array(3).fill(0).map((_, index) => (
+							<Grid item xs={12} md={4} key={index}>
+								<Card sx={{ textAlign: "center", p: 3 }}>
+									<CardContent>
+										<Skeleton variant="circular" width={64} height={64} sx={{ mx: "auto", mb: 2 }} />
+										<Skeleton variant="text" width="80%" height={28} sx={{ mx: "auto", mb: 1 }} />
+										<Skeleton variant="text" width="100%" height={20} sx={{ mx: "auto" }} />
+									</CardContent>
+								</Card>
+							</Grid>
+						))}
+					</Grid>
+
+					<Box textAlign="center" mt={6}>
+						<Skeleton variant="rectangular" width={200} height={48} sx={{ mx: "auto" }} />
+					</Box>
+				</Container>
+			</MainLayout>
+		);
 	}
 
 	// Show loading if user is not a seller (while redirecting)
 	if (!userInfo.isSeller) {
-		return <LoadingOverlay loadingMessage="Redirecting..." />;
+		return (
+			<MainLayout>
+				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "50vh" }}>
+					<Box textAlign="center">
+						<Skeleton variant="circular" width={60} height={60} sx={{ mx: "auto", mb: 2 }} />
+						<Skeleton variant="text" width={150} height={24} sx={{ mx: "auto" }} />
+					</Box>
+				</Box>
+			</MainLayout>
+		);
 	}
 
 	const handleGoToDashboard = () => {

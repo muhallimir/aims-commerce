@@ -12,6 +12,7 @@ import {
     Switch,
     FormControlLabel,
     Paper,
+    Skeleton,
 } from "@mui/material";
 import {
     Person,
@@ -26,7 +27,6 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useUpdateSellerProfileMutation, setSellerInfo } from "@store/seller.slice";
 import { updateUserInfo, useUpdateProfileMutation } from "@store/user.slice";
-import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const profileValidationSchema = yup.object({
     name: yup.string().required("Name is required"),
@@ -136,12 +136,96 @@ const SellerProfileLayout: React.FC = () => {
     ];
 
     if (loading || isUpdating) {
-        return <LoadingOverlay loadingMessage={isUpdating ? "Updating profile..." : "Loading profile..."} />;
-    }
+        return (
+            <Box>
+                <Typography variant="h4" color="primary" component="div">
+                    <Skeleton width={200} height={40} />
+                </Typography>
 
-    return (
+                <Grid container spacing={3} sx={{ mt: 0 }}>
+                    <Grid item xs={12} md={8}>
+                        <Card>
+                            <CardContent>
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                    <Skeleton variant="text" width={150} height={32} />
+                                    <Skeleton variant="rectangular" width={100} height={36} sx={{ borderRadius: 1 }} />
+                                </Box>
+
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: 1 }} />
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid item xs={12} md={4}>
+                        <Card sx={{ mb: 3 }}>
+                            <CardContent sx={{ textAlign: "center" }}>
+                                <Skeleton
+                                    variant="circular"
+                                    width={100}
+                                    height={100}
+                                    sx={{ mx: "auto", mb: 2 }}
+                                />
+                                <Skeleton variant="text" width={120} height={32} sx={{ mx: "auto", mb: 1 }} />
+                                <Skeleton variant="text" width={100} height={20} sx={{ mx: "auto", mb: 1 }} />
+                                <Skeleton variant="text" width={120} height={16} sx={{ mx: "auto" }} />
+                            </CardContent>
+                        </Card>
+
+                        <Card sx={{ mb: 3 }}>
+                            <CardContent>
+                                <Skeleton variant="text" width={120} height={32} sx={{ mb: 2 }} />
+                                <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+                                    <Skeleton variant="text" width={90} height={24} />
+                                    <Skeleton variant="rectangular" width={58} height={38} sx={{ borderRadius: 3 }} />
+                                </Box>
+                                <Skeleton variant="text" width="100%" height={20} />
+                            </CardContent>
+                        </Card>
+
+                        <Paper sx={{ p: 2 }}>
+                            <Skeleton variant="text" width={100} height={32} sx={{ mb: 2 }} />
+                            {[1, 2, 3, 4].map((index) => (
+                                <Box key={index} sx={{ mb: index < 4 ? 2 : 0 }}>
+                                    <Box display="flex" alignItems="center" justifyContent="space-between">
+                                        <Box display="flex" alignItems="center">
+                                            <Skeleton variant="circular" width={24} height={24} />
+                                            <Skeleton variant="text" width={100} height={20} sx={{ ml: 1 }} />
+                                        </Box>
+                                        <Skeleton variant="text" width={60} height={28} />
+                                    </Box>
+                                    {index < 4 && <Divider sx={{ mt: 2 }} />}
+                                </Box>
+                            ))}
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </Box>
+        );
+    } return (
         <Box>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
+            <Typography variant="h4" color="primary" fontWeight="bold" gutterBottom>
                 Seller Profile
             </Typography>
 

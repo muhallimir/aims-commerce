@@ -16,6 +16,7 @@ import {
     TextField,
     Alert,
     CircularProgress,
+    Skeleton,
 } from "@mui/material";
 import {
     Add,
@@ -223,10 +224,35 @@ const SellerProductsLayout: React.FC = () => {
         product?.brand?.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
+    const renderSkeletonCards = () => {
+        return Array(6).fill(0).map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                    <Skeleton variant="rectangular" height={200} />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                            <Skeleton variant="text" width="65%" height={32} />
+                            <Skeleton variant="rectangular" width={70} height={24} sx={{ borderRadius: 3 }} />
+                        </Box>
+                        <Skeleton variant="text" width="50%" height={20} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="35%" height={32} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="60%" height={20} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="90%" height={20} />
+                        <Skeleton variant="text" width="70%" height={20} />
+                    </CardContent>
+                    <Box display="flex" justifyContent="space-between" p={2}>
+                        <Skeleton variant="rectangular" width={60} height={32} sx={{ borderRadius: 1 }} />
+                        <Skeleton variant="rectangular" width={70} height={32} sx={{ borderRadius: 1 }} />
+                    </Box>
+                </Card>
+            </Grid>
+        ));
+    };
+
     return (
         <Box>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography variant="h4" color="primary" fontWeight="bold">
                     Products ({products?.length || 0})
                 </Typography>
                 <Button
@@ -246,14 +272,10 @@ const SellerProductsLayout: React.FC = () => {
                 </Alert>
             )}
 
-            {isLoading && (
-                <Box display="flex" justifyContent="center" my={4}>
-                    <CircularProgress />
-                </Box>
-            )}
-
             <Grid container spacing={3} sx={{ mt: 1 }}>
-                {filteredProducts.length > 0 ? (
+                {isLoading ? (
+                    renderSkeletonCards()
+                ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product: any) => (
                         <Grid item xs={12} sm={6} md={4} key={product?._id || Math.random()}>
                             <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>

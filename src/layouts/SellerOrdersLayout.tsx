@@ -23,6 +23,7 @@ import {
     ListItemText,
     Pagination,
     Alert,
+    Skeleton,
 } from "@mui/material";
 import {
     LocalShipping,
@@ -33,7 +34,6 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import SearchBar from "src/components/bars/SearchBar";
-import LoadingOverlay from "src/components/loaders/TextLoader";
 
 const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
@@ -112,9 +112,53 @@ const SellerOrdersLayout: React.FC = () => {
         setCurrentPage(value);
     };
 
+    const renderSkeletonCards = () => {
+        return Array(6).fill(0).map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                            <Skeleton variant="text" width="60%" height={32} />
+                            <Skeleton variant="rectangular" width={80} height={24} sx={{ borderRadius: 3 }} />
+                        </Box>
+
+                        <Skeleton variant="text" width="70%" height={20} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="60%" height={20} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="40%" height={20} sx={{ mb: 1 }} />
+                        <Skeleton variant="text" width="50%" height={32} sx={{ mb: 2 }} />
+
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+                            <Box display="flex" gap={1}>
+                                <Skeleton variant="circular" width={20} height={20} />
+                                <Skeleton variant="circular" width={20} height={20} />
+                            </Box>
+                        </Box>
+                    </CardContent>
+
+                    <Box display="flex" justifyContent="space-between" p={2}>
+                        <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
+                        <Skeleton variant="rectangular" width={120} height={32} sx={{ borderRadius: 1 }} />
+                    </Box>
+                </Card>
+            </Grid>
+        ));
+    };
+
     // Show loading state
     if (loading) {
-        return <LoadingOverlay loadingMessage="Loading orders..." />;
+        return (
+            <Box>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                    <Skeleton variant="text" width={200} height={48} />
+                </Box>
+
+                <Skeleton variant="rectangular" width="100%" height={56} sx={{ mb: 3 }} />
+
+                <Grid container spacing={3} sx={{ mt: 1 }}>
+                    {renderSkeletonCards()}
+                </Grid>
+            </Box>
+        );
     }
 
     // Show error state
@@ -131,7 +175,7 @@ const SellerOrdersLayout: React.FC = () => {
     return (
         <Box>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography variant="h4" color="primary" fontWeight="bold">
                     Orders ({ordersData.length})
                 </Typography>
             </Box>
