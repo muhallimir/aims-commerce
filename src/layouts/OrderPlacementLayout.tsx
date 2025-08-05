@@ -32,6 +32,7 @@ import useAuthentication from "src/hooks/useAuthentication";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm from "src/forms/StripePaymentForm";
+import { attractiveGlow, orangeGlow } from "@common/animations";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
@@ -142,6 +143,26 @@ const OrderPlacementLayout: React.FC = () => {
 		setErrorMessage(
 			"Payment failed. Please check your payment details and try again.",
 		);
+	};
+
+	const handleDummyStripePayment = async () => {
+		setIsLoading(true);
+		try {
+			// Simulate Stripe test payment with dummy data
+			const dummyPaymentDetails: PaymentDetails = {
+				_id: `dummy_${Date.now()}`,
+				status: "COMPLETED",
+				update_time: new Date().toISOString(),
+				payer: {
+					email_address: userInfo?.email || "demo@example.com",
+				},
+			};
+
+			await handleSuccessPayment(dummyPaymentDetails);
+		} catch (error) {
+			console.error("Dummy payment error:", error);
+			setErrorMessage("Demo payment failed. Please try again.");
+		}
 	};
 
 	if (loading || isLoading) {
@@ -304,24 +325,82 @@ const OrderPlacementLayout: React.FC = () => {
 											onError={handlePaymentError}
 										/>)}
 									{paymentMethod === "stripe" && (
-										<Elements stripe={stripePromise}>
-											<StripePaymentForm
-												amount={totalPrice || 0}
-												onSuccess={handleSuccessPayment}
-											/>
-										</Elements>)}
+										<Box>
+											<Button
+												variant="contained"
+												color="success"
+												fullWidth
+												onClick={handleDummyStripePayment}
+												disabled={isLoading}
+												sx={{
+													mb: 2,
+													py: 1.5,
+													fontSize: "1rem",
+													fontWeight: 700,
+													textTransform: "none",
+													borderRadius: 3,
+													position: "relative",
+													overflow: "hidden",
+													background: "linear-gradient(45deg, #4CAF50 30%, #66BB6A 90%)",
+													animation: `${attractiveGlow} 2.5s ease-in-out infinite`,
+													"&:hover": {
+														animation: "none",
+														transform: "scale(1.02)",
+														boxShadow: "0 6px 25px rgba(76, 175, 80, 0.5)",
+														background: "linear-gradient(45deg, #43A047 30%, #4CAF50 90%)",
+													},
+													"&:disabled": {
+														animation: "none",
+														opacity: 0.7,
+													},
+												}}
+											>
+												{isLoading ? "Processing..." : "💳 One-Click Demo Payment (Stripe)"}
+											</Button>
+											<Alert severity="info" sx={{ mb: 2, fontSize: "0.85rem" }}>
+												🎯 <strong>Demo Payment:</strong> Uses test card 4242 4242 4242 4242, expires 12/25, CVV 123
+											</Alert>
+											<Elements stripe={stripePromise}>
+												<StripePaymentForm
+													amount={totalPrice || 0}
+													onSuccess={handleSuccessPayment}
+												/>
+											</Elements>
+										</Box>
+									)}
 								</>
 							)}
 							{isPaid && (
 								<Button
 									variant="contained"
 									color="primary"
-									sx={{ width: "100%" }}
+									fullWidth
 									onClick={() => {
 										router.push("/services");
 									}}
+									sx={{
+										py: 1.5,
+										fontSize: "1rem",
+										fontWeight: 600,
+										textTransform: "none",
+										borderRadius: 3,
+										background: isDelivered
+											? "linear-gradient(45deg, var(--color-success) 30%, #66BB6A 90%)"
+											: "linear-gradient(45deg, var(--primary-aims-main) 30%, var(--primary-aims-light) 90%)",
+										animation: `${orangeGlow} 3s ease-in-out infinite`,
+										"&:hover": {
+											animation: "none",
+											transform: "scale(1.02)",
+											boxShadow: isDelivered
+												? "0 6px 25px rgba(40, 167, 69, 0.4)"
+												: "0 6px 25px rgba(10, 102, 194, 0.4)",
+											background: isDelivered
+												? "linear-gradient(45deg, #218838 30%, var(--color-success) 90%)"
+												: "linear-gradient(45deg, var(--primary-aims-dark) 30%, var(--primary-aims-main) 90%)",
+										},
+									}}
 								>
-									Track Order
+									{isDelivered ? "🧾 View Receipt" : "📦 Track Order"}
 								</Button>
 							)}
 						</Box>

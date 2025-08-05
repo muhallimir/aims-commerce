@@ -1,13 +1,15 @@
 import React from "react";
-import { Box, Button, TextField, Typography, Container } from "@mui/material";
+import { Box, Button, TextField, Typography, Container, Paper } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { RegistrationFormValues } from "@common/interface";
 import useAuthentication from "src/hooks/useAuthentication";
 import { LOADERTEXT } from "@common/constants";
 import LoadingOverlay from "src/components/loaders/TextLoader";
+import DemoBanner from "src/components/misc/DemoBanner";
 import { getErrorMessage } from "@helpers/getErrorMessage";
 import { setIsRegisteringNewUser } from "@store/user.slice";
+import { useRouter } from "next/router";
 
 const validationSchema = yup.object({
 	name: yup.string().required("Name is required"),
@@ -26,6 +28,7 @@ const validationSchema = yup.object({
 });
 
 const RegistrationForm: React.FC = () => {
+	const router = useRouter();
 	const { reqRegister, resRegister, isRegisteringNewUser } =
 		useAuthentication();
 	const { isLoading, isError, error } = resRegister;
@@ -47,11 +50,15 @@ const RegistrationForm: React.FC = () => {
 	return (
 		<Container maxWidth="sm">
 			{isLoading && <LoadingOverlay loadingMessage={LOADERTEXT.REGISTER} />}
+			<DemoBanner
+				isLoading={isLoading}
+				isSignInForm={false}
+			/>
 			<Box
 				component="form"
 				onSubmit={formik.handleSubmit}
 				sx={{
-					mt: 4,
+					mt: 3,
 					p: 3,
 					boxShadow: 3,
 					borderRadius: 2,

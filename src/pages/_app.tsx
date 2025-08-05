@@ -11,6 +11,7 @@ import createEmotionCache from "@helpers/createEmotionCache";
 import MainLayout from "src/layouts/MainLayout";
 import MainHeader from "src/components/headers/MainHeader";
 import Footer from "src/components/footers/MainFooter";
+import PersistentDemoAccountDialog from "src/components/misc/PersistentDemoAccountDialog";
 import { useRouter } from "next/router";
 import { useGoogleAuth } from "src/hooks/useGoogleAuth";
 import { Analytics } from '@vercel/analytics/next';
@@ -63,6 +64,8 @@ const MyApp = ({
 						<Footer />
 					</>
 				)}
+				{/* Global Demo Account Dialog */}
+				<PersistentDemoAccountDialog />
 			</ThemeProvider>
 			<Analytics />
 		</CacheProvider>

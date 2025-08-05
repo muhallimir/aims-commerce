@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Container, Autocomplete, CircularProgress, InputAdornment, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Box, Button, TextField, Typography, Container, Autocomplete, CircularProgress, InputAdornment, IconButton, Dialog, DialogTitle, DialogContent, Paper } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { ShippingFormValues } from "@common/interface";
@@ -8,6 +8,8 @@ import { updateShippingAddress } from "@store/cart.slice";
 import { useRouter } from "next/router";
 import useCartHandling from "src/hooks/useCartHandling";
 import useAddressAutoComplete from "src/hooks/useAddressAutoComplete";
+import { LocationOn as LocationIcon, AutoFixHigh as AutoIcon } from "@mui/icons-material";
+import { orangeGlow, shimmer } from "@common/animations";
 
 const validationSchema = yup.object({
 	fullName: yup.string().required("Full name is required"),
@@ -32,6 +34,53 @@ const ShippingForm: React.FC = () => {
 	const { shippingAddress } = useCartHandling();
 	const [addressQuery, setAddressQuery] = useState("");
 	const { suggestions, loading } = useAddressAutoComplete(addressQuery);
+	const [isGeneratingAddress, setIsGeneratingAddress] = useState(false);
+
+	// Generate dummy address data
+	const generateDummyAddress = () => {
+		setIsGeneratingAddress(true);
+
+		const dummyAddresses = [
+			{
+				fullName: "John Demo Smith",
+				contactNo: "1234567890",
+				address: "123 Main Street, Downtown",
+				city: "New York",
+				postalCode: "10001",
+				country: "United States"
+			},
+			{
+				fullName: "Sarah Demo Johnson",
+				contactNo: "9876543210",
+				address: "456 Oak Avenue, Central District",
+				city: "Los Angeles",
+				postalCode: "90210",
+				country: "United States"
+			},
+			{
+				fullName: "Mike Demo Wilson",
+				contactNo: "5551234567",
+				address: "789 Pine Road, Business Quarter",
+				city: "Chicago",
+				postalCode: "60601",
+				country: "United States"
+			},
+			{
+				fullName: "Emma Demo Brown",
+				contactNo: "4449876543",
+				address: "321 Elm Street, Residential Area",
+				city: "Houston",
+				postalCode: "77001",
+				country: "United States"
+			}
+		];
+
+		setTimeout(() => {
+			const randomAddress = dummyAddresses[Math.floor(Math.random() * dummyAddresses.length)];
+			formik.setValues(randomAddress);
+			setIsGeneratingAddress(false);
+		}, 1000);
+	};
 
 	const formik = useFormik<ShippingFormValues>({
 		initialValues: {
@@ -93,6 +142,84 @@ const ShippingForm: React.FC = () => {
 				>
 					Shipping Address
 				</Typography>
+
+				{/* Demo Address Generator */}
+				<Paper
+					elevation={2}
+					sx={{
+						mt: 2,
+						mb: 3,
+						p: 2,
+						backgroundColor: "warning.50",
+						border: "1px solid",
+						borderColor: "warning.200",
+					}}
+				>
+					<Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+						<LocationIcon sx={{ color: "warning.main", mr: 1 }} />
+						<Typography
+							variant="h6"
+							sx={{ fontWeight: 600, color: "warning.main", fontSize: "1rem" }}
+						>
+							Demo Project - Quick Address Fill
+						</Typography>
+					</Box>
+					<Typography
+						variant="body2"
+						sx={{ mb: 2, color: "text.secondary", lineHeight: 1.6 }}
+					>
+						Skip the manual entry! Generate a realistic demo address to quickly test the checkout process.
+					</Typography>
+					<Button
+						variant="contained"
+						color="warning"
+						fullWidth
+						onClick={generateDummyAddress}
+						startIcon={<AutoIcon />}
+						disabled={isGeneratingAddress}
+						sx={{
+							fontWeight: 600,
+							textTransform: "none",
+							py: 1.2,
+							position: "relative",
+							overflow: "hidden",
+							animation: `${orangeGlow} 2.5s ease-in-out infinite`,
+							"&:hover": {
+								animation: "none",
+								transform: "scale(1.02)",
+								boxShadow: "0 4px 20px rgba(255, 152, 0, 0.4)",
+							},
+							"&:disabled": {
+								animation: "none",
+								opacity: 0.6,
+							},
+							"&::before": {
+								content: '""',
+								position: "absolute",
+								top: 0,
+								left: "-100%",
+								width: "100%",
+								height: "100%",
+								background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+								animation: `${shimmer} 3s ease-in-out infinite`,
+							},
+						}}
+					>
+						{isGeneratingAddress ? "Generating Address..." : "Generate Demo Address"}
+					</Button>
+					<Typography
+						variant="caption"
+						sx={{
+							display: "block",
+							textAlign: "center",
+							mt: 1,
+							color: "text.secondary",
+							fontStyle: "italic"
+						}}
+					>
+						Instantly fills all address fields with realistic demo data
+					</Typography>
+				</Paper>
 
 				{renderTextField("fullName", "Full Name")}
 				{renderTextField("contactNo", "Contact No.")}

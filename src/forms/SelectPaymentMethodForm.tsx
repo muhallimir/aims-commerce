@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import {
 	Box,
 	Button,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updatePaymentMethod } from "@store/cart.slice";
 import { useRouter } from "next/router";
 
@@ -20,10 +20,11 @@ const validationSchema = yup.object({
 });
 
 const SelectPaymentMethodForm: React.FC = () => {
+	const { isDemo } = useSelector((state: any) => state.app);
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const formik = useFormik({
-		initialValues: { paymentMethod: "paypal" },
+		initialValues: { paymentMethod: isDemo ? "stripe" : "paypal" },
 		validationSchema: validationSchema,
 		onSubmit: ({ paymentMethod }) => {
 			dispatch(updatePaymentMethod(paymentMethod));
@@ -61,20 +62,24 @@ const SelectPaymentMethodForm: React.FC = () => {
 						onChange={(e) => formik.setFieldValue("paymentMethod", e.target.value)}
 					>
 						<FormControlLabel
-							value="paypal"
-							control={<Radio />}
-							label={
-								<Typography color={formik.values.paymentMethod === "paypal" ? "primary" : "text.primary"}>
-									PayPal
-								</Typography>
-							}
-						/>
-						<FormControlLabel
 							value="stripe"
 							control={<Radio />}
 							label={
 								<Typography color={formik.values.paymentMethod === "stripe" ? "primary" : "text.primary"}>
 									Stripe
+								</Typography>
+							}
+						/>
+						<FormControlLabel
+							value="paypal"
+							control={<Radio />}
+							disabled={isDemo}
+							label={
+								<Typography color={formik.values.paymentMethod === "paypal" ? "primary" : "text.primary"}>
+									PayPal {''}
+									<Typography component="span" sx={{ fontSize: "0.8rem", color: "text.primary" }}>
+										{isDemo && "(disabled in demo mode)"}
+									</Typography>
 								</Typography>
 							}
 						/>

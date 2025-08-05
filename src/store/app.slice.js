@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   routeBack: false,
   transitioning: false,
+  isDemo: false
 };
 
 export const appSlice = createSlice({
@@ -22,10 +23,14 @@ export const appSlice = createSlice({
     setAppError: (state, { payload }) => ({ ...state, error: payload }),
     resetAppError: (state) => ({ ...state, error: null }),
     updateApp: (state, action) => ({ ...state, ...action.payload }),
+    setIsDemo: (state, action) => ({
+      ...state,
+      isDemo: action.payload,
+    }),
   },
   extraReducers: () => { },
 });
 
-export const { switchTheme, setLoading, setAppError, resetAppError, updateApp } = appSlice.actions;
+export const { switchTheme, setLoading, setAppError, resetAppError, updateApp, setIsDemo } = appSlice.actions;
 
 export default appSlice.reducer;

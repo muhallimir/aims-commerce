@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
+import { setIsDemo } from "@store/app.slice";
 
 const useAuthentication = () => {
     const { userInfo, adminUsersData } = useSelector(({ user }) => user)
@@ -34,6 +35,7 @@ const useAuthentication = () => {
         dispatch(clearUserInfo())
         dispatch(resetCartState())
         dispatch(clearOrderData())
+        dispatch(setIsDemo(false))
         redirectToHome()
     };
 
@@ -45,7 +47,6 @@ const useAuthentication = () => {
                 const userData = resSignIn.data || resRegister.data || resUpdateProfile.data;
                 dispatch(updateUserInfo(userData));
 
-                // If user is a seller, populate sellerInfo state with user data
                 if (userData?.isSeller) {
                     dispatch(setSellerInfo({
                         _id: userData._id,

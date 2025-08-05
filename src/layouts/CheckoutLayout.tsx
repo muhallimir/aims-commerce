@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { resetCartState } from "@store/cart.slice";
 import { getImageUrl } from "@helpers/commonFn";
+import { attractiveGlow, shimmer } from "@common/animations";
 
 const CheckoutLayout: React.FC = () => {
 	const { loading: appLoading } = useSelector((state: any) => state.app);
@@ -208,8 +209,40 @@ const CheckoutLayout: React.FC = () => {
 							variant="contained"
 							color="success"
 							fullWidth
+							disabled={isLoading}
+							sx={{
+								py: 1.5,
+								fontSize: "1.1rem",
+								fontWeight: 700,
+								textTransform: "none",
+								borderRadius: 3,
+								position: "relative",
+								overflow: "hidden",
+								background: "linear-gradient(45deg, var(--color-success) 30%, #66BB6A 90%)",
+								animation: `${attractiveGlow} 2.5s ease-in-out infinite`,
+								"&:hover": {
+									animation: "none",
+									transform: "scale(1.02)",
+									boxShadow: "0 6px 25px rgba(40, 167, 69, 0.5)",
+									background: "linear-gradient(45deg, #218838 30%, var(--color-success) 90%)",
+								},
+								"&:disabled": {
+									animation: "none",
+									opacity: 0.7,
+								},
+								"&::before": {
+									content: '""',
+									position: "absolute",
+									top: 0,
+									left: "-100%",
+									width: "100%",
+									height: "100%",
+									background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+									animation: `${shimmer} 3s ease-in-out infinite`,
+								},
+							}}
 						>
-							Place Order
+							{isLoading ? "Processing Order..." : "🛒 Place Order"}
 						</Button>
 						{isError && (
 							<Typography
