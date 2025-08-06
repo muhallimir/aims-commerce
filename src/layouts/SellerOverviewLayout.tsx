@@ -784,29 +784,30 @@ const SellerOverviewLayout: React.FC = () => {
                     )}
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 3 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h6" fontWeight="bold">
-                                Recent Orders
-                            </Typography>
-                            <Button
-                                variant="outlined"
-                                size="small"
-                                onClick={handleViewOrders}
-                                sx={{
-                                    borderColor: variables['--primary-aims-light'],
-                                    color: variables['--primary-aims-main'],
-                                    '&:hover': {
-                                        borderColor: variables['--primary-aims-main'],
-                                        bgcolor: 'rgba(13, 128, 243, 0.04)',
-                                    }
-                                }}
-                            >
-                                View All Orders
-                            </Button>
-                        </Box>
-                        {recentOrders?.length > 0 ? (
+                {/* Only show Recent Orders section if there are orders */}
+                {orders?.length > 0 && (
+                    <Grid item xs={12}>
+                        <Paper sx={{ p: 3 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                <Typography variant="h6" fontWeight="bold">
+                                    Recent Orders
+                                </Typography>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    onClick={handleViewOrders}
+                                    sx={{
+                                        borderColor: variables['--primary-aims-light'],
+                                        color: variables['--primary-aims-main'],
+                                        '&:hover': {
+                                            borderColor: variables['--primary-aims-main'],
+                                            bgcolor: 'rgba(13, 128, 243, 0.04)',
+                                        }
+                                    }}
+                                >
+                                    View All Orders
+                                </Button>
+                            </Box>
                             <Grid container spacing={2}>
                                 {recentOrders?.map((order: any) => (
                                     <Grid item xs={12} sm={6} md={4} key={order?._id || Math.random()}>
@@ -896,43 +897,9 @@ const SellerOverviewLayout: React.FC = () => {
                                     </Grid>
                                 ))}
                             </Grid>
-                        ) : (
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                                alignItems="center"
-                                justifyContent="center"
-                                py={4}
-                                sx={{
-                                    bgcolor: 'rgba(0, 0, 0, 0.02)',
-                                    borderRadius: 2,
-                                    border: '1px dashed rgba(0, 0, 0, 0.12)'
-                                }}
-                            >
-                                <ShoppingCart sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-                                <Typography variant="h6" color="text.secondary" gutterBottom>
-                                    No recent orders
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" textAlign="center" mb={3}>
-                                    Start by adding products to your store to receive your first orders!
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<Add />}
-                                    onClick={handleAddProduct}
-                                    sx={{
-                                        bgcolor: variables['--primary-aims-main'],
-                                        '&:hover': {
-                                            bgcolor: variables['--primary-aims-dark'],
-                                        }
-                                    }}
-                                >
-                                    Add Your First Product
-                                </Button>
-                            </Box>
-                        )}
-                    </Paper>
-                </Grid>
+                        </Paper>
+                    </Grid>
+                )}
             </Grid>
 
             {/* Order Details Dialog */}
@@ -985,20 +952,45 @@ const SellerOverviewLayout: React.FC = () => {
                                 Order Items
                             </Typography>
                             <List>
-                                {selectedOrder.orderItems?.map((item: any, index: number) => (
-                                    <ListItem key={index}>
-                                        <ListItemAvatar>
-                                            <Avatar src={item.image} alt={item.name} />
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={item.name}
-                                            secondary={`Quantity: ${item.quantity} | Price: $${item.price}`}
-                                        />
-                                        <Typography variant="body2">
-                                            ${(item.price * item.quantity).toFixed(2)}
-                                        </Typography>
-                                    </ListItem>
-                                ))}
+                                {selectedOrder.orderItems?.map((item: any, index: number) => {
+                                    // Validate image URL and provide fallback
+                                    const getValidImageSrc = (imageSrc: string) => {
+                                        if (!imageSrc || imageSrc === "sad") return null;
+                                        if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://')) {
+                                            return imageSrc;
+                                        }
+                                        if (imageSrc.startsWith('/')) {
+                                            return imageSrc;
+                                        }
+                                        return null;
+                                    };
+
+                                    const validImageSrc = getValidImageSrc(item.image);
+
+                                    return (
+                                        <ListItem key={index}>
+                                            <ListItemAvatar>
+                                                <Avatar
+                                                    src={validImageSrc || undefined}
+                                                    alt={item.name}
+                                                    sx={{
+                                                        bgcolor: !validImageSrc ? 'primary.main' : undefined,
+                                                        color: !validImageSrc ? 'white' : undefined
+                                                    }}
+                                                >
+                                                    {!validImageSrc && item.name?.charAt(0)?.toUpperCase()}
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={item.name}
+                                                secondary={`Quantity: ${item.quantity} | Price: $${item.price}`}
+                                            />
+                                            <Typography variant="body2">
+                                                ${(item.price * item.quantity).toFixed(2)}
+                                            </Typography>
+                                        </ListItem>
+                                    );
+                                })}
                             </List>
 
                             <Divider sx={{ my: 2 }} />
