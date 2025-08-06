@@ -99,20 +99,31 @@ const CustomerChatBox: React.FC = () => {
 	};
 
 	return (
-		<Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
+		<Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1300 }}>
 			{!isEmpty(userInfo) && !isAdmin && !isOpen ? (
 				<IconButton
 					onClick={supportHandler}
 					color="primary"
 					aria-label="chat"
 					sx={{
-						backgroundColor: "primary.main",
+						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 						color: "white",
+						width: 64,
+						height: 64,
 						position: "fixed",
-						bottom: { xs: "16px", md: "32px" },
-						right: { xs: "16px", md: "32px" },
-						zIndex: 1000,
-						"&:hover": { backgroundColor: "primary.dark" },
+						bottom: { xs: "20px", md: "32px" },
+						right: { xs: "20px", md: "32px" },
+						zIndex: 1300,
+						boxShadow: "0 8px 32px rgba(102, 126, 234, 0.4)",
+						transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+						"&:hover": { 
+							transform: "scale(1.1)",
+							boxShadow: "0 12px 40px rgba(102, 126, 234, 0.6)",
+							background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+						},
+						"&:active": {
+							transform: "scale(0.95)",
+						},
 					}}
 				>
 					<ChatIcon fontSize="large" />
@@ -120,14 +131,30 @@ const CustomerChatBox: React.FC = () => {
 			) : (
 				<Box
 					sx={{
-						width: 350,
-						height: 450,
+						width: { xs: "calc(100vw - 32px)", sm: 380 },
+						height: { xs: "calc(100vh - 100px)", sm: 520 },
+						maxHeight: "80vh",
 						display: "flex",
 						flexDirection: "column",
 						backgroundColor: "background.paper",
-						boxShadow: 3,
-						borderRadius: 2,
-						mr: "20px",
+						borderRadius: 4,
+						overflow: "hidden",
+						mr: { xs: 0, sm: "20px" },
+						mb: { xs: 2, sm: 0 },
+						boxShadow: "0 24px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05)",
+						backdropFilter: "blur(20px)",
+						border: "1px solid rgba(255, 255, 255, 0.1)",
+						animation: "slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+						"@keyframes slideUp": {
+							from: {
+								opacity: 0,
+								transform: "translateY(20px) scale(0.95)",
+							},
+							to: {
+								opacity: 1,
+								transform: "translateY(0) scale(1)",
+							},
+						},
 					}}
 				>
 					<Stack
@@ -135,18 +162,50 @@ const CustomerChatBox: React.FC = () => {
 						justifyContent="space-between"
 						alignItems="center"
 						sx={{
-							p: 1,
-							backgroundColor: "primary.main",
+							p: 3,
+							background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 							color: "white",
-							borderRadius: "8px 8px 0 0",
+							position: "relative",
+							"&::before": {
+								content: '""',
+								position: "absolute",
+								bottom: 0,
+								left: 0,
+								right: 0,
+								height: "1px",
+								background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+							},
 						}}
 					>
-						<Typography variant="h6" ml={1}>
-							Customer Support
-						</Typography>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+							<Box
+								sx={{
+									width: 10,
+									height: 10,
+									borderRadius: "50%",
+									backgroundColor: "#4ade80",
+									boxShadow: "0 0 8px rgba(74, 222, 128, 0.6)",
+									animation: "pulse 2s infinite",
+									"@keyframes pulse": {
+										"0%, 100%": { opacity: 1, transform: "scale(1)" },
+										"50%": { opacity: 0.7, transform: "scale(1.1)" },
+									},
+								}}
+							/>
+							<Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1.1rem" }}>
+								Customer Support
+							</Typography>
+						</Box>
 						<IconButton
 							onClick={closeHandler}
-							sx={{ color: "white" }}
+							sx={{ 
+								color: "white",
+								transition: "all 0.2s ease",
+								"&:hover": { 
+									backgroundColor: "rgba(255, 255, 255, 0.1)",
+									transform: "rotate(90deg)",
+								},
+							}}
 							aria-label="close chat"
 						>
 							<CloseIcon />
@@ -158,8 +217,22 @@ const CustomerChatBox: React.FC = () => {
 						sx={{
 							flexGrow: 1,
 							overflowY: "auto",
-							p: 2,
-							bgcolor: "background.default",
+							p: 3,
+							bgcolor: "transparent",
+							background: "linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%)",
+							"&::-webkit-scrollbar": {
+								width: "6px",
+							},
+							"&::-webkit-scrollbar-track": {
+								background: "transparent",
+							},
+							"&::-webkit-scrollbar-thumb": {
+								background: "rgba(0, 0, 0, 0.2)",
+								borderRadius: "3px",
+								"&:hover": {
+									background: "rgba(0, 0, 0, 0.3)",
+								},
+							},
 						}}
 					>
 						{messages.map((msg, index) => (
@@ -171,17 +244,24 @@ const CustomerChatBox: React.FC = () => {
 										msg.name === (isAdmin ? "Admin" : userInfo.name)
 											? "flex-end"
 											: "flex-start",
-									mb: 1,
+									mb: 2,
+									p: 0,
+									animation: `fadeIn 0.3s ease ${index * 0.1}s both`,
+									"@keyframes fadeIn": {
+										from: { opacity: 0, transform: "translateY(10px)" },
+										to: { opacity: 1, transform: "translateY(0)" },
+									},
 								}}
 							>
 								{msg.name !== (isAdmin ? "Admin" : userInfo.name) && (
 									<Avatar
 										sx={{
-											bgcolor:
-												msg.name !== userInfo.name
-													? "secondary.main"
-													: "primary.main",
-											mr: 1,
+											bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+											mr: 2,
+											width: 40,
+											height: 40,
+											boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+											border: "2px solid white",
 										}}
 									>
 										{msg.name[0].toUpperCase()}
@@ -189,21 +269,90 @@ const CustomerChatBox: React.FC = () => {
 								)}
 								<Box
 									sx={{
-										p: 1,
-										borderRadius: 2,
-										backgroundColor:
-											msg.name === (isAdmin ? "Admin" : userInfo.name)
-												? "primary.light"
-												: "secondary.light",
-										boxShadow: 1,
-										color: "common.white",
+										maxWidth: "75%",
+										position: "relative",
 									}}
 								>
-									<Typography variant="body2" fontWeight="bold">
-										{msg.name}
-									</Typography>
-									<Typography variant="body2">{msg.body}</Typography>
+									<Box
+										sx={{
+											p: 2,
+											borderRadius: msg.name === (isAdmin ? "Admin" : userInfo.name)
+												? "20px 20px 4px 20px"
+												: "20px 20px 20px 4px",
+											background: msg.name === (isAdmin ? "Admin" : userInfo.name)
+												? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+												: "white",
+											color: msg.name === (isAdmin ? "Admin" : userInfo.name)
+												? "white"
+												: "text.primary",
+											boxShadow: msg.name === (isAdmin ? "Admin" : userInfo.name)
+												? "0 4px 12px rgba(102, 126, 234, 0.3)"
+												: "0 2px 8px rgba(0, 0, 0, 0.1)",
+											border: msg.name !== (isAdmin ? "Admin" : userInfo.name)
+												? "1px solid rgba(0, 0, 0, 0.05)"
+												: "none",
+											position: "relative",
+											"&::before": msg.name !== (isAdmin ? "Admin" : userInfo.name) ? {
+												content: '""',
+												position: "absolute",
+												left: -8,
+												top: 8,
+												width: 0,
+												height: 0,
+												borderStyle: "solid",
+												borderWidth: "8px 8px 8px 0",
+												borderColor: "transparent white transparent transparent",
+											} : {},
+											"&::after": msg.name === (isAdmin ? "Admin" : userInfo.name) ? {
+												content: '""',
+												position: "absolute",
+												right: -8,
+												top: 8,
+												width: 0,
+												height: 0,
+												borderStyle: "solid",
+												borderWidth: "8px 0 8px 8px",
+												borderColor: "transparent transparent transparent #667eea",
+											} : {},
+										}}
+									>
+										<Typography 
+											variant="caption" 
+											sx={{ 
+												fontWeight: 600,
+												opacity: 0.8,
+												fontSize: "0.75rem",
+												display: "block",
+												mb: 0.5,
+											}}
+										>
+											{msg.name}
+										</Typography>
+										<Typography 
+											variant="body2" 
+											sx={{ 
+												fontSize: "0.9rem",
+												lineHeight: 1.4,
+											}}
+										>
+											{msg.body}
+										</Typography>
+									</Box>
 								</Box>
+								{msg.name === (isAdmin ? "Admin" : userInfo.name) && (
+									<Avatar
+										sx={{
+											bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+											ml: 2,
+											width: 40,
+											height: 40,
+											boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+											border: "2px solid white",
+										}}
+									>
+										{userInfo.name[0].toUpperCase()}
+									</Avatar>
+								)}
 							</ListItem>
 						))}
 					</List>
@@ -212,30 +361,71 @@ const CustomerChatBox: React.FC = () => {
 						component="form"
 						onSubmit={submitHandler}
 						sx={{
-							p: 2,
-							borderTop: "1px solid",
-							borderColor: "divider",
+							p: 3,
+							background: "white",
+							borderTop: "1px solid rgba(0, 0, 0, 0.05)",
 							display: "flex",
 							alignItems: "center",
+							gap: 2,
+							backdropFilter: "blur(10px)",
 						}}
 					>
 						<TextField
 							fullWidth
 							variant="outlined"
-							placeholder="Type a message"
+							placeholder="Type your message..."
 							value={messageBody}
 							onChange={(e) => setMessageBody(e.target.value)}
 							size="small"
-							sx={{ flexGrow: 1, mr: 1 }}
+							sx={{ 
+								flexGrow: 1,
+								"& .MuiOutlinedInput-root": {
+									borderRadius: 3,
+									backgroundColor: "#f8fafc",
+									border: "1px solid rgba(0, 0, 0, 0.08)",
+									transition: "all 0.2s ease",
+									"&:hover": {
+										backgroundColor: "#f1f5f9",
+										borderColor: "rgba(102, 126, 234, 0.3)",
+									},
+									"&.Mui-focused": {
+										backgroundColor: "white",
+										borderColor: "#667eea",
+										boxShadow: "0 0 0 3px rgba(102, 126, 234, 0.1)",
+									},
+									"& fieldset": {
+										border: "none",
+									},
+								},
+								"& .MuiOutlinedInput-input": {
+									padding: "12px 16px",
+									fontSize: "0.9rem",
+								},
+							}}
 						/>
 
 						<IconButton
 							type="submit"
-							color="primary"
+							disabled={!messageBody.trim()}
 							sx={{
-								backgroundColor: "primary.main",
+								background: messageBody.trim() 
+									? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+									: "rgba(0, 0, 0, 0.1)",
 								color: "white",
-								"&:hover": { backgroundColor: "primary.dark" },
+								width: 48,
+								height: 48,
+								transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+								"&:hover": messageBody.trim() ? {
+									transform: "scale(1.05)",
+									boxShadow: "0 8px 24px rgba(102, 126, 234, 0.4)",
+									background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+								} : {},
+								"&:disabled": {
+									color: "rgba(0, 0, 0, 0.3)",
+								},
+								"&:active": {
+									transform: "scale(0.95)",
+								},
 							}}
 						>
 							<SendIcon />
