@@ -40,7 +40,7 @@ const profileValidationSchema = yup.object({
 const SellerProfileLayout: React.FC = () => {
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state: any) => state.user);
-    const { sellerInfo } = useSelector((state: any) => state.seller);
+    const { sellerInfo, orders, products } = useSelector((state: any) => state.seller);
     const { loading } = useSelector((state: any) => state.app);
     const [updateSellerProfile, { isLoading: isUpdating }] = useUpdateSellerProfileMutation();
     const [updateProfile] = useUpdateProfileMutation();
@@ -108,28 +108,62 @@ const SellerProfileLayout: React.FC = () => {
         formik.resetForm();
     };
 
+    const calculateStats = () => {
+        const ordersData = orders || [];
+        const productsData = products || [];
+
+        const totalRevenue = ordersData
+            .filter((order: any) => order?.isPaid)
+            .reduce((sum: number, order: any) => sum + (order?.totalPrice || 0), 0);
+
+        const activeProducts = productsData.filter((product: any) =>
+            (product?.countInStock || 0) > 0
+        ).length;
+
+        const totalReviews = productsData.reduce((sum: number, product: any) =>
+            sum + (product?.reviews?.length || 0), 0
+        );
+
+        const allRatings = productsData.flatMap((product: any) =>
+            product?.reviews?.map((review: any) => review?.rating || 0) || []
+        );
+        const averageRating = allRatings.length > 0
+            ? (allRatings.reduce((sum: number, rating: number) => sum + rating, 0) / allRatings.length)
+            : 0;
+
+        return {
+            totalRevenue,
+            totalOrders: ordersData.length,
+            activeProducts,
+            totalReviews,
+            averageRating
+        };
+    };
+
+    const stats = calculateStats();
+
     const statsCards = [
         {
             title: "Store Rating",
-            value: "4.5/5",
+            value: stats.averageRating > 0 ? `${stats.averageRating.toFixed(1)}/5` : "No ratings",
             icon: <Store />,
             color: "primary",
         },
         {
-            title: "Total Sales",
-            value: "$12,430",
+            title: "Total Revenue",
+            value: `$${stats.totalRevenue.toFixed(2)}`,
             icon: <BusinessCenter />,
             color: "success",
         },
         {
             title: "Active Products",
-            value: "45",
+            value: stats.activeProducts.toString(),
             icon: <Store />,
             color: "info",
         },
         {
             title: "Customer Reviews",
-            value: "234",
+            value: stats.totalReviews.toString(),
             icon: <Person />,
             color: "warning",
         },

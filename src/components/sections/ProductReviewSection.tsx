@@ -42,9 +42,21 @@ export default function ProductReviewSection() {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+
+		// Validate required fields
+		if (!rating || rating === 0) {
+			setErrorMessage("Please provide a rating before submitting your review.");
+			return;
+		}
+
+		if (!comment.trim()) {
+			setErrorMessage("Please write a comment before submitting your review.");
+			return;
+		}
+
 		const payload = {
 			name: userInfo?.name,
-			comment,
+			comment: comment.trim(),
 			rating: rating?.toString(),
 		};
 		await reqPostReview({ productId: product?._id, ...payload })
@@ -196,9 +208,6 @@ export default function ProductReviewSection() {
 						</Typography>
 						<Stack spacing={2}>
 							<Box>
-								<Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-									Rating
-								</Typography>
 								<Rating
 									value={rating}
 									onChange={(_, newValue) => setRating(newValue)}
@@ -211,6 +220,7 @@ export default function ProductReviewSection() {
 							</Box>
 							<TextField
 								label="Write your comment"
+								placeholder="Share your experience with this product..."
 								multiline
 								rows={3}
 								value={comment}
@@ -228,6 +238,7 @@ export default function ProductReviewSection() {
 							<Button
 								type="submit"
 								variant="contained"
+								disabled={!rating || rating === 0 || !comment.trim()}
 								sx={{
 									borderRadius: 2,
 									textTransform: "none",
@@ -240,6 +251,10 @@ export default function ProductReviewSection() {
 									alignSelf: "flex-start",
 									"&:hover": {
 										background: "primary.dark",
+									},
+									"&:disabled": {
+										background: "rgba(0, 0, 0, 0.12)",
+										color: "rgba(0, 0, 0, 0.26)",
 									},
 								}}
 							>

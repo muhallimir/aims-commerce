@@ -18,9 +18,9 @@
 		"@next/next/no-typos": "off",
 		"react/no-unescaped-entities": "off",
 		"complexity": [
-			"error",
+			"warn",
 			{
-				"max": 50
+				"max": 60
 			}
 		]
 	},

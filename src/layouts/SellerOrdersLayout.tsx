@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     useGetSellerOrdersQuery,
     useUpdateOrderStatusMutation,
@@ -24,6 +24,7 @@ import {
     Pagination,
     Alert,
     Skeleton,
+    IconButton,
 } from "@mui/material";
 import {
     LocalShipping,
@@ -31,6 +32,7 @@ import {
     Pending,
     Visibility,
     Update,
+    Refresh,
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import SearchBar from "src/components/bars/SearchBar";
@@ -39,7 +41,7 @@ const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
     const { loading } = useSelector((state: any) => state.app);
 
-    const { error: ordersError } = useGetSellerOrdersQuery({});
+    const { error: ordersError, refetch: refetchOrders } = useGetSellerOrdersQuery({}, {});
     const [reqUpdateOrderStatus] = useUpdateOrderStatusMutation();
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -69,8 +71,7 @@ const SellerOrdersLayout: React.FC = () => {
                 deliveredAt: status === "delivered" ? new Date().toISOString() : undefined
             }).unwrap();
 
-            // Refetch orders to get updated data
-            // Order status updated successfully, data will refresh automatically
+            refetchOrders();
         } catch (error) {
             console.error("Error updating order status:", error);
         }
@@ -178,6 +179,21 @@ const SellerOrdersLayout: React.FC = () => {
                 <Typography variant="h4" color="primary" fontWeight="bold">
                     Orders ({ordersData.length})
                 </Typography>
+                <IconButton
+                    onClick={refetchOrders}
+                    color="primary"
+                    size="small"
+                    sx={{
+                        bgcolor: 'background.paper',
+                        boxShadow: 1,
+                        '&:hover': { boxShadow: 2 },
+                        border: '1px solid',
+                        borderColor: 'primary.light'
+                    }}
+                    title="Refresh Orders"
+                >
+                    <Refresh />
+                </IconButton>
             </Box>
 
             <SearchBar onSearch={handleSearch} placeholder="Search orders..." />

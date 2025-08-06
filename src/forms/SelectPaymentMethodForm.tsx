@@ -87,7 +87,7 @@ const SelectPaymentMethodForm: React.FC = () => {
 							value="bankTransfer"
 							control={<Radio disabled />}
 							label={
-								<Typography color={formik.values.paymentMethod === "bankTransfer" ? "primary" : ""}>
+								<Typography color={formik.values.paymentMethod === "bankTransfer" ? "primary" : "text.primary"}>
 									Bank Transfer (Coming Soon)
 								</Typography>
 							}
