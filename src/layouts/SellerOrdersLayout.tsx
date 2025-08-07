@@ -41,7 +41,7 @@ const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
     const { loading } = useSelector((state: any) => state.app);
 
-    const { error: ordersError, refetch: refetchOrders } = useGetSellerOrdersQuery({}, {});
+    const { error: ordersError, refetch: refetchOrders } = useGetSellerOrdersQuery({});
     const [reqUpdateOrderStatus] = useUpdateOrderStatusMutation();
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -71,7 +71,6 @@ const SellerOrdersLayout: React.FC = () => {
                 deliveredAt: status === "delivered" ? new Date().toISOString() : undefined
             }).unwrap();
 
-            refetchOrders();
         } catch (error) {
             console.error("Error updating order status:", error);
         }

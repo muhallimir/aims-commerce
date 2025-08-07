@@ -26,7 +26,7 @@ import * as yup from "yup";
 import { useRouter } from "next/router";
 import { useCreateSellerProductMutation } from "@store/seller.slice";
 import LoadingOverlay from "src/components/loaders/TextLoader";
-import { LOADERTEXT, SUCCESSMESSAGE } from "@common/constants";
+import { LOADERTEXT, PRODUCT_CATEGORIES } from "@common/constants";
 import SuccessModal from "src/components/modals/SuccessModal";
 
 const SellerProductForm: React.FC = () => {
@@ -262,15 +262,11 @@ const SellerProductForm: React.FC = () => {
                                         borderRadius: 4,
                                     }}
                                 >
-                                    <MenuItem value="Electronics">Electronics</MenuItem>
-                                    <MenuItem value="Clothing">Clothing</MenuItem>
-                                    <MenuItem value="Books">Books</MenuItem>
-                                    <MenuItem value="Home & Garden">Home & Garden</MenuItem>
-                                    <MenuItem value="Sports">Sports</MenuItem>
-                                    <MenuItem value="Automotive">Automotive</MenuItem>
-                                    <MenuItem value="Health & Beauty">Health & Beauty</MenuItem>
-                                    <MenuItem value="Toys & Games">Toys & Games</MenuItem>
-                                    <MenuItem value="Other">Other</MenuItem>
+                                    {PRODUCT_CATEGORIES.map((category) => (
+                                        <MenuItem key={category.value} value={category.value}>
+                                            {category.label}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
 

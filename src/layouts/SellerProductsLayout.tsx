@@ -17,6 +17,10 @@ import {
     Alert,
     CircularProgress,
     Skeleton,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import {
     Add,
@@ -30,7 +34,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import SearchBar from "src/components/bars/SearchBar";
 import ConfirmModal from "src/components/modals/ConfirmModal";
-import { CONFIRMATIONMESSAGE } from "@common/constants";
+import { CONFIRMATIONMESSAGE, PRODUCT_CATEGORIES } from "@common/constants";
 import {
     useGetSellerProductsQuery,
     useCreateSellerProductMutation,
@@ -577,19 +581,30 @@ const SellerProductsLayout: React.FC = () => {
                             </Grid>
 
                             <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    name="category"
-                                    label="Category"
-                                    value={formik.values.category}
-                                    onChange={formik.handleChange}
-                                    error={formik.touched.category && Boolean(formik.errors.category)}
-                                    helperText={formik.touched.category && formik.errors.category}
-                                    sx={{
-                                        '& .MuiInputBase-root': { borderRadius: 2 },
-                                        '& .MuiFormLabel-root': { fontWeight: 'bold' }
-                                    }}
-                                />
+                                <FormControl fullWidth error={formik.touched.category && Boolean(formik.errors.category)}>
+                                    <InputLabel sx={{ fontWeight: 'bold' }}>Category</InputLabel>
+                                    <Select
+                                        name="category"
+                                        value={formik.values.category}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        label="Category"
+                                        sx={{
+                                            '& .MuiInputBase-root': { borderRadius: 2 }
+                                        }}
+                                    >
+                                        {PRODUCT_CATEGORIES.map((category) => (
+                                            <MenuItem key={category.value} value={category.value}>
+                                                {category.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    {formik.touched.category && formik.errors.category && (
+                                        <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                                            {formik.errors.category}
+                                        </Typography>
+                                    )}
+                                </FormControl>
                             </Grid>
 
                             <Grid item xs={12} sm={6}>

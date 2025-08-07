@@ -14,3 +14,15 @@ export const CONFIRMATIONMESSAGE = {
     PRODUCT_DELETE: "Are you sure you want to delete this product? This action cannot be undone.",
 };
 
+export const PRODUCT_CATEGORIES = [
+    { value: "Electronics", label: "Electronics" },
+    { value: "Clothing", label: "Clothing" },
+    { value: "Books", label: "Books" },
+    { value: "Home & Garden", label: "Home & Garden" },
+    { value: "Sports", label: "Sports" },
+    { value: "Automotive", label: "Automotive" },
+    { value: "Health & Beauty", label: "Health & Beauty" },
+    { value: "Toys & Games", label: "Toys & Games" },
+    { value: "Other", label: "Other" },
+];
+
