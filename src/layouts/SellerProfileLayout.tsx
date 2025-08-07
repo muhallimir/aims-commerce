@@ -35,6 +35,7 @@ const profileValidationSchema = yup.object({
     address: yup.string(),
     city: yup.string(),
     country: yup.string(),
+    isActiveStore: yup.boolean(),
 });
 
 const SellerProfileLayout: React.FC = () => {
@@ -46,7 +47,6 @@ const SellerProfileLayout: React.FC = () => {
     const [updateProfile] = useUpdateProfileMutation();
 
     const [isEditing, setIsEditing] = useState(false);
-    const [storeActive, setStoreActive] = useState(true);
 
     const formik = useFormik({
         initialValues: {
@@ -57,6 +57,7 @@ const SellerProfileLayout: React.FC = () => {
             address: userInfo?.address || sellerInfo?.address || "",
             city: userInfo?.city || sellerInfo?.city || "",
             country: userInfo?.country || sellerInfo?.country || "",
+            isActiveStore: userInfo?.isActiveStore !== undefined ? userInfo.isActiveStore : true,
         },
         validationSchema: profileValidationSchema,
         onSubmit: async (values) => {
@@ -70,6 +71,7 @@ const SellerProfileLayout: React.FC = () => {
                     address: values.address,
                     city: values.city,
                     country: values.country,
+                    isActiveStore: values.isActiveStore,
                 };
 
                 const sellerPayload = {
@@ -431,17 +433,23 @@ const SellerProfileLayout: React.FC = () => {
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        checked={storeActive}
-                                        onChange={(e) => setStoreActive(e.target.checked)}
+                                        checked={formik.values.isActiveStore}
+                                        onChange={(e) => formik.setFieldValue('isActiveStore', e.target.checked)}
+                                        disabled={!isEditing}
                                     />
                                 }
                                 label="Store Active"
                             />
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                {storeActive
+                                {formik.values.isActiveStore
                                     ? "Your store is visible to customers"
                                     : "Your store is temporarily hidden"}
                             </Typography>
+                            {isEditing && (
+                                <Typography variant="caption" color="primary" sx={{ mt: 1, display: 'block' }}>
+                                    Toggle to activate/deactivate your store visibility
+                                </Typography>
+                            )}
                         </CardContent>
                     </Card>
 

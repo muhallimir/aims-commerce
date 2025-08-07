@@ -70,12 +70,14 @@ const ProductsGridLayout: React.FC = () => {
 	};
 
 
-	const filteredProducts = products.filter((product: any) =>
-		[product.title, product.category, product.description]
-			.join(" ")
-			.toLowerCase()
-			.includes(searchQuery.toLowerCase()),
-	);
+	const filteredProducts = products
+		.filter((product: any) => product.isActive === true)
+		.filter((product: any) =>
+			[product.title, product.name, product.category, product.description]
+				.join(" ")
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase()),
+		);
 
 	return (
 		<Container
