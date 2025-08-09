@@ -303,7 +303,7 @@ const ProductDetailSection: React.FC = ({ }) => {
 						</Stack>
 					) : (
 						<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-							{product.countInStock === 0 ? (
+							{product?.countInStock === 0 ? (
 								<Button
 									variant="contained"
 									size="large"

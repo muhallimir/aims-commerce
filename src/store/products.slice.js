@@ -48,6 +48,34 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }
       },
     }),
+    GetProductListForChatbot: builder.query({
+      query: () => ({
+        url: '/api/products',
+        method: 'GET',
+      }),
+    }),
+    GetProductCategories: builder.query({
+      query: () => ({
+        url: '/api/products/categories',
+        method: 'GET',
+      }),
+    }),
+    SearchProducts: builder.query({
+      query: (searchParams) => {
+        const params = new URLSearchParams();
+        if (searchParams.name) params.append('name', searchParams.name);
+        if (searchParams.category) params.append('category', searchParams.category);
+        if (searchParams.min) params.append('min', searchParams.min);
+        if (searchParams.max) params.append('max', searchParams.max);
+        if (searchParams.rating) params.append('rating', searchParams.rating);
+        if (searchParams.order) params.append('order', searchParams.order);
+
+        return {
+          url: `/api/products?${params.toString()}`,
+          method: 'GET',
+        };
+      },
+    }),
     GetProduct: builder.mutation({
       query: (args) => ({
         url: `/api/products/${args.productId}`,
@@ -159,7 +187,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetProductListMutation, useGetProductMutation, usePostProductReviewMutation, useDeleteProductMutation, useCreateNewProductMutation, useUpdateProductMutation, useUploadProductImageMutation } = productApiSlice;
+export const {
+  useGetProductListMutation,
+  useGetProductMutation,
+  usePostProductReviewMutation,
+  useDeleteProductMutation,
+  useCreateNewProductMutation,
+  useUpdateProductMutation,
+  useUploadProductImageMutation,
+  useGetProductListForChatbotQuery,
+  useGetProductCategoriesQuery,
+  useSearchProductsQuery
+} = productApiSlice;
 
 
 

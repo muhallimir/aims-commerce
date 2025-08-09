@@ -35,21 +35,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 			}}
 		>
 			<Box>{children}</Box>
-			{!isAdmin && !isEmpty(userInfo) && (
-				<Box
-					sx={{
-						position: "fixed",
-						bottom: { xs: "80px", md: "100px" },
-						right: { xs: "16px", md: "32px" },
-						width: { xs: "90%", md: "400px" },
-						maxWidth: "100%",
-						zIndex: 1000,
-						boxShadow: 5,
-					}}
-				>
-					<CustomerChatBox />
-				</Box>
-			)}
+			{!isAdmin && !isEmpty(userInfo) && <CustomerChatBox />}
 		</Box>
 	);
 }
