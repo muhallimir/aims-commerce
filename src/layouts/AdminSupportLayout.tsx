@@ -36,7 +36,7 @@ const AdminSupportLayout: React.FC = () => {
 		) {
 			setEndpoint("http://localhost:5003");
 		} else {
-			setEndpoint(process.env.NEXT_PUBLIC_MONGODB_URI);
+			setEndpoint(process.env.NEXT_PUBLIC_API_URI);
 		}
 	}, []);
 

@@ -1,9 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import chatbotService, { ChatbotMessage, ChatbotResponse } from 'src/services/chatbotService';
 import {
     useGetProductListForChatbotQuery,
     useGetProductCategoriesQuery
 } from 'src/store/products.slice';
+import { useSelector } from 'react-redux';
+
+// Helper functions for user-specific storage keys
+const getChatStorageKey = (userId: string | null) =>
+    userId ? `chatbot-messages-${userId}` : 'chatbot-messages-guest';
+const getInteractionStorageKey = (userId: string | null) =>
+    userId ? `chatbot-hasInteracted-${userId}` : 'chatbot-hasInteracted-guest';
+const getEscalationStorageKey = (userId: string | null) =>
+    userId ? `chatbot-shouldEscalate-${userId}` : 'chatbot-shouldEscalate-guest';
+const getLastUserKey = () => 'chatbot-lastUserId';
 
 export const useChatbot = () => {
     const [messages, setMessages] = useState<ChatbotMessage[]>([]);
@@ -12,11 +22,71 @@ export const useChatbot = () => {
     const [shouldEscalateToAdmin, setShouldEscalateToAdmin] = useState(false);
     const [hasInteractedWithBot, setHasInteractedWithBot] = useState(false);
 
-    // Initialize chat from localStorage or default message
+    // Get current user from Redux
+    const { userInfo } = useSelector((state: any) => state.user);
+    const currentUserId = userInfo?._id || null;
+    const previousUserIdRef = useRef<string | null>(null);
+
+    // Initialize and handle user changes
     useEffect(() => {
-        const savedMessages = localStorage.getItem('chatbot-messages');
-        const savedInteractionState = localStorage.getItem('chatbot-hasInteracted');
-        const savedEscalationState = localStorage.getItem('chatbot-shouldEscalate');
+        const lastUserId = localStorage.getItem(getLastUserKey());
+        const wasGuest = lastUserId === 'guest' || lastUserId === null;
+        const isNowLoggedIn = currentUserId !== null;
+        const isDifferentLoggedInUser = lastUserId !== null && lastUserId !== 'guest' && lastUserId !== currentUserId;
+
+        // Case 1: Guest just logged in - migrate guest chat to user
+        if (wasGuest && isNowLoggedIn) {
+            migrateGuestChatToUser(currentUserId);
+        }
+        // Case 2: Different logged-in user - clear and load fresh for new user
+        else if (isDifferentLoggedInUser && isNowLoggedIn) {
+            loadChatForUser(currentUserId);
+        }
+        // Case 3: User logged out (now guest) - load guest chat or start fresh
+        else if (!isNowLoggedIn && lastUserId && lastUserId !== 'guest') {
+            loadChatForUser(null);
+        }
+        // Case 4: Same user or first load - just load their chat
+        else {
+            loadChatForUser(currentUserId);
+        }
+
+        // Update last user tracking
+        localStorage.setItem(getLastUserKey(), currentUserId || 'guest');
+        previousUserIdRef.current = currentUserId;
+    }, [currentUserId]);
+
+    // Migrate guest chat history to logged-in user
+    const migrateGuestChatToUser = (userId: string) => {
+        const guestMessages = localStorage.getItem(getChatStorageKey(null));
+        const guestInteraction = localStorage.getItem(getInteractionStorageKey(null));
+        const guestEscalation = localStorage.getItem(getEscalationStorageKey(null));
+
+        // Check if user already has chat history
+        const userMessages = localStorage.getItem(getChatStorageKey(userId));
+
+        if (guestMessages && !userMessages) {
+            // Migrate guest chat to user
+            localStorage.setItem(getChatStorageKey(userId), guestMessages);
+            if (guestInteraction) {
+                localStorage.setItem(getInteractionStorageKey(userId), guestInteraction);
+            }
+            if (guestEscalation) {
+                localStorage.setItem(getEscalationStorageKey(userId), guestEscalation);
+            }
+        }
+
+        // Clear guest data after migration
+        clearGuestChatData();
+
+        // Load the (now migrated) user chat
+        loadChatForUser(userId);
+    };
+
+    const loadChatForUser = (userId: string | null) => {
+        const savedMessages = localStorage.getItem(getChatStorageKey(userId));
+        const savedInteractionState = localStorage.getItem(getInteractionStorageKey(userId));
+        const savedEscalationState = localStorage.getItem(getEscalationStorageKey(userId));
 
         if (savedMessages) {
             try {
@@ -24,45 +94,52 @@ export const useChatbot = () => {
                 setMessages(parsedMessages);
             } catch (error) {
                 console.error('Error parsing saved messages:', error);
-                setMessages([{
-                    name: 'AI Assistant',
-                    body: "Hello! I'm your AI shopping assistant. I can help you find products, check prices, and answer questions about our inventory. What are you looking for today?",
-                    type: 'bot',
-                    timestamp: new Date(),
-                }]);
+                setMessages([getInitialMessage()]);
             }
         } else {
-            setMessages([{
-                name: 'AI Assistant',
-                body: "Hello! I'm your AI shopping assistant. I can help you find products, check prices, and answer questions about our inventory. What are you looking for today?",
-                type: 'bot',
-                timestamp: new Date(),
-            }]);
+            setMessages([getInitialMessage()]);
         }
 
         if (savedInteractionState) {
             setHasInteractedWithBot(JSON.parse(savedInteractionState));
+        } else {
+            setHasInteractedWithBot(false);
         }
 
         if (savedEscalationState) {
             setShouldEscalateToAdmin(JSON.parse(savedEscalationState));
+        } else {
+            setShouldEscalateToAdmin(false);
         }
-    }, []);
+    };
+
+    const getInitialMessage = (): ChatbotMessage => ({
+        name: 'AI Assistant',
+        body: "Hello! I'm your AI shopping assistant. I can help you find products, check prices, and answer questions about our inventory. What are you looking for today?",
+        type: 'bot',
+        timestamp: new Date(),
+    });
+
+    const clearGuestChatData = () => {
+        localStorage.removeItem(getChatStorageKey(null));
+        localStorage.removeItem(getInteractionStorageKey(null));
+        localStorage.removeItem(getEscalationStorageKey(null));
+    };
 
     // Save chat state to localStorage whenever it changes
     useEffect(() => {
         if (messages.length > 0) {
-            localStorage.setItem('chatbot-messages', JSON.stringify(messages));
+            localStorage.setItem(getChatStorageKey(currentUserId), JSON.stringify(messages));
         }
-    }, [messages]);
+    }, [messages, currentUserId]);
 
     useEffect(() => {
-        localStorage.setItem('chatbot-hasInteracted', JSON.stringify(hasInteractedWithBot));
-    }, [hasInteractedWithBot]);
+        localStorage.setItem(getInteractionStorageKey(currentUserId), JSON.stringify(hasInteractedWithBot));
+    }, [hasInteractedWithBot, currentUserId]);
 
     useEffect(() => {
-        localStorage.setItem('chatbot-shouldEscalate', JSON.stringify(shouldEscalateToAdmin));
-    }, [shouldEscalateToAdmin]);
+        localStorage.setItem(getEscalationStorageKey(currentUserId), JSON.stringify(shouldEscalateToAdmin));
+    }, [shouldEscalateToAdmin, currentUserId]);
 
     // RTK Query hooks
     const {
@@ -120,7 +197,7 @@ export const useChatbot = () => {
 
             setIsTyping(false);
 
-            // Create bot message
+            // Create bot message with typing animation flag
             const botMessage: ChatbotMessage = {
                 name: 'AI Assistant',
                 body: response.message,
@@ -128,6 +205,7 @@ export const useChatbot = () => {
                 timestamp: new Date(),
                 products: response.products,
                 isProductSuggestion: response.type === 'product_suggestions',
+                showPopularityChart: response.showPopularityChart,
             };
 
             setMessages(prev => [...prev, botMessage]);
@@ -172,25 +250,18 @@ export const useChatbot = () => {
 
     // Reset chatbot state
     const resetChatbot = useCallback(() => {
-        const initialMessage = {
-            name: 'AI Assistant',
-            body: "Hello! I'm your AI shopping assistant. I can help you find products, check prices, and answer questions about our inventory. What are you looking for today?",
-            type: 'bot' as const,
-            timestamp: new Date(),
-        };
-
-        setMessages([initialMessage]);
+        setMessages([getInitialMessage()]);
         setShouldEscalateToAdmin(false);
         setHasInteractedWithBot(false);
         setIsTyping(false);
 
-        // Clear localStorage
-        localStorage.removeItem('chatbot-messages');
-        localStorage.removeItem('chatbot-hasInteracted');
-        localStorage.removeItem('chatbot-shouldEscalate');
+        // Clear localStorage for current user
+        localStorage.removeItem(getChatStorageKey(currentUserId));
+        localStorage.removeItem(getInteractionStorageKey(currentUserId));
+        localStorage.removeItem(getEscalationStorageKey(currentUserId));
 
         chatbotService.clearConversationHistory();
-    }, []);
+    }, [currentUserId]);
 
     // Refresh product data
     const refreshProductData = useCallback(async () => {

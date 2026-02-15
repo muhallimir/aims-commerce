@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     Box,
     Card,
@@ -11,14 +11,20 @@ import {
     Stack,
     Snackbar,
     Alert,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LoginIcon from '@mui/icons-material/Login';
 import { Product } from 'src/services/chatbotService';
 import { getImageUrl } from 'src/helpers/commonFn';
 import { updateCartList } from 'src/store/cart.slice';
+import useAuthentication from 'src/hooks/useAuthentication';
 
 interface ProductSuggestionProps {
     products: Product[];
@@ -31,7 +37,10 @@ const ProductSuggestion: React.FC<ProductSuggestionProps> = ({
 }) => {
     const router = useRouter();
     const dispatch = useDispatch();
+    const { isAuthenticated } = useAuthentication();
     const cartItems = useSelector((state: any) => state.cart.cartItems);
+    const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+    const [pendingProduct, setPendingProduct] = useState<Product | null>(null);
     const [notification, setNotification] = useState<{
         open: boolean;
         message: string;
@@ -51,8 +60,16 @@ const ProductSuggestion: React.FC<ProductSuggestionProps> = ({
         router.push(`/store/product/${product._id}`);
     };
 
-    const handleAddToCart = (e: React.MouseEvent, product: Product) => {
+    const handleAddToCart = useCallback((e: React.MouseEvent, product: Product) => {
         e.stopPropagation(); // Prevent triggering product click
+
+        if (!isAuthenticated) {
+            // Store the product user wanted to add
+            setPendingProduct(product);
+            setShowSignInPrompt(true);
+            return;
+        }
+
         dispatch(updateCartList(product));
 
         // Show success notification
@@ -61,7 +78,22 @@ const ProductSuggestion: React.FC<ProductSuggestionProps> = ({
             message: `${product.name} added to cart!`,
             severity: 'success',
         });
-    };
+    }, [isAuthenticated, dispatch]);
+
+    const handleSignInRedirect = useCallback(() => {
+        // Store pending product in sessionStorage to add after sign-in
+        if (pendingProduct) {
+            sessionStorage.setItem('pendingCartProduct', JSON.stringify(pendingProduct));
+        }
+        setShowSignInPrompt(false);
+        // Use window.location.href for full page redirect (same as checkout flow)
+        window.location.href = '/signin';
+    }, [pendingProduct]);
+
+    const handleCloseSignInPrompt = useCallback(() => {
+        setShowSignInPrompt(false);
+        setPendingProduct(null);
+    }, []);
 
     const handleViewCart = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent triggering product click
@@ -311,6 +343,79 @@ const ProductSuggestion: React.FC<ProductSuggestionProps> = ({
                     {notification.message}
                 </Alert>
             </Snackbar>
+
+            {/* Sign-In Prompt Dialog */}
+            <Dialog
+                open={showSignInPrompt}
+                onClose={handleCloseSignInPrompt}
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                        maxWidth: 400,
+                        p: 1,
+                    },
+                }}
+            >
+                <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
+                    <Box sx={{ mb: 1 }}>
+                        <ShoppingCartIcon sx={{ fontSize: 48, color: '#667eea' }} />
+                    </Box>
+                    <Typography variant="h6" fontWeight={600}>
+                        You&apos;re Almost There! 🎉
+                    </Typography>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        textAlign="center"
+                        sx={{ mb: 2 }}
+                    >
+                        Sign in to add <strong>{pendingProduct?.name}</strong> to your cart and enjoy a personalized shopping experience.
+                    </Typography>
+                    <Box
+                        sx={{
+                            bgcolor: 'rgba(102, 126, 234, 0.08)',
+                            borderRadius: 2,
+                            p: 2,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography variant="caption" color="text.secondary">
+                            ✨ Save your cart across devices<br />
+                            🚀 Faster checkout experience<br />
+                            📦 Track your orders easily
+                        </Typography>
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 3, flexDirection: 'column', gap: 1 }}>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        startIcon={<LoginIcon />}
+                        onClick={handleSignInRedirect}
+                        sx={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            py: 1.5,
+                            borderRadius: 2,
+                            fontWeight: 600,
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #5a67d8 0%, #6a4c93 100%)',
+                            },
+                        }}
+                    >
+                        Sign In to Continue
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="text"
+                        onClick={handleCloseSignInPrompt}
+                        sx={{ color: 'text.secondary' }}
+                    >
+                        Maybe Later
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

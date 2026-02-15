@@ -5,7 +5,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     tagTypes: ['SellerProducts', 'SellerOrders', 'SellerAnalytics'],
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_MONGODB_URI,
+        baseUrl: process.env.NEXT_PUBLIC_API_URI,
         prepareHeaders: (headers) => {
             const token = Cookies.get("token");
             if (token) {

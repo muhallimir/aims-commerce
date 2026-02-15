@@ -27,6 +27,8 @@ import { useChatbot } from "src/hooks/useChatbot";
 import ProductSuggestion from "./ProductSuggestion";
 import QuickSuggestions from "./QuickSuggestions";
 import TypingIndicator from "./TypingIndicator";
+import TypewriterText from "./TypewriterText";
+import PopularityChart from "./PopularityChart";
 import isEmpty from "lodash/isEmpty";
 
 interface Message {
@@ -35,6 +37,8 @@ interface Message {
 	type?: 'user' | 'admin' | 'bot';
 	products?: any[];
 	isProductSuggestion?: boolean;
+	showPopularityChart?: boolean;
+	isTyping?: boolean; // Flag to track if this message is still being typed
 }
 
 const CustomerChatBox: React.FC = () => {
@@ -52,11 +56,24 @@ const CustomerChatBox: React.FC = () => {
 	const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
 	const uiMessagesRef = useRef<HTMLUListElement | null>(null);
 	const [endpoint, setEndpoint] = useState<string | any>("");
+	const previousUserIdRef = useRef<string | null>(null);
+	// Track which bot message is currently animating (by index)
+	const [typingMessageIndex, setTypingMessageIndex] = useState<number | null>(null);
+	const lastBotMessageCountRef = useRef<number>(0);
 
-	// Initialize admin messages from localStorage
-	useEffect(() => {
-		const savedAdminMessages = localStorage.getItem('admin-messages');
-		const savedAdminMode = localStorage.getItem('admin-mode');
+	// Helper functions for user-specific admin chat storage
+	const getAdminMessagesKey = (userId: string | null) =>
+		userId ? `admin-messages-${userId}` : 'admin-messages-guest';
+	const getAdminModeKey = (userId: string | null) =>
+		userId ? `admin-mode-${userId}` : 'admin-mode-guest';
+	const getLastAdminUserKey = () => 'admin-chat-lastUserId';
+
+	const currentUserId = userInfo?._id || null;
+
+	// Helper function to load admin messages for a user
+	const loadAdminMessagesForUser = (userId: string | null) => {
+		const savedAdminMessages = localStorage.getItem(getAdminMessagesKey(userId));
+		const savedAdminMode = localStorage.getItem(getAdminModeKey(userId));
 
 		if (savedAdminMessages) {
 			try {
@@ -72,20 +89,71 @@ const CustomerChatBox: React.FC = () => {
 
 		if (savedAdminMode) {
 			setIsAdminMode(JSON.parse(savedAdminMode));
+		} else {
+			setIsAdminMode(false);
 		}
-	}, []);
+	};
+
+	// Migrate guest admin chat to logged-in user
+	const migrateGuestAdminChatToUser = (userId: string) => {
+		const guestMessages = localStorage.getItem(getAdminMessagesKey(null));
+		const guestMode = localStorage.getItem(getAdminModeKey(null));
+		const userMessages = localStorage.getItem(getAdminMessagesKey(userId));
+
+		if (guestMessages && !userMessages) {
+			localStorage.setItem(getAdminMessagesKey(userId), guestMessages);
+			if (guestMode) {
+				localStorage.setItem(getAdminModeKey(userId), guestMode);
+			}
+		}
+
+		// Clear guest data
+		localStorage.removeItem(getAdminMessagesKey(null));
+		localStorage.removeItem(getAdminModeKey(null));
+
+		loadAdminMessagesForUser(userId);
+	};
+
+	// Initialize admin messages and handle user changes
+	useEffect(() => {
+		const lastUserId = localStorage.getItem(getLastAdminUserKey());
+		const wasGuest = lastUserId === 'guest' || lastUserId === null;
+		const isNowLoggedIn = currentUserId !== null;
+		const isDifferentLoggedInUser = lastUserId !== null && lastUserId !== 'guest' && lastUserId !== currentUserId;
+
+		// Case 1: Guest just logged in - migrate guest chat to user
+		if (wasGuest && isNowLoggedIn) {
+			migrateGuestAdminChatToUser(currentUserId);
+		}
+		// Case 2: Different logged-in user - load fresh for new user
+		else if (isDifferentLoggedInUser && isNowLoggedIn) {
+			loadAdminMessagesForUser(currentUserId);
+		}
+		// Case 3: User logged out - load guest chat
+		else if (!isNowLoggedIn && lastUserId && lastUserId !== 'guest') {
+			loadAdminMessagesForUser(null);
+		}
+		// Case 4: Same user or first load
+		else {
+			loadAdminMessagesForUser(currentUserId);
+		}
+
+		// Update last user tracking
+		localStorage.setItem(getLastAdminUserKey(), currentUserId || 'guest');
+		previousUserIdRef.current = currentUserId;
+	}, [currentUserId]);
 
 	// Save admin messages to localStorage
 	useEffect(() => {
 		if (messages.length > 0) {
-			localStorage.setItem('admin-messages', JSON.stringify(messages));
+			localStorage.setItem(getAdminMessagesKey(currentUserId), JSON.stringify(messages));
 		}
-	}, [messages]);
+	}, [messages, currentUserId]);
 
 	// Save admin mode state
 	useEffect(() => {
-		localStorage.setItem('admin-mode', JSON.stringify(isAdminMode));
-	}, [isAdminMode]);
+		localStorage.setItem(getAdminModeKey(currentUserId), JSON.stringify(isAdminMode));
+	}, [isAdminMode, currentUserId]);
 
 	// Chatbot hook
 	const {
@@ -104,7 +172,7 @@ const CustomerChatBox: React.FC = () => {
 		setEndpoint(
 			window?.location?.host?.indexOf("localhost") >= 0
 				? "http://localhost:5003"
-				: process.env.NEXT_PUBLIC_MONGODB_URI,
+				: process.env.NEXT_PUBLIC_API_URI,
 		);
 	}, []);
 
@@ -119,6 +187,25 @@ const CustomerChatBox: React.FC = () => {
 
 	// Use bot messages when not in admin mode
 	const currentMessages = isAdminMode ? messages : botMessages;
+
+	// Detect new bot messages and trigger typing animation
+	useEffect(() => {
+		if (!isAdminMode) {
+			const botMessageCount = botMessages.filter(m => m.type === 'bot' || m.name === 'AI Assistant').length;
+			const lastMsg = botMessages[botMessages.length - 1];
+
+			// Only animate if this is a new bot message (not from storage)
+			if (botMessageCount > lastBotMessageCountRef.current && lastMsg?.type === 'bot') {
+				setTypingMessageIndex(botMessages.length - 1);
+			}
+			lastBotMessageCountRef.current = botMessageCount;
+		}
+	}, [botMessages, isAdminMode]);
+
+	// Handler for when typing animation completes
+	const handleTypingComplete = () => {
+		setTypingMessageIndex(null);
+	};
 
 	useEffect(() => {
 		if (socket) {
@@ -175,7 +262,7 @@ const CustomerChatBox: React.FC = () => {
 
 	const clearAdminHistory = () => {
 		setMessages([{ name: "Admin", body: "Hi! Please input your inquiry." }]);
-		localStorage.removeItem('admin-messages');
+		localStorage.removeItem(getAdminMessagesKey(currentUserId));
 	};
 
 	// Function to clear all chat data
@@ -285,7 +372,7 @@ const CustomerChatBox: React.FC = () => {
 			zIndex: isOpen ? 1300 : 1200,
 			pointerEvents: isOpen ? "auto" : "none"
 		}}>
-			{!isEmpty(userInfo) && !isAdmin && !isOpen ? (
+			{!isAdmin && !isOpen ? (
 				<Box sx={{ position: "relative", pointerEvents: "auto" }}>
 					{/* Main Chat Button */}
 					<IconButton
@@ -797,16 +884,29 @@ const CustomerChatBox: React.FC = () => {
 												>
 													{msg.name}
 												</Typography>
-												<Typography
-													variant="body2"
-													sx={{
-														fontSize: "0.9rem",
-														lineHeight: 1.4,
-														whiteSpace: "pre-wrap",
-													}}
-												>
-													{msg.body}
-												</Typography>
+												{/* Use TypewriterText for new bot messages */}
+												{isBotMessage && typingMessageIndex === index ? (
+													<TypewriterText
+														text={msg.body}
+														speed={100}
+														onComplete={handleTypingComplete}
+														sx={{
+															fontSize: "0.9rem",
+															lineHeight: 1.4,
+														}}
+													/>
+												) : (
+													<Typography
+														variant="body2"
+														sx={{
+															fontSize: "0.9rem",
+															lineHeight: 1.4,
+															whiteSpace: "pre-wrap",
+														}}
+													>
+														{msg.body}
+													</Typography>
+												)}
 											</Box>
 										</Box>
 										{isUserMessage && (
@@ -845,6 +945,13 @@ const CustomerChatBox: React.FC = () => {
 												},
 											}}
 										>
+											{/* Show popularity chart for popularity queries */}
+											{(msg as any).showPopularityChart && msg.products.length > 0 && (
+												<PopularityChart
+													products={msg.products}
+													maxDisplay={5}
+												/>
+											)}
 											<ProductSuggestion
 												products={msg.products}
 												onProductClick={handleProductClickWithCleanup}

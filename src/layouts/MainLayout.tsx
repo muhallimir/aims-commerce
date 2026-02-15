@@ -35,7 +35,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 			}}
 		>
 			<Box>{children}</Box>
-			{!isAdmin && !isEmpty(userInfo) && <CustomerChatBox />}
+			{!isAdmin && <CustomerChatBox />}
 		</Box>
 	);
 }

@@ -260,7 +260,7 @@ AI: "I understand you'd like to speak with a human agent. Let me connect you wit
 ```bash
 # (.env.local)
 NEXT_PUBLIC_API_URL=http://localhost:5003
-NEXT_PUBLIC_MONGODB_URI=your_backend_url
+NEXT_PUBLIC_API_URI=your_backend_url
 
 ### RTK Query Setup
 

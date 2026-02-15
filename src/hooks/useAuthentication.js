@@ -1,4 +1,4 @@
-import { resetCartState } from "@store/cart.slice";
+import { resetCartState, updateCartList, setIsCheckingOut } from "@store/cart.slice";
 import { clearOrderData } from "@store/order.slice";
 import { clearUserInfo, updateUserInfo, usePostRegistrationMutation, usePostSignInMutation, useUpdateProfileMutation } from "@store/user.slice";
 import { setSellerInfo } from "@store/seller.slice";
@@ -65,7 +65,24 @@ const useAuthentication = () => {
                 }
 
                 const token = resSignIn?.data?.token || resRegister?.data?.token;
-                const targetRoute = isCheckingOut ? "/store/shipping" : "/store";
+
+                // Check for pending cart product from chatbot (unauthenticated user wanted to add to cart)
+                const pendingCartProduct = sessionStorage.getItem('pendingCartProduct');
+                let targetRoute = isCheckingOut ? "/store/shipping" : "/store";
+
+                if (pendingCartProduct) {
+                    try {
+                        const product = JSON.parse(pendingCartProduct);
+                        dispatch(updateCartList(product));
+                        dispatch(setIsCheckingOut(true));
+                        targetRoute = "/store/shipping";
+                        sessionStorage.removeItem('pendingCartProduct');
+                    } catch (error) {
+                        console.error('Error parsing pending cart product:', error);
+                        sessionStorage.removeItem('pendingCartProduct');
+                    }
+                }
+
                 if (token) {
                     Cookies.set("token", token, { path: "/" });
                     router.replace(targetRoute);

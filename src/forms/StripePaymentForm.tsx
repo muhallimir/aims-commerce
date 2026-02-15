@@ -39,7 +39,7 @@ const StripePaymentForm = ({
         setError(null);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_MONGODB_URI}/api/orders/create-payment-intent`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/api/orders/create-payment-intent`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
