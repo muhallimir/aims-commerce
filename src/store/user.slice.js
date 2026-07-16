@@ -2,6 +2,25 @@ import { createSlice } from "@reduxjs/toolkit";
 import { apiSlice } from "./api.slice";
 import { setAppError, setLoading } from "./app.slice";
 
+/**
+ * Map PostgreSQL snake_case → MongoDB camelCase for users
+ */
+const mapUser = (u) => ({
+  _id: u.id,
+  name: u.name,
+  email: u.email,
+  phone: u.phone,
+  isAdmin: u.is_admin,
+  isSeller: u.is_seller,
+  sellerId: u.seller_id,
+  storeName: u.store_name,
+  address: u.address,
+  city: u.city,
+  country: u.country,
+  createdAt: u.created_at,
+  updatedAt: u.updated_at,
+});
+
 const initialState = {
     userInfo: {},
     adminUsersData: {
@@ -91,7 +110,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 dispatch(setLoading(true));
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setAllUsers(data));
+                    dispatch(setAllUsers((data || []).map(mapUser)));
                 } catch ({ error }) {
                     dispatch(setAppError(error?.status));
                 } finally {
@@ -108,7 +127,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 dispatch(setLoading(true));
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setUserInview(data));
+                    dispatch(setUserInview(mapUser(data)));
                 } catch ({ error }) {
                     dispatch(setAppError(error?.status));
                 } finally {

@@ -2,6 +2,27 @@ import { createSlice } from "@reduxjs/toolkit";
 import { setAppError, setLoading } from "./app.slice";
 import { apiSlice } from "./api.slice";
 
+/**
+ * Map PostgreSQL (snake_case) response to MongoDB (camelCase) expected by frontend
+ */
+const mapProduct = (p) => ({
+  _id: p.id,
+  name: p.name,
+  title: p.name,
+  image: p.image,
+  brand: p.brand,
+  category: p.category,
+  description: p.description,
+  price: Number(p.price),
+  countInStock: p.count_in_stock,
+  rating: Number(p.rating),
+  num_reviews: p.num_reviews,
+  sellerId: p.seller_id,
+  isActive: p.is_active,
+  createdAt: p.created_at,
+  updatedAt: p.updated_at,
+});
+
 const initialState = {
   products: [],
   currentProduct: null,
@@ -40,7 +61,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(updateProductList(data));
+          dispatch(updateProductList(data.map(mapProduct)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {
@@ -85,7 +106,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(setCurrentProduct(data));
+          dispatch(setCurrentProduct(mapProduct(data)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {
@@ -120,7 +141,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(setCurrentProduct(data));
+          dispatch(setCurrentProduct(mapProduct(data)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {
@@ -138,7 +159,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(setCurrentProduct(data));
+          dispatch(setCurrentProduct(mapProduct(data)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {

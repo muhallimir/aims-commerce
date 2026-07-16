@@ -2,6 +2,56 @@ import { createSlice } from "@reduxjs/toolkit";
 import { apiSlice } from "./api.slice";
 import { setAppError, setLoading } from "./app.slice";
 
+/**
+ * Map PostgreSQL snake_case → MongoDB camelCase for frontend
+ */
+const mapSellerProduct = (p) => ({
+  _id: p.id,
+  title: p.name,
+  name: p.name,
+  image: p.image,
+  brand: p.brand,
+  category: p.category,
+  description: p.description,
+  price: Number(p.price),
+  countInStock: p.count_in_stock,
+  isActive: p.is_active,
+  sellerId: p.seller_id,
+  rating: Number(p.rating),
+});
+
+const mapSellerOrder = (o) => ({
+  _id: o.id,
+  user: o.user && { _id: o.user_id, name: o.user?.name || "", email: o.user?.email || "" },
+  orderItems: (o.orderItems || []).map((i) => ({
+    product: i.product_id,
+    name: i.name,
+    qty: i.qty,
+    price: Number(i.price),
+    image: i.image,
+    seller: i.seller_id,
+  })),
+  itemsPrice: Number(o.items_price),
+  shippingPrice: Number(o.shipping_price),
+  taxPrice: Number(o.tax_price),
+  totalPrice: Number(o.total_price),
+  paymentMethod: o.payment_method,
+  isPaid: o.is_paid,
+  paidAt: o.paid_at,
+  isDelivered: o.is_delivered,
+  deliveredAt: o.delivered_at,
+  shippingAddress: {
+    fullName: o.shipping_full_name,
+    contact: o.shipping_contact,
+    address: o.shipping_address,
+    city: o.shipping_city,
+    postalCode: o.shipping_postal_code,
+    country: o.shipping_country,
+  },
+  paymentResult: o.payment_result ? JSON.parse(o.payment_result) : null,
+  createdAt: o.created_at,
+});
+
 const initialState = {
     section: 'overview',
     sellerInfo: null,
@@ -83,7 +133,7 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
                 dispatch(setLoading(true));
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setSellerProducts(data));
+                    dispatch(setSellerProducts((data || []).map(mapSellerProduct)));
                 } catch ({ error }) {
                     dispatch(setAppError(error?.status));
                 } finally {
@@ -98,7 +148,7 @@ export const sellerApiSlice = apiSlice.injectEndpoints({
                 dispatch(setLoading(true));
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setSellerOrders(data));
+                    dispatch(setSellerOrders((data || []).map(mapSellerOrder)));
                 } catch ({ error }) {
                     dispatch(setAppError(error?.status));
                 } finally {
