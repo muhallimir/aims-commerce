@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import chatbotService, { ChatbotMessage, ChatbotResponse } from 'src/services/chatbotService';
+import chatbotService, { ChatbotMessage, ChatbotResponse, Product } from 'src/services/chatbotService';
 import {
     useGetProductListForChatbotQuery,
     useGetProductCategoriesQuery
@@ -152,11 +152,32 @@ export const useChatbot = () => {
         refetch: refetchCategories
     } = useGetProductCategoriesQuery({});
 
+    // Map snake_case API response → camelCase Product shape the service expects.
+    // The migrated /api/products returns { id, count_in_stock, num_reviews, is_active }
+    // but the chatbot service was written against the old Mongoose shape
+    // { _id, countInStock, numReviews, isActive }. Without this mapping every
+    // product gets filtered out by the `if (!product.isActive) return false`
+    // check (truthy check on undefined).
+    const toProductShape = (raw: any): Product => ({
+        _id: raw.id ?? raw._id,
+        name: raw.name,
+        image: raw.image,
+        brand: raw.brand,
+        category: raw.category,
+        description: raw.description,
+        price: Number(raw.price),
+        countInStock: raw.count_in_stock ?? raw.countInStock ?? 0,
+        rating: Number(raw.rating ?? 0),
+        numReviews: raw.num_reviews ?? raw.numReviews ?? 0,
+        isActive: raw.is_active ?? raw.isActive ?? true,
+    });
+
     // Initialize chatbot service with RTK Query endpoints
     useEffect(() => {
         if (products && categories) {
+            const mapped = Array.isArray(products) ? products.map(toProductShape) : [];
             chatbotService.setApiEndpoints(
-                () => Promise.resolve({ data: products }),
+                () => Promise.resolve({ data: mapped }),
                 () => Promise.resolve({ data: categories })
             );
             chatbotService.initializeProductData();
