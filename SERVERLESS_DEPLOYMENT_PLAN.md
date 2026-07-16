@@ -1,670 +1,241 @@
-# Serverless Zero-Cost Deployment Plan
+# Zero-Cost Deployment Plan (Monorepo Merge Path)
 
-> **Goal:** Eliminate Railway backend ($5-10/mo) by moving all backend logic into Next.js API Routes on Vercel (free tier), while connecting to Supabase (free tier) for PostgreSQL + Realtime.
+> **Goal:** Eliminate Railway backend ($5-10/mo) by merging backend API routes into this Next.js monorepo → deploy everything on Vercel (free tier) + Supabase (free tier).
 
-## 🏗️ Current vs. Target Architecture
-
-### Current Architecture (Cost: ~$5-10/mo)
+## 📊 Current Architecture (Cost: ~$5-10/mo)
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Next.js Front  │────▶│  Express Server │────▶│  MongoDB/Railway│
-│   (Vercel)      │     │  (Railway)      │     │   Collection    │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-                              Socket.IO             (500MB)
-                              + Mongoose
+┌─────────────────┐     ┌─────────────────────────────────────────┐     ┌─────────────────┐
+│  Next.js Front  │────▶│  Backend Express Server (separate repo) │────▶│ Supabase Postgres │
+│   (Vercel)      │     │  ┌──────────────────────────────────┐   │     │  (Free Tier)    │
+│                 │────▶│  │  postgres.js (38 endpoints)      │   │     │                 │
+│                 │────▶│  │  Socket.IO (live chat)           │   │     │  ✓ 6 tables     │
+│                 │─────│  │  Mongoose import (stub only)     │   │     │  ✓ Seed loaded  │
+└─────────────────┘     │  └──────────────────────────────────┘   │     │  ✓ RLS enabled  │
+                        └─────────────────────────────────────────┘     └─────────────────┘
 ```
 
-### Target Architecture (Cost: $0/mo)
+**Backend repo:** `aims-commerce-backend` — Fully migrated from MongoDB → postgres.js. All routers use `sql` tagged template queries.
+
+---
+
+## 🎯 Target Architecture (Cost: $0/mo) — Monorepo
 
 ```
-┌─────────────────┐     ┌─────────────────────────────────────────┐
-│  Next.js Front  │────▶│  Next.js API Routes (Vercel Serverless) │
-│   (Vercel Free) │     │   ┌──────────────────────────────────┐  │
-│                 │────▶│   │  Supabase PostgreSQL + Realtime   │  │
-│                 │────▶│   │   (Supabase Free Tier)            │  │
-│                 │────▶│   │   ┌────────┐  ┌──────────────┐   │  │
-│                 │────▶│   │   │ PG DB  │  │ Supabase RT  │   │  │
-│                 │────▶│   │   └────────┘  └──────────────┘   │  │
-└─────────────────┘     │   └──────────────────────────────────┘  │
-                        │                                        │
-                        │   ┌──────────────────────────────────┐  │
-                        │   │  Storage (Supabase S3)           │  │
-                        │   └──────────────────────────────────┘  │
-                        └─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   Single Repo: aims-commerce                     │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Next.js 15 (API Routes + Pages) — Vercel Serverless     │  │
+│  │                                                           │  │
+│  │  /src/app/api/users/          → register, login, profile │  │
+│  │  /src/app/api/products/       → CRUD, search, reviews    │  │
+│  │  /src/app/api/orders/         → create, pay, mine        │  │
+│  │  /src/app/api/sellers/        → become, analytics        │  │
+│  │  /src/app/api/upload/         → Supabase Storage upload  │  │
+│  │  /src/app/api/config/         → paypal, google keys      │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                           │                                      │
+│                           ▼                                      │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Supabase PostgreSQL + Realtime (Free Tier)               │  │
+│  │  ┌────────┐  ┌──────────────┐  ┌──────────────────┐      │  │
+│  │  │ PG  DB │  │ Supabase RT  │  │ Storage (images) │      │  │
+│  │  └────────┘  └──────────────┘  └──────────────────┘      │  │
+│  └───────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 **Total Monthly Cost: $0** ✅
 
 ---
 
-## 📊 Vercel Free Tier Limits vs Our Usage
+## 📊 Vercel Free Tier vs Our Usage
 
 | Resource | Free Limit | Expected Usage | Headroom |
 |---|---|---|---|
 | Serverless Functions | 100 hrs/month (~7.2M requests @ 100ms) | ~500K requests (10% of limit) | **90% unused** |
 | Bandwidth | 100 GB/month | ~10 GB (images cached) | **90% unused** |
 | Build Minutes | 6,000/month | ~30 min (auto-deploy) | **99.5% unused** |
-| Server Execution Time | 100 GB-hours/month | Negligible | ✅ |
-| Edge Functions | 1,000/day | Not used | ✅ |
+| Storage | 1 GB (Supabase) | ~100 MB (images) | **~900 MB free** |
 
 **Verdict: EASILY handled on free tier.**
 
 ---
 
-## 🚧 Supabase Free Tier Limits
+## ✅ What's Already Done (Backend Repo)
 
-| Resource | Free Limit | Our Usage | Headroom |
-|---|---|---|---|
-| Database | 500 MB | Currently empty (~few MB after seed) | **~500 MB free** |
-| API Requests | Unlimited | ~1M/month (free tier) | ✅ |
-| Monthly Active Users | Unlimited | ~100 users | ✅ |
-| Connections | 50 concurrent | ~10 avg | ✅ |
-| Storage | 1 GB | ~100 MB (images) | **~900 MB free** |
+| Component | Status | Details |
+|---|---|---|
+| **Prisma 7 Schema** | ✅ Done | 6 models (User, Seller, Product, Order, OrderItem, Review) |
+| **PostgreSQL DDL** | ✅ Done | All 6 tables + indexes + FKs applied to Supabase |
+| **RLS Policies** | ✅ Done | 15 policies across all user-facing tables |
+| **Seed Data** | ✅ Done | 2 users + 1 seller + 15 products in Supabase |
+| **User Router** | ✅ Done | 9 endpoints migrated to postgres.js |
+| **Product Router** | ✅ Done | 8 endpoints migrated to postgres.js |
+| **Order Router** | ✅ Done | 10 endpoints migrated to postgres.js |
+| **Seller Router** | ✅ Done | 10 endpoints migrated to postgres.js |
+| **Total Endpoints** | **38/38** | All migrated, 0 Mongoose usage in routers |
 
-**Verdict: Perfectly sized for our e-commerce app.**
-
----
-
-## 📋 Migration Phases
-
-### Phase 1: Supabase Client & Realtime Setup (Frontend)
-
-#### 1.1 Install Supabase Dependencies
-```bash
-cd aims-commerce
-npm install @supabase/supabase-js
-```
-
-#### 1.2 Create Supabase Client (`src/lib/supabase.ts`)
-```typescript
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
-})
-
-// Admin key for server-side operations (next-api routes only)
-export const supabaseAdmin = supabase
-  .asServiceRole()
-  .asClient // For server-side API routes only
-
-```
-
-#### 1.3 Add Environment Variables (`.env.local`)
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://tmnsezftbqitxibndtlk.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-```
-
-#### 1.4 Create Realtime Channel Hook (`src/hooks/useSupabaseRealtime.tsx`)
-```typescript
-import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
-import type { Channel } from '@supabase/supabase-js'
-
-interface ChatMessage {
-  id?: string
-  body: string
-  name: string
-  _id: string
-  isAdmin?: boolean
-  created_at?: string
-}
-
-interface UserStatus {
-  _id: string
-  name: string
-  online: boolean
-  socketId?: string // Legacy, not used in RT
-  messages?: ChatMessage[]
-}
-
-export function useSupabaseRealtime(
-  userId: string | null,
-  isAdmin: boolean,
-  onMessage: (msg: ChatMessage) => void,
-  onUserStatusChange: (users: UserStatus[]) => void,
-) {
-  const [channel, setChannel] = useState<Channel | null>(null)
-  const [users, setUsers] = useState<UserStatus[]>([])
-
-  useEffect(() => {
-    if (!userId) return
-
-    // Create realtime channel for chat
-    const rtChannel = supabase
-      .channel('chat-room')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages', // We'll create this table
-        },
-        (payload) => {
-          onMessage(payload.new as ChatMessage)
-        },
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('✅ Realtime chat channel subscribed')
-        }
-      })
-
-    setChannel(rtChannel)
-
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel)
-      }
-    }
-  }, [userId, onMessage])
-
-  return { users, setUsers }
-}
-```
-
-#### 1.5 Create Messages Table in PostgreSQL
-```sql
--- Create messages table for Supabase Realtime
-CREATE TABLE IF NOT EXISTS messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  body TEXT NOT NULL,
-  name TEXT NOT NULL,
-  user_id UUID NOT NULL, -- references users.id
-  is_admin BOOLEAN DEFAULT FALSE,
-  is_bot BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
-
--- Users can read all messages (public chat)
-CREATE POLICY "Messages are readable by all authenticated users"
-  ON messages FOR SELECT
-  TO authenticated
-  USING (true);
-
--- Users can insert their own messages
-CREATE POLICY "Users can insert own messages"
-  ON messages FOR INSERT
-  TO authenticated
-  WITH CHECK (auth.uid() = user_id OR is_admin = true);
-
--- Enable realtime
-ALTER PUBLICATION supabase_realtime ADD TABLE messages;
-```
+**Note:** `server.js` in the backend repo still has:
+- `mongoose` import (stub — not called by any router, can be removed)
+- `Socket.IO` server (needed for live chat until we migrate to Supabase Realtime)
+- `mongoose.connect()` call (fails silently if MongoDB unavailable, can be removed)
 
 ---
 
-### Phase 2: Replace Socket.IO with Supabase Realtime (Frontend Components)
+## 📋 Next Steps — Monorepo Merge Plan
 
-#### 2.1 Replace `CustomerChatbox.tsx` Socket.IO
+### Phase 1: Prepare Backend for Monorepo
 
-| Old (Socket.IO) | New (Supabase Realtime) |
-|---|---|
-| `socketIOClient(endpoint)` | `supabase.channel('chat-room')` |
-| `socket.emit('onLogin', user)` | Insert `users online_status` table row |
-| `socket.on('message', handler)` | `on('postgres_changes', { event: 'INSERT', table: 'messages' }, handler)` |
-| `socket.emit('onMessage', msg)` | Insert into `messages` table |
-| `socket.emit('onUserSelected', user)` | Update messages read status in DB |
+**Goal:** Clean up backend so it can be moved into Next.js structure.
 
-#### 2.2 Replace `AdminSupportLayout.tsx` Socket.IO
+**Tasks:**
+1. Remove `mongoose` import from `server.js` (all routers use postgres.js now)
+2. Remove `mongoose.connect()` from `server.js`
+3. Keep Socket.IO in `server.js` for live chat (until Phase 2 is done) — or migrate Socket.IO
+4. Create `src/middleware/auth.ts` from `backend/utils.js` 
+5. Create `src/lib/supabase.ts` client for direct Supabase access
+6. Create `src/lib/db.ts` — shared postgres.js client (replace backend `dbClient.js`)
 
-| Old (Socket.IO) | New (Supabase Realtime) |
-|---|---|
-| Socket.IO event tracking | Realtime database changes |
-| `sk.on('listUsers')` | Realtime query on `users online_status` table |
-| `sk.on('updateUser')` | Realtime INSERT/UPDATE on `users online_status` |
-| Polling unread messages | Database `is_read` flag + realtime |
+### Phase 2: Migrate Socket.IO to Supabase Realtime (Or Keep Both)
 
-#### 2.3 Create `users.online_status` Table
-```sql
-CREATE TABLE IF NOT EXISTS online_status (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id),
-  name TEXT NOT NULL,
-  is_admin BOOLEAN DEFAULT FALSE,
-  is_online BOOLEAN DEFAULT FALSE,
-  messages JSONB DEFAULT '[]'::jsonb,
-  last_seen TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id)
-);
+**Option A — Replace Socket.IO with Supabase Realtime:**  
+Create `messages` + `online_status` tables in Supabase, replace `socket.emit/on` with `supabase.channel('chat-room').on('postgres_changes', ...)`.
 
--- Enable RLS
-ALTER TABLE online_status ENABLE ROW LEVEL SECURITY;
+**Option B — Keep Socket.IO on Edge (Recommended for Phase X):**  
+Supabase Edge Functions support WebSockets, or we keep the small Express process on a $0-tier platform. Socket.IO is the most expensive part to migrate.
 
-CREATE POLICY "Anyone can view online status"
-  ON online_status FOR SELECT
-  TO authenticated
-  USING (true);
+### Phase 3: Move API Routes to Next.js App Router
 
-CREATE POLICY "Users can insert own status"
-  ON online_status FOR INSERT
-  TO authenticated
-  WITH CHECK (auth.uid() = user_id);
+**Create `src/app/api/` routes that proxy to our existing postgres.js queries:**
 
-CREATE POLICY "Users can update own status"
-  ON online_status FOR UPDATE
-  TO authenticated
-  USING (auth.uid() = user_id);
-
--- Enable realtime
-ALTER PUBLICATION supabase_realtime ADD TABLE online_status;
 ```
-
-#### 2.4 Create Supabase Trigger for Auto-Online/User Sync
-Create a Supabase Edge Function to handle user login/logout:
-```typescript
-// supabase/functions/handle-user-status/index.ts
-import { serve } from 'https://deno.land/x/siftmod@0.0.5/mod.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-serve(async (req) => {
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  )
-  
-  // This function receives auth events from Supabase
-  // and updates online_status table accordingly
-})
-```
-
----
-
-### Phase 3: Move Backend API Routes to Next.js
-
-#### 3.1 Create Next.js API Routes Structure
-```
-aims-commerce/src/app/api/
+src/app/api/
 ├── users/
-│   ├── auth/[...nextauth]/route.ts        # OAuth & JWT auth
-│   ├── register/route.ts                  # User registration
-│   ├── login/route.ts                     # User login
-│   ├── profile/route.ts                   # Get/update profile
-│   ├── admin/route.ts                     # Admin-only endpoints
-│   └── escalate-to-human/route.ts         # Chatbot escalation
+│   ├── seed/route.ts
+│   ├── google-auth/route.ts
+│   ├── signin/route.ts
+│   ├── register/route.ts
+│   └── [id]/
+│       ├── GET/route.ts
+│       ├── PUT/route.ts
+│       └── DELETE/route.ts
 ├── products/
-│   ├── route.ts                           # GET all, POST create
-│   └── [id]/route.ts                      # GET/PUT/DELETE by id
+│   ├── GET/route.ts
+│   ├── POST/route.ts
+│   └── [id]/
+│       ├── GET/route.ts
+│       ├── PUT/route.ts
+│       ├── DELETE/route.ts
+│       └── reviews/POST/route.ts
 ├── orders/
-│   ├── route.ts                           # GET all, POST create
-│   └── [id]/route.ts                      # GET/UPDATE by id
+│   ├── GET/route.ts
+│   ├── POST/route.ts
+│   └── [id]/
+│       ├── GET/route.ts
+│       ├── PUT/pay/route.ts
+│       ├── PUT/deliver/route.ts
+│       └── DELETE/route.ts
 ├── sellers/
-│   ├── route.ts                           # GET all, POST create
-│   └── [id]/route.ts                      # GET/PUT/DELETE by id
-├── config/
-│   ├── paypal/route.ts                    # PAYPAL_CLIENT_ID
-│   └── google/route.ts                    # GOOGLE_API_KEY
-└── upload/
-    ├── route.ts                           # Handle file uploads (Multer)
-    └── [id]/delete/route.ts               # Delete uploaded file
+│   ├── become/route.ts
+│   ├── analytics/route.ts
+│   └── [id]/
+│       ├── GET/route.ts
+│       └── PUT/route.ts
+├── upload/
+│   └── POST/route.ts
+└── health/route.ts
 ```
 
-#### 3.2 Example: Users API Route (`src/app/api/users/login/route.ts`)
-```typescript
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+**Strategy:** Don't rewrite logic — import the existing postgres.js queries from the backend repo (or copy them). The router logic is already written and tested.
 
-export async function POST(request: Request) {
-  try {
-    const { email, password } = await request.json()
+### Phase 4: Migrate Frontend Store to New API Paths
 
-    // Fetch user from Supabase
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .single()
+Update Redux slices to use `/api/...` paths instead of the Railway backend URL:
 
-    if (error || !user) {
-      return NextResponse.json(
-        { message: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
+```js
+// Before (Railway)
+apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/users/signin",  // Railway env
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+  }),
+});
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password_hash)
-    if (!isMatch) {
-      return NextResponse.json(
-        { message: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Generate token
-    const token = jwt.sign(
-      { 
-        _id: user.id, 
-        name: user.name, 
-        email: user.email,
-        isAdmin: user.is_admin,
-        is_seller: user.is_seller 
-      },
-      process.env.JWT_SECRET!,
-      { expiresIn: '30d' }
-    )
-
-    return NextResponse.json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.is_admin,
-      isSeller: user.is_seller,
-      token,
-    })
-  } catch (error) {
-    return NextResponse.json(
-      { message: 'Server error' },
-      { status: 500 }
-    )
-  }
-}
+// After (Monorepo)
+apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/users/signin",  // Next.js API Route
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+  }),
+});
 ```
 
----
+No URL changes needed — both point to `/api/...` since they're on the same domain.
 
-### Phase 4: Handle File Uploads (Images)
+### Phase 5: Vercel Deployment
 
-#### 4.1 Option A: Use Supabase Storage (Recommended ✅)
-```typescript
-// src/app/api/upload/route.ts
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-import { put } from '@vercel/blob'
+**Environment Variables for Vercel:**
 
-export async function POST(request: Request) {
-  const formData = await request.formData()
-  const file = formData.get('image') as File
-
-  // Upload to Vercel Blob Storage (free tier)
-  const blob = await put(file.name, file, {
-    access: 'public',
-    token: process.env.BLOB_READ_WRITE_TOKEN,
-  })
-
-  return NextResponse.json({ url: blob.url })
-}
-```
-
-#### 4.2 Option B: Use Supabase Storage Bucket
-```typescript
-// Upload to Supabase Storage with same structure as /uploads
-export async function POST(request: Request) {
-  const formData = await request.formData()
-  const file = formData.get('image') as File
-  const folder = formData.get('folder') || 'products'
-
-  const { data, error } = await supabase.storage
-    .from('images')
-    .upload(`${folder}/${file.name}`, file, {
-      cacheControl: '3600',
-      upsert: false,
-    })
-
-  if (error) {
-    return NextResponse.json({ message: error.message }, { status: 500 })
-  }
-
-  const { data: { publicUrl } } = supabase.storage
-    .from('images')
-    .getPublicUrl(data.path)
-
-  return NextResponse.json({ url: publicUrl })
-}
-```
-
-#### 4.3 Required Supabase Storage Setup
-```sql
--- Create storage bucket for images
-INSERT INTO storage.buckets (id, name, public) 
-VALUES ('images', 'images', true);
-
--- Set RLS policies for bucket
-CREATE POLICY "Allow public read access"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'images');
-
-CREATE POLICY "Allow authenticated upload"
-ON storage.objects FOR INSERT
-TO authenticated
-WITH CHECK (bucket_id = 'images');
-
-CREATE POLICY "Allow authenticated delete"
-ON storage.objects FOR DELETE
-TO authenticated
-USING (bucket_id = 'images');
-```
-
----
-
-### Phase 5: Testing Strategy
-
-#### 5.1 Manual Testing Checklist
-
-**Auth Endpoints:**
-- [ ] User registration via `/api/users/register`
-- [ ] User login via `/api/users/login`
-- [ ] JWT token generation & validation
-- [ ] Google OAuth flow (if enabled)
-- [ ] Logout token invalidation
-
-**Product API:**
-- [ ] GET `/api/products` (all products)
-- [ ] GET `/api/products/:id` (single product)
-- [ ] POST `/api/products` (create product - admin)
-- [ ] PUT `/api/products/:id` (update product)
-- [ ] DELETE `/api/products/:id` (delete product)
-- [ ] Product seller relationship sync
-
-**Order API:**
-- [ ] POST `/api/orders` (create order)
-- [ ] GET `/api/orders` (fetch orders)
-- [ ] GET `/api/orders/:id` (order details)
-- [ ] Order status updates
-- [ ] Order item relationship integrity
-
-**Seller Dashboard API:**
-- [ ] Seller profile creation
-- [ ] Product CRUD for sellers
-- [ ] Order fulfillment management
-- [ ] User escalation handling
-
-**Realtime Chat:**
-- [ ] Admin sees user online status
-- [ ] Messages persist in Supabase
-- [ ] Realtime updates across tabs
-- [ ] Chat history persists after refresh
-- [ ] User switches between bot/admin mode
-- [ ] Escalation workflow
-
-**File Uploads:**
-- [ ] Product images upload & return URL
-- [ ] File deletion endpoint
-- [ ] Storage bucket access policies
-
-#### 5.2 Supabase Dashboard Verification
-```sql
--- Check data integrity post-migration
-SELECT 
-  (SELECT count(*) FROM users) as total_users,
-  (SELECT count(*) FROM sellers) as total_sellers,
-  (SELECT count(*) FROM products) as total_products,
-  (SELECT count(*) FROM orders) as total_orders,
-  (SELECT count(*) FROM reviews) as total_reviews,
-  (SELECT count(*) FROM messages) as total_messages;
-
--- Check relationships
-SELECT 
-  u.name, s.store_name, 
-  (SELECT count(*) FROM products WHERE seller_id = s.id) as product_count,
-  (SELECT count(*) FROM orders WHERE seller_id = s.id) as order_count
-FROM users u
-JOIN sellers s ON u.id = s.user_id;
-```
-
----
-
-### Phase 6: Vercel Deployment
-
-#### 6.1 Vercel Environment Variables
 ```env
+# Client-side (NEXT_PUBLIC_)
 NEXT_PUBLIC_SUPABASE_URL=https://tmnsezftbqitxibndtlk.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-# Server-only (not exposed to browser)
+
+# Server-side (not exposed to browser)
 DATABASE_URL=postgresql://postgres.tmnsezftbqitxibndtlk:pass@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 DIRECT_URL=postgresql://postgres.tmnsezftbqitxibndtlk:pass@aws-0-us-east-1.pooler.supabase.com:5432/postgres
+SUPABASE_SECRET_KEY=<service-role-key>
 JWT_SECRET=<strong-random-string>
-PAYPAL_CLIENT_ID=<paypal-merchant-id>
-GOOGLE_API_KEY=<google-maps-api-key>
-BLOB_READ_WRITE_TOKEN=<vercel-blob-token>
-```
-
-#### 6.2 Vercel Build Settings
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "installCommand": "npm install"
-}
-```
-
-#### 6.3 Prisma Integration in Next.js
-```bash
-# Install in frontend repo
-cd aims-commerce
-npm install prisma
-npx prisma init --datasource-provider postgresql
-```
-
-```prisma
-// prisma/schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
-  email     String   @unique
-  password  String
-  // ... rest of fields
-}
-// ... all other models
+STRIPE_SECRET_KEY=<stripe-live-key>
+GOOGLE_CLIENT_ID=<google-id>
+GOOGLE_CLIENT_SECRET=<google-secret>
+PAYPAL_CLIENT_ID=<paypal-id>
 ```
 
 ---
 
-### Phase 7: Complete Cutover Checklist
+## 🔀 Current State vs Monorepo Plan Alignment
 
-#### 7.1 Before Removing Railway
+This plan has been updated to match what we've actually done:
 
-- [ ] All API routes migrated to Next.js (`src/app/api/`)
-- [ ] Supabase Realtime fully tested in production
-- [ ] File uploads working with new storage solution
-- [ ] Database schema matches Supabase (migration applied)
-- [ ] Environment variables set in Vercel dashboard
-- [ ] CI/CD pipeline updated for Next.js build
-- [ ] Backend health check endpoint: `GET /api/_health`
-
-#### 7.2 After Successful Deployment
-
-- [ ] DNS pointing to Vercel
-- [ ] Old Railway deployment terminated (or kept as backup for 1 week)
-- [ ] MongoDB database marked as read-only
-- [ ] Monitor Vercel function logs for errors
-- [ ] Monitor Supabase for connection issues
-- [ ] Update any hardcoded backend URLs in frontend config
-
----
-
-## 🎯 Timeline & Milestones
-
-| Phase | Task | Duration | Status |
+| Plan Section | Original | Updated | Reason |
 |---|---|---|---|
-| 1 | Supabase Client + Realtime Setup | 2 days | ⬜ |
-| 2 | Socket.IO → Supabase Realtime Migration | 3 days | ⬜ |
-| 3 | API Routes (User, Product, Order) | 5 days | ⬜ |
-| 4 | File Uploads Integration | 1 day | ⬜ |
-| 5 | Testing (Local + Supabase Dashboard) | 3 days | ⬜ |
-| 6 | Vercel Deployment | 1 day | ⬜ |
-| 7 | Cutover & Railway Decommission | 1 day | ⬜ |
-| **Total** | | **~16 days** | |
+| **Current Architecture** | MongoDB + Railway | postgres.js + Supabase | Phase 1-4 backend migration completed |
+| **Phase 1** | Supabase Client | Prepare Backend for Monorepo | Backend done, need cleanup + client setup |
+| **Phase 2** | Socket.IO → Supabase Realtime | Socket.IO Keep OR Replace | Live chat migration is optional, not urgent |
+| **Phase 3** | New API Routes (from scratch) | Copy from backend repo | 38 routers already written with postgres.js |
+| **Phase 4** | Supabase Storage | Keep as-is | uploadRouter already migrated to Supabase Storage in backend |
+| **Phase 5** | Vercel Deployment | Same | Unchanged |
 
 ---
 
-## ⚠️ Known Limitations & Workarounds
+## 🧹 Backend Cleanup Needed (Before Merge)
 
-### 1. Prisma Connection Pooling with Vercel Serverless
-
-**Problem:** Serverless functions spin up/down, new connections each time.
-
-**Solution:** Use Prisma 5+ with `@prisma/adapter-pg` + PgBouncer pooling:
-
-```typescript
-// src/lib/prisma.ts
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@prisma/client'
-import pg from 'pg'
-
-const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  // PgBouncer is already handling pooling
-})
-
-const adapter = new PrismaPg(pool)
-
-export const prisma = new PrismaClient({ adapter })
-```
-
-### 2. Next.js Serverless Function Timeout (10s)
-
-**Problem:** Long-running operations (e.g., bulk imports) will time out.
-
-**Solution:** Use Vercel Cron Jobs or Supabase Edge Functions for heavy processing.
-
-### 3. WebSocket Limitations
-
-**Problem:** Supabase Realtime is based on WebSockets, but for our use case, database events via Realtime are sufficient.
-
-**Solution:** Database events replace Socket.IO events perfectly:
-- User online/offline → `online_status` table changes
-- Messages → `messages` table INSERT/UPDATE events
-- Read receipts → `is_read` column updates
+| File | Action | Priority |
+|---|---|---|
+| `backend/server.js` | Remove `mongoose` import + `mongoose.connect()` | High |
+| `backend/server.js` | Keep Socket.IO (until Supabase Realtime replaces it) | — |
+| `backend/server.js` | Delete `/uploads/` static folder — use Supabase Storage instead | Medium |
+| `backend/package.json` | Remove `mongoose` from dependencies | High |
+| `MONGODB_TO_SUPABASE_MIGRATION_PLAN.md` | Already updated ✅ | Done |
 
 ---
 
 ## 📝 Notes
 
-1. **Backward Compatibility:** All tables use `@@map()` to preserve original MongoDB collection names (`users`, `sellers`, `products`, `orders`, `order_items`, `reviews`).
-
-2. **Frontend Store Changes:** Redux slices (`user.slice.js`, `products.slice.js`, etc.) need to replace `fetch` calls with direct Supabase client queries where possible, or keep using Next.js API routes for complex logic.
-
-3. **Testing Priority:** Test chat/realtime functionality first (Phase 2), as it's the most complex migration path from Socket.IO → Supabase Realtime.
-
-4. **Rollback Plan:** Keep Railway running at no cost (stop deployment but keep data) for 1 week post-migration.
+1. **38 endpoints already migrated:** All routers in `backend/routers/` use postgres.js with `sql` tagged templates. Zero Mongoose usage. Ready to copy to Next.js API routes.
+2. **Socket.IO is the only server-state we need:** All DB work is done. Socket.IO is for live chat only. Consider keeping the small Express server on Railway's free tier (stops spinning down, no charge for idle) or migrating to Supabase Realtime.
+3. **Upload router:** `uploadRouter.js` already migrated to Supabase Storage in the backend. Use the same `@supabase/supabase-js` client in Next.js.
+4. **Backend repo is production-ready for testing:** Deploy to Railway temporarily (with Supabase env vars) to test the full flow before merging into monorepo.
+5. **Frontend needs ONE change:** Update `NEXT_PUBLIC_API_URI` in frontend `.env` to point to either the Railway backend URL or the new Vercel API routes once deployed.
