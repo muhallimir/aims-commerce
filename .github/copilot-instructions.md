@@ -10,46 +10,53 @@ Full-stack e-commerce platform. Multi-vendor (sellers + admin). Supports three u
 **Customer**, **Seller**, and **Admin**.
 
 Current stack:
-- **Frontend**: Next.js 15 (Pages Router), TypeScript, Material-UI v5, Redux Toolkit + RTK Query, Formik + Yup.
-- **Backend**: Express.js (Node 20, ESM), **postgres.js** (raw parameterized SQL), Stripe + PayPal.
-- **Database**: Supabase (PostgreSQL 15 + pgbouncer pooler), 8 tables (incl. `chat_sessions` + `chat_messages`), 21 RLS policies, 5 triggers.
+- **Single Next.js 15 app** (Pages Router), TypeScript, Material-UI v5, Redux Toolkit + RTK Query, Formik + Yup. Deployed to Vercel.
+- **37 API routes under `src/pages/api/`** — run as Vercel serverless functions, no separate Express server in production.
+- **postgres.js** (raw parameterized SQL) for all DB access.
+- **Database**: Supabase (PostgreSQL 15 + pgbouncer pooler), 9 tables (users, sellers, products, orders, order_items, reviews, chat_sessions, chat_messages), 21 RLS policies, 5 triggers.
 - **Live chat**: Supabase Realtime (`postgres_changes` on `chat_messages` + `chat_sessions`). No Socket.IO.
 - **File storage**: Supabase Storage bucket `uploads` (public).
-- **Deployment target**: Vercel monorepo (single repo, Next.js API routes replace the Express server). The Express server is still live locally for development; see `aims-commerce-backend/ARCHITECTURE.md` for the merge plan.
+- **Deployment**: Vercel (single Next.js project). `aims-commerce-backend/` is a sidecar for migration scripts and E2E tests only.
 
 ## Architecture Quick Reference
 
 ```
 aims/                                 ← workspace root
-├── aims-commerce/                     ← Next.js 15 frontend
+├── aims-commerce/                     ← Next.js 15 frontend + API routes (Vercel)
 │   ├── src/
 │   │   ├── lib/                       ← @lib/* alias
-│   │   │   ├── auth.ts                ← requireAuth/Admin/Seller (mirror of backend/utils.js)
-│   │   │   ├── db.ts                  ← postgres.js singleton (mirror of backend/dbClient.js)
-│   │   │   └── supabase.ts            ← getSupabaseAdmin / getSupabaseBrowser
+│   │   │   ├── auth.ts                ← requireAuth/Admin/Seller (takes req, res)
+│   │   │   ├── db.ts                  ← postgres.js singleton (HMR-safe via globalThis)
+│   │   │   ├── supabase.ts            ← getSupabaseAdmin / getSupabaseBrowser / getStoragePublicUrl
+│   │   │   ├── userMap.ts             ← mapUser() shared by /api/users/*
+│   │   │   ├── orderMap.ts            ← buildOrderResponse() shared by /api/orders/*
+│   │   │   ├── sellerMap.ts           ← mapSeller() + ensureIsSeller()
+│   │   │   └── chatClient.ts          ← Supabase Realtime adapter (replaces socket.io-client)
 │   │   ├── helpers/, common/, components/, forms/, hooks/, layouts/, middleware.ts, pages/, services/, store/
+│   │   └── pages/api/                 ← 37 endpoints (Vercel serverless functions)
+│   ├── vercel.json
 │   ├── .env
 │   └── package.json
 │
-└── aims-commerce-backend/              ← Express + postgres.js API
+└── aims-commerce-backend/              ← scripts + E2E tests only (NOT deployed)
     ├── backend/
-    │   ├── server.js                   ← Express only (chat on Supabase Realtime)
+    │   ├── server.js                   ← Legacy Express (local dev only)
     │   ├── dbClient.js                 ← shared postgres.js pool
-    │   ├── utils.js                    ← JWT helpers + isAuth/isAdmin/isSeller
-    │   └── routers/{user,product,order,seller,upload}Router.js
+    │   ├── utils.js                    ← JWT helpers
+    │   └── routers/                    ← Reference implementations of the same endpoints
     ├── prisma/
     │   ├── schema.prisma               ← table shape (source of truth)
     │   ├── seed.ts                     ← thin wrapper around db:migrate
-    │   └── migrations/                 ← 0_init + RLS + triggers
+    │   └── migrations/                 ← 0_init + RLS + triggers + 5_chat_supabase_realtime
     ├── scripts/
     │   ├── dumpMongo.mjs               ← MongoDB → mongo-dump/*.json
     │   ├── migrateMongoToSupabase.mjs  ← mongo-dump → Supabase (1:1)
-    │   └── e2e_test.mjs                ← 43 endpoint tests × 3 roles
+    │   ├── setupSupabaseStorage.mjs    ← uploads bucket + image upload
+    │   ├── applyChatMigration.mjs      ← chat_sessions + chat_messages tables
+    │   ├── e2e_test.mjs                ← 43 endpoint tests × 3 roles
+    │   └── chat_test.mjs               ← 4 Supabase Realtime tests
     ├── mongo-dump/                     ← JSON dump of original MongoDB data
-    ├── uploads/                        ← legacy local image folder
-    ├── MONGODB_TO_SUPABASE_MIGRATION_PLAN.md
-    ├── ROLE_BASED_ACCESS.md
-    └── ARCHITECTURE.md
+    └── uploads/                        ← legacy local image folder
 ```
 
 ## Auth Flow
@@ -83,11 +90,16 @@ Full matrix in `aims-commerce-backend/ROLE_BASED_ACCESS.md`.
 
 ## E2E Testing
 
-`aims-commerce-backend/scripts/e2e_test.mjs` covers all 37 active endpoints × 3 roles + public. 43 assertions total. **Currently 43/43 passing.**
+`aims-commerce-backend/scripts/e2e_test.mjs` covers all 37 active endpoints × 3 roles + negative cases. 43 assertions total. **Currently 43/43 passing.**
 
 ```bash
 cd aims-commerce-backend
-node backend/server.js &
+# Start Next.js dev server on port 3005
+cd ../aims-commerce && npx next dev -p 3005 &
+# Or for production build:
+# npx next build && npx next start -p 3005 &
+
+cd ../aims-commerce-backend
 npm run test:e2e
 ```
 

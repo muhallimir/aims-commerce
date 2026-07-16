@@ -56,8 +56,14 @@ export function verifyToken(token: string): AuthUser | null {
  * Extract and verify a Bearer token from a Next.js Request.
  * Returns the decoded user, or null if missing/invalid.
  */
-export function getUserFromRequest(req: Request): AuthUser | null {
-  const auth = req.headers.get("authorization");
+export function getUserFromRequest(req: any): AuthUser | null {
+  let auth: string | null | undefined;
+  if (typeof req.headers?.get === "function") {
+    auth = req.headers.get("authorization");
+  } else {
+    const h = req.headers?.authorization;
+    auth = Array.isArray(h) ? h[0] : h;
+  }
   if (!auth) return null;
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : auth;
   return verifyToken(token);
@@ -72,41 +78,46 @@ export function getUserFromCookieToken(cookieToken: string | undefined): AuthUse
 }
 
 /**
- * Throw-style helpers for API route handlers. Throws a Response so callers
- * can let the error bubble up to Next.js's error boundary.
+ * Auth helpers for Next.js Pages Router API routes.
+ *
+ * Each `requireX` takes `(req, res)`. Returns the user on success.
+ * On failure it writes the 401/403 response and returns null —
+ * the handler should `if (!user) return;` after the call.
+ *
+ *   const user = requireAdmin(req, res);
+ *   if (!user) return;
+ *   // user is AuthUser from here on
  */
-export function requireAuth(req: Request): AuthUser {
-  const user = getUserFromRequest(req);
+type ReqLike =
+  | Request
+  | { headers: Record<string, string | string[] | undefined> | { get(name: string): string | null } };
+type ResLike = { status(code: number): any; json(body: any): any };
+
+export function requireAuth(req: ReqLike, res: ResLike): AuthUser | null {
+  const user = getUserFromRequest(req as any);
   if (!user) {
-    throw new Response(JSON.stringify({ message: "No Token" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    res.status(401).json({ message: "No Token" });
+    return null;
   }
   return user;
 }
 
-export function requireAdmin(req: Request): AuthUser {
-  const user = requireAuth(req);
+export function requireAdmin(req: ReqLike, res: ResLike): AuthUser | null {
+  const user = requireAuth(req, res);
+  if (!user) return null;
   if (!user.isAdmin) {
-    throw new Response(JSON.stringify({ message: "Invalid Admin Token" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    res.status(401).json({ message: "Invalid Admin Token" });
+    return null;
   }
   return user;
 }
 
-export function requireSeller(req: Request): AuthUser {
-  const user = requireAuth(req);
+export function requireSeller(req: ReqLike, res: ResLike): AuthUser | null {
+  const user = requireAuth(req, res);
+  if (!user) return null;
   if (!user.isSeller) {
-    throw new Response(
-      JSON.stringify({ message: "Access denied. Must be a seller." }),
-      {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    res.status(403).json({ message: "Access denied. Must be a seller." });
+    return null;
   }
   return user;
 }

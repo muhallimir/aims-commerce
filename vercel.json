@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "buildCommand": "next build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, must-revalidate" }
+      ]
+    }
+  ]
+}

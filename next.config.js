@@ -2,22 +2,12 @@
 
 module.exports = async () => {
   const nextConfig = {
+    trailingSlash: false,
     env: {
-      NEXT_PUBLIC_API_URI: process.env.NEXT_PUBLIC_API_URI,
       NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       NEXT_PUBLIC_LOCATIONIQ_API_KEY: process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY,
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    },
-    async rewrites() {
-      return [
-        {
-          source: '/api/:path*',
-          destination: process.env.NEXT_PUBLIC_API_URI
-            ? `${process.env.NEXT_PUBLIC_API_URI}/api/:path*`
-            : '/api/:path*',
-        },
-      ];
     },
     redirects: async () => [
       {
