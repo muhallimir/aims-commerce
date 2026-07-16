@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import socketIOClient, { Socket } from "socket.io-client";
+import { createChatClient, ChatClient } from "@lib/chatClient";
 import {
 	Box,
 	Typography,
@@ -47,7 +47,7 @@ const CustomerChatBox: React.FC = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const isTabletOrDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-	const [socket, setSocket] = useState<Socket | null>(null);
+	const [socket, setSocket] = useState<ChatClient | null>(null);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [messageBody, setMessageBody] = useState("");
@@ -169,11 +169,8 @@ const CustomerChatBox: React.FC = () => {
 	} = useChatbot();
 
 	useEffect(() => {
-		setEndpoint(
-			window?.location?.host?.indexOf("localhost") >= 0
-				? "http://localhost:5003"
-				: process.env.NEXT_PUBLIC_API_URI,
-		);
+		// Endpoint no longer needed — chat uses Supabase Realtime.
+		// Kept the effect to avoid changing the surrounding JSX.
 	}, []);
 
 	useEffect(() => {
@@ -232,7 +229,7 @@ const CustomerChatBox: React.FC = () => {
 		setIsExpanded(false);
 		// Don't reset chatbot when opening - preserve chat history
 		if (!socket && isAdminMode) {
-			const newSocket = socketIOClient(endpoint);
+			const newSocket = createChatClient({ user: userInfo });
 			setSocket(newSocket);
 		}
 	};
@@ -245,7 +242,7 @@ const CustomerChatBox: React.FC = () => {
 			setMessages(prev => [...prev, { name: "Admin", body: "Connecting you to a human agent..." }]);
 		}
 		if (!socket) {
-			const newSocket = socketIOClient(endpoint);
+			const newSocket = createChatClient({ user: userInfo });
 			setSocket(newSocket);
 		}
 	};

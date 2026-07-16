@@ -11,8 +11,10 @@ Full-stack e-commerce platform. Multi-vendor (sellers + admin). Supports three u
 
 Current stack:
 - **Frontend**: Next.js 15 (Pages Router), TypeScript, Material-UI v5, Redux Toolkit + RTK Query, Formik + Yup.
-- **Backend**: Express.js (Node 20, ESM), **postgres.js** (raw parameterized SQL), Socket.IO for live chat, Stripe + PayPal.
-- **Database**: Supabase (PostgreSQL 15 + pgbouncer pooler), 6 tables, 15 RLS policies, 5 triggers.
+- **Backend**: Express.js (Node 20, ESM), **postgres.js** (raw parameterized SQL), Stripe + PayPal.
+- **Database**: Supabase (PostgreSQL 15 + pgbouncer pooler), 8 tables (incl. `chat_sessions` + `chat_messages`), 21 RLS policies, 5 triggers.
+- **Live chat**: Supabase Realtime (`postgres_changes` on `chat_messages` + `chat_sessions`). No Socket.IO.
+- **File storage**: Supabase Storage bucket `uploads` (public).
 - **Deployment target**: Vercel monorepo (single repo, Next.js API routes replace the Express server). The Express server is still live locally for development; see `aims-commerce-backend/ARCHITECTURE.md` for the merge plan.
 
 ## Architecture Quick Reference
@@ -31,7 +33,7 @@ aims/                                 ← workspace root
 │
 └── aims-commerce-backend/              ← Express + postgres.js API
     ├── backend/
-    │   ├── server.js                   ← Express + Socket.IO
+    │   ├── server.js                   ← Express only (chat on Supabase Realtime)
     │   ├── dbClient.js                 ← shared postgres.js pool
     │   ├── utils.js                    ← JWT helpers + isAuth/isAdmin/isSeller
     │   └── routers/{user,product,order,seller,upload}Router.js

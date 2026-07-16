@@ -61,7 +61,6 @@
     "redux-persist": "^6.0.0",
     "server-only": "^0.0.1",
     "sharp": "^0.33.5",
-    "socket.io-client": "4.5.1",
     "swiper": "8.4.2",
     "yup": "0.32.11"
   },

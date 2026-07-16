@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import socketIOClient, { Socket } from "socket.io-client";
+import { createChatClient, ChatClient } from "@lib/chatClient";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import { isEmpty } from "lodash";
@@ -12,13 +12,12 @@ let allSelectedUser: any = {};
 
 const AdminSupportLayout: React.FC = () => {
 	const [selectedUser, setSelectedUser] = useState<any>({});
-	const [socket, setSocket] = useState<Socket | null>(null);
+	const [socket, setSocket] = useState<ChatClient | null>(null);
 	const uiMessagesRef = useRef<HTMLUListElement>(null);
 	const [messageBody, setMessageBody] = useState<string>("");
 	const [messages, setMessages] = useState<any[]>([]);
 	const [users, setUsers] = useState<any[]>([]);
 	const { userInfo } = useSelector(({ user }: any) => user);
-	const [endpoint, setEndpoint] = useState<any>("");
 
 	useEffect(() => {
 		if (!isEmpty(selectedUser) && selectedUser.unread) {
@@ -30,17 +29,6 @@ const AdminSupportLayout: React.FC = () => {
 	}, [selectedUser, socket]);
 
 	useEffect(() => {
-		if (
-			typeof window !== "undefined" &&
-			window.location.host.indexOf("localhost") >= 0
-		) {
-			setEndpoint("http://localhost:5003");
-		} else {
-			setEndpoint(process.env.NEXT_PUBLIC_API_URI);
-		}
-	}, []);
-
-	useEffect(() => {
 		if (uiMessagesRef.current) {
 			uiMessagesRef.current.scrollTo({
 				top: uiMessagesRef.current.scrollHeight,
@@ -48,8 +36,8 @@ const AdminSupportLayout: React.FC = () => {
 			});
 		}
 
-		if (!socket && !isEmpty(endpoint)) {
-			const sk = socketIOClient(endpoint);
+		if (!socket && userInfo?._id) {
+			const sk = createChatClient({ user: userInfo });
 			setSocket(sk);
 			sk.emit("onLogin", {
 				_id: userInfo._id,
@@ -95,7 +83,7 @@ const AdminSupportLayout: React.FC = () => {
 				setMessages(allMessages);
 			});
 		}
-	}, [messages, socket, endpoint, users]);
+	}, [messages, socket, users]);
 
 	const submitHandler = (e: React.FormEvent) => {
 		e.preventDefault();
