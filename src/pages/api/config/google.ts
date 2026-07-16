@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default function handler(_req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).send(process.env.GOOGLE_API_KEY || "");
+  res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
+  res.status(200).json({
+    googleClientId: process.env.GOOGLE_CLIENT_ID || "",
+  });
 }
