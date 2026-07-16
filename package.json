@@ -98,5 +98,6 @@
     "tsconfig-paths-webpack-plugin": "4.1.0",
     "typescript": "^5.6.3",
     "whatwg-fetch": "3.6.2"
-  }
+  },
+  "packageManager": "npm@10.8.2"
 }
