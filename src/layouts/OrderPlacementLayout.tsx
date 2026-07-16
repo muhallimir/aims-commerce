@@ -251,9 +251,9 @@ const OrderPlacementLayout: React.FC = () => {
 								<Image
 									src={getImageUrl(item.image)}
 									alt={item.name}
-									width={50}
-									height={50}
-									style={{ objectFit: "contain" }}
+									width={100}
+									height={100}
+									style={{ objectFit: "contain", borderRadius: 4 }}
 								/>
 								<Box sx={{ ml: 2 }}>
 									<Typography variant="body1" fontWeight="medium">

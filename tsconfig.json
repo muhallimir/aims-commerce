@@ -28,6 +28,9 @@
       "@helpers/*": [
         "src/helpers/*"
       ],
+      "@lib/*": [
+        "src/lib/*"
+      ],
       "@store/*": [
         "src/store/*"
       ],

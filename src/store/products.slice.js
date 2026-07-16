@@ -21,6 +21,15 @@ const mapProduct = (p) => ({
   isActive: p.is_active,
   createdAt: p.created_at,
   updatedAt: p.updated_at,
+  reviews: Array.isArray(p.reviews)
+    ? p.reviews.map((r) => ({
+        _id: r._id,
+        name: r.name,
+        rating: Number(r.rating),
+        comment: r.comment,
+        createdAt: r.created_at,
+      }))
+    : [],
 });
 
 const initialState = {

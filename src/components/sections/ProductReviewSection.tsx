@@ -77,8 +77,8 @@ export default function ProductReviewSection() {
 
 	const sortedReviews = [...(product?.reviews || [])]?.sort(
 		(a: any, b: any) => {
-			const dateA = new Date(a.updatedAt);
-			const dateB = new Date(b.updatedAt);
+			const dateA = new Date(a.createdAt);
+			const dateB = new Date(b.createdAt);
 
 			return dateB.getTime() - dateA.getTime();
 		},

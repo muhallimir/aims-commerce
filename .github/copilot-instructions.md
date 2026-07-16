@@ -1,290 +1,146 @@
-# Aims Commerce - Copilot Instructions
+# Aims Commerce — Copilot Instructions
+
+> **Updated 2026-07-16** to reflect the post-migration architecture. Old instructions said
+> "MongoDB + Mongoose + separate Express server" — that's gone. See `ARCHITECTURE.md` in
+> `aims-commerce-backend/` for the full picture.
 
 ## Project Overview
 
-Full-stack e-commerce platform with Next.js (Pages Router) frontend and Express/MongoDB backend as separate packages. Supports three user roles: **Customer**, **Seller**, and **Admin**.
+Full-stack e-commerce platform. Multi-vendor (sellers + admin). Supports three user roles:
+**Customer**, **Seller**, and **Admin**.
 
-## Architecture
+Current stack:
+- **Frontend**: Next.js 15 (Pages Router), TypeScript, Material-UI v5, Redux Toolkit + RTK Query, Formik + Yup.
+- **Backend**: Express.js (Node 20, ESM), **postgres.js** (raw parameterized SQL), Socket.IO for live chat, Stripe + PayPal.
+- **Database**: Supabase (PostgreSQL 15 + pgbouncer pooler), 6 tables, 15 RLS policies, 5 triggers.
+- **Deployment target**: Vercel monorepo (single repo, Next.js API routes replace the Express server). The Express server is still live locally for development; see `aims-commerce-backend/ARCHITECTURE.md` for the merge plan.
 
-### Monorepo Structure
-
-```
-aims-commerce/          # Next.js 15 frontend (port 3005)
-aims-commerce-backend/  # Express.js API (port 5003)
-```
-
-### Frontend Stack
-
-- **Next.js 15** with Pages Router (`src/pages/`)
-- **TypeScript** (mixed with JS - migrating)
-- **Material-UI (MUI) v5** for components
-- **Redux Toolkit + RTK Query** for state/API (`src/store/`)
-- **Formik + Yup** for form handling
-- **Emotion** for CSS-in-JS styling
-
-### Backend Stack
-
-- **Express.js** with ES Modules
-- **MongoDB + Mongoose** for data
-- **JWT** for authentication
-- **Socket.io** for real-time chat/support
-- **Stripe & PayPal** for payments
-
-## Key Patterns
-
-### State Management
-
-RTK Query endpoints are co-located with Redux slices using `apiSlice.injectEndpoints()`:
-
-```javascript
-// src/store/user.slice.js
-export const userApiSlice = apiSlice.injectEndpoints({
-	endpoints: (builder) => ({
-		PostSignIn: builder.mutation({
-			query: (args) => ({
-				url: "/api/users/signin",
-				method: "POST",
-				body: args,
-			}),
-		}),
-	}),
-});
-```
-
-### Custom Hooks Pattern
-
-Business logic is encapsulated in hooks under `src/hooks/`:
-
-- `useAuthentication` - Sign in/out, role checks
-- `useCartHandling` - Cart operations
-- `useSellerAuth` - Seller verification
-- `useChatbot` - AI chatbot integration
-
-### Path Aliases (tsconfig.json)
+## Architecture Quick Reference
 
 ```
-@pages/*, @store/*, @common/*, @helpers/*, @styles/*
+aims/                                 ← workspace root
+├── aims-commerce/                     ← Next.js 15 frontend
+│   ├── src/
+│   │   ├── lib/                       ← @lib/* alias
+│   │   │   ├── auth.ts                ← requireAuth/Admin/Seller (mirror of backend/utils.js)
+│   │   │   ├── db.ts                  ← postgres.js singleton (mirror of backend/dbClient.js)
+│   │   │   └── supabase.ts            ← getSupabaseAdmin / getSupabaseBrowser
+│   │   ├── helpers/, common/, components/, forms/, hooks/, layouts/, middleware.ts, pages/, services/, store/
+│   ├── .env
+│   └── package.json
+│
+└── aims-commerce-backend/              ← Express + postgres.js API
+    ├── backend/
+    │   ├── server.js                   ← Express + Socket.IO
+    │   ├── dbClient.js                 ← shared postgres.js pool
+    │   ├── utils.js                    ← JWT helpers + isAuth/isAdmin/isSeller
+    │   └── routers/{user,product,order,seller,upload}Router.js
+    ├── prisma/
+    │   ├── schema.prisma               ← table shape (source of truth)
+    │   ├── seed.ts                     ← thin wrapper around db:migrate
+    │   └── migrations/                 ← 0_init + RLS + triggers
+    ├── scripts/
+    │   ├── dumpMongo.mjs               ← MongoDB → mongo-dump/*.json
+    │   ├── migrateMongoToSupabase.mjs  ← mongo-dump → Supabase (1:1)
+    │   └── e2e_test.mjs                ← 43 endpoint tests × 3 roles
+    ├── mongo-dump/                     ← JSON dump of original MongoDB data
+    ├── uploads/                        ← legacy local image folder
+    ├── MONGODB_TO_SUPABASE_MIGRATION_PLAN.md
+    ├── ROLE_BASED_ACCESS.md
+    └── ARCHITECTURE.md
 ```
 
-### Route Protection
+## Auth Flow
 
-Middleware (`src/middleware.ts`) handles auth redirects:
+- JWT signed with `JWT_SECRET` (env var, 30-day expiry).
+- Token claims: `{ _id, name, email, isAdmin, isSeller }`.
+- `backend/utils.js` (Express): `isAuth`, `isAdmin`, `isSeller` middlewares.
+- `src/lib/auth.ts` (Next.js): same `requireAuth/Admin/Seller` for the future API routes.
+- `src/middleware.ts` (Next.js): decodes the JWT client-side to gate `/admin/*` and `/seller/*` page navigation.
 
-- `/admin/*` - requires `isAdmin` JWT claim
-- `/seller/*` - requires `isSeller` JWT claim
-- `/start-selling` - authenticated non-sellers only
+## Roles × Routes
 
-### Layout Pattern
+| Role | Access |
+|---|---|
+| Public (no auth) | `/api/products/*`, `/api/users/:id`, `/api/users/register`, `/api/users/signin`, `/api/users/google-auth`, `/api/config/*`, `/_health` |
+| Customer (any auth user) | profile, own orders, place orders, leave reviews, `/api/sellers/become` |
+| Seller (`isSeller=true`) | own products CRUD, own orders, own analytics, own profile |
+| Admin (`isAdmin=true`) | everything: all users, all products, all orders, all reviews |
 
-Pages use layout components from `src/layouts/`. Admin/Seller dashboards bypass `MainLayout` in `_app.tsx`.
+Full matrix in `aims-commerce-backend/ROLE_BASED_ACCESS.md`.
 
-## Component Organization
+## Database Conventions
 
-```
-src/components/
-├── cards/          # ProductCard, etc.
-├── forms/          # Located in src/forms/ (separate folder)
-├── headers/        # MainHeader
-├── footers/        # MainFooter
-├── modals/         # SuccessModal, etc.
-├── sections/       # ProductDetailSection, admin/, seller/
-└── messaging/      # CustomerChatbox (AI + human support)
-```
+- IDs are UUIDs (`gen_random_uuid()`), never MongoDB-style ObjectIds.
+- Timestamps are `TIMESTAMPTZ` (`created_at`, `updated_at`).
+- Booleans are stored as `boolean` (not 0/1). `is_admin`, `is_seller`, `is_active`, `is_paid`, `is_delivered`, `is_active_store`.
+- Money is `NUMERIC(10, 2)` for products, `NUMERIC(12, 2)` for orders. Never `FLOAT`.
+- Names are unique (`products.name`, `users.email`).
+- `sellers.user_id` is unique (1:1 with users).
+- `reviews (product_id, user_id)` is unique (one review per user per product).
 
-## API Integration
+## E2E Testing
 
-- Base URL: `process.env.NEXT_PUBLIC_API_URI`
-- Auth: JWT token stored in cookies, attached via `apiSlice` prepareHeaders
-- Backend routes: `/api/users`, `/api/products`, `/api/orders`, `/api/sellers`
-
-## Development Commands
+`aims-commerce-backend/scripts/e2e_test.mjs` covers all 37 active endpoints × 3 roles + public. 43 assertions total. **Currently 43/43 passing.**
 
 ```bash
-# Frontend (aims-commerce/)
-npm run dev          # Start on port 3005 with Turbopack
-npm run lint:fix     # ESLint auto-fix
-npm run storybook    # Component development
-
-# Backend (aims-commerce-backend/)
-npm start            # Production server
-nodemon              # Development (install nodemon)
+cd aims-commerce-backend
+node backend/server.js &
+npm run test:e2e
 ```
 
-## Database Models
+All test-created data uses the `__TEST__` prefix on `name` / `email` / `store_name` and is auto-cleaned at the end of the run. The original MongoDB-dumped data is left untouched.
 
-- **User** - Core user with `isAdmin`, `isSeller` flags
-- **Seller** - Auto-created when user becomes seller (see `userModel.js` hooks)
-- **Product** - Has optional `seller` reference
-- **Order** - Order with items, shipping, payment status
+## Path Aliases (Next.js `tsconfig.json`)
 
-## Testing
-
-- Jest + React Testing Library
-- Run: `npm test`
-
-## Coding Standards
-
-### Core Principles
-
-- **KISS** - Keep solutions simple; avoid over-engineering
-- **YAGNI** - Don't add functionality until needed
-- **DRY** - Extract repeated logic into helpers/hooks/components
-- **SOLID** - Single responsibility per file; depend on abstractions
-
-### File & Component Guidelines
-
-- **Max ~150 lines per file** - Split large components into smaller modules
-- **Follow existing folder structure** - Place new files in appropriate `src/` subdirectories
-- **One component per file** - Export default for main component
-
-### Performance Optimization (Frontend)
-
-```tsx
-// Use useMemo for expensive calculations
-const filteredProducts = useMemo(
-	() => products.filter((p) => p.category === selectedCategory),
-	[products, selectedCategory],
-);
-
-// Use useCallback for functions passed to children
-const handleAddToCart = useCallback(
-	(productId: string) => {
-		dispatch(updateCartList(productId));
-	},
-	[dispatch],
-);
-
-// Use useRef for DOM refs and mutable values that don't trigger re-renders
-const inputRef = useRef<HTMLInputElement>(null);
+```
+@pages/*    → src/pages/*
+@helpers/*  → src/helpers/*
+@lib/*      → src/lib/*           ← NEW: shared lib layer for monorepo
+@store/*    → src/store/*
+@common/*   → src/common/*
+@styles/*   → src/styles/*
 ```
 
-### Custom Hooks Pattern
+## Key Coding Rules
 
-Extract reusable logic into `src/hooks/`:
+- **Server-only files** (`src/lib/db.ts`, `src/lib/supabase.ts`, `src/lib/auth.ts`): never import from client components. Use `import "server-only"` once Next.js-side is wired up.
+- **postgres.js**: never pass `undefined` to a query — use `?? null` first. (`COALESCE(${x ?? null}, col)` not `COALESCE(${x}, col)`.)
+- **Server-side DB calls**: use `sql\`\`` tagged templates, or `sql.unsafe(query, values)` for dynamic queries. **Do not** use `sql.query(query, values)` — that method does not exist on the `postgres` library.
+- **Numeric columns** come back from postgres.js as **strings**. Call `Number()` or `parseFloat()` before doing math.
+- **Boolean params**: use native `true` / `false`, not `"true"` / `"false"`. With the latter, `::boolean` casts on parameterized queries silently produce `false`.
+- **Mongoose patterns are forbidden**: no `Schema()`, no `Model.find()`, no `ObjectId`. Use `sql\`SELECT …\``.
 
-```tsx
-// Good: Encapsulate related state and effects
-const useProductSearch = (query: string) => {
-	const [results, setResults] = useState([]);
-	const [loading, setLoading] = useState(false);
-	// ... logic
-	return { results, loading };
-};
+## Adding a New API Endpoint
+
+1. Add the handler in the appropriate `backend/routers/*Router.js`.
+2. Use `isAuth` / `isAdmin` / `isSeller` from `../utils.js`.
+3. Use `sql\`\`` tagged templates for queries. For dynamic column lists, use `sql.unsafe(query, valuesArray)`.
+4. Add a test case in `scripts/e2e_test.mjs` covering all three roles (admin pass, seller pass/denied, customer pass/denied).
+5. Run `npm run test:e2e` to confirm.
+
+## Frontend ↔ Backend Wiring
+
+- `NEXT_PUBLIC_API_URI` (frontend env) → `http://127.0.0.1:5003` in dev, deployed URL in prod.
+- JWT attached in `apiSlice.prepareHeaders` (`src/store/apiSlice.js`).
+- Redux slices in `src/store/`: `user`, `product`, `order`, `seller`, `admin`, `chat`. Each co-locates state + RTK Query endpoints.
+
+## Migrations
+
+```bash
+# 1. Dump MongoDB to mongo-dump/
+npm run db:dump
+
+# 2. Apply Prisma migrations to Supabase
+npx prisma migrate deploy
+
+# 3. Load mongo-dump into Supabase (1:1)
+npm run db:migrate
+
+# Or: single-command seed (calls step 1+3 via seed.ts)
+npm run db:seed
 ```
 
-### Modularity & Reusability
+## AI Chatbot
 
-- Extract shared UI into `src/components/` by category (cards, buttons, modals)
-- Place form components in `src/forms/`
-- Create section components in `src/components/sections/`
-- Use `src/common/constants.ts` for shared constants
-- Define TypeScript interfaces in `src/common/interface.tsx`
-
-## Conventions
-
-- Forms use Formik with Yup validation schemas
-- MUI theme in `src/styles/theme/` with custom breakpoints
-- Constants/interfaces in `src/common/`
-- Use `lodash/isEmpty` for object checks
-- Loading states managed via `app.slice` (`setLoading`, `setAppError`)
-
-## AI Chatbot Feature
-
-### Chat Availability
-
-- Chat is available for **all users** (authenticated and unauthenticated)
-- Unauthenticated users can browse products and get recommendations
-- "Add to Cart" shows sign-in prompt dialog for unauthenticated users
-- After sign-in, pending product is auto-added to cart and user is redirected to checkout
-
-### User-Specific Chat Persistence
-
-- Chat history is stored per-user using localStorage with user ID keys
-- Pattern: `chatbot-messages-{userId}` or `chatbot-messages-guest`
-- **Guest → Login (same session)**: Guest chat is migrated to user's chat (persists)
-- **Login as different user**: Fresh chat for new user, previous user's chat preserved separately
-- **Logout**: User's chat preserved, loads fresh guest chat
-- Users can manually clear chat via the clear button
-
-### Key Files
-
-- `src/hooks/useChatbot.ts` - Chat state management with user-specific persistence
-- `src/hooks/useAuthentication.js` - Handles pending cart product after login
-- `src/components/messaging/CustomerChatbox.tsx` - Main chat UI (AI + human support)
-- `src/components/messaging/ProductSuggestion.tsx` - Product cards with auth-aware "Add to Cart"
-- `src/components/messaging/TypewriterText.tsx` - Typing animation component for bot responses
-- `src/components/messaging/PopularityChart.tsx` - Visual chart for product popularity rankings
-- `src/services/chatbotService.ts` - AI response generation and product search
-- `docs/CHATBOT_TESTING.md` - Test questions and expected responses
-
-### Knowledge Base Topics
-
-The chatbot handles common e-commerce questions via a built-in knowledge base:
-
-| Topic      | Example Questions                                  |
-| ---------- | -------------------------------------------------- |
-| Shipping   | "How long does shipping take?", "Free shipping?"   |
-| Returns    | "Return policy", "How to exchange?"                |
-| Payment    | "Payment methods", "Is it secure?"                 |
-| Account    | "Forgot password", "Create account"                |
-| Orders     | "Where is my order?", "Cancel order"               |
-| Products   | "Size guide", "Warranty info"                      |
-| Popularity | "What's trending?", "Most popular?", "Best rated?" |
-| Price      | "Cheapest?", "Most expensive?", "Budget options?"  |
-| Deals      | "Any sales?", "Discounts?", "Promotions?"          |
-| Stock      | "Is this in stock?", "Notify when available?"      |
-| Wishlist   | "Save for later", "Where's my wishlist?"           |
-| Loyalty    | "Rewards program?", "Earn points?"                 |
-| Categories | "What do you sell?", "Browse categories"           |
-| Privacy    | "Is my data safe?", "Secure payments?"             |
-| Seller     | "How to become a seller?"                          |
-
-### Typing Animation
-
-Bot responses use a fast typewriter effect for natural conversation feel:
-
-- **Component**: `TypewriterText.tsx`
-- **Speed**: ~100 characters/second
-- **Features**: Character-by-character reveal, blinking cursor, completion callback
-
-### Popularity Chart
-
-When users ask about popular/trending products, a visual chart is displayed:
-
-- **Component**: `PopularityChart.tsx`
-- **Trigger Words**: "popular", "trending", "best rated", "top rated", "bestseller"
-- **Features**: Horizontal bar chart, gold/silver/bronze rankings, hover tooltips, animated bars
-- **Data**: Products sorted by rating × log(numReviews)
-
-### Price Extreme Queries
-
-Handles "cheapest" and "most expensive" product searches:
-
-- **Cheapest triggers**: "cheapest", "lowest price", "budget", "bargain", "affordable"
-- **Expensive triggers**: "most expensive", "premium", "luxury", "priciest"
-- **Category support**: "cheapest electronics", "most expensive clothing"
-- **Features**: Price-sorted results, price range display, relevant follow-up suggestions
-
-### Empty State Handling
-
-The chatbot gracefully handles scenarios when no products are found:
-
-- **Category Empty**: Shows trending products from ALL categories as fallback
-- **Helpful Message**: Explains no products in that category yet
-- **Alternative Suggestions**: Offers other categories to browse
-- **No Broken UI**: Never shows "browse categories" with empty suggestions
-- **Complete Empty**: If no products at all, offers helpful info about shipping, returns, etc.
-
-### Adding New Knowledge Base Topics
-
-To add new Q&A topics, update the `knowledgeBase` object in `chatbotService.ts`:
-
-```typescript
-topicName: {
-    patterns: ['keyword1', 'keyword2'],  // Trigger words
-    responses: {
-        general: "Default response...",
-        subtopic: "Specific response..."
-    }
-}
-```
+Knowledge base in `aims-commerce/src/services/chatbotService.ts` (frontend-only — no backend). Persists per-user in `localStorage` under `chatbot-messages-{userId}`. See `docs/CHATBOT_INTEGRATION.md` and `docs/CHATBOT_TESTING.md` for full details.
