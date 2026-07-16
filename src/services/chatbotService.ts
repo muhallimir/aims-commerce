@@ -150,7 +150,7 @@ class ChatbotService {
         },
         // Categories
         categories: {
-            patterns: ['categories', 'category', 'browse', 'departments', 'sections', 'what do you sell', 'what products'],
+            patterns: ['what categories', 'list categories', 'show categories', 'what departments', 'tell me about categories', 'what do you sell', 'what products do you have', 'what do you carry', 'product types', 'what kind of products'],
             responses: {
                 general: "🛍️ **Our Categories**\n\nExplore our departments:\n• **Electronics**: Laptops, phones, gadgets\n• **Clothing**: Fashion for all\n• **Home & Living**: Decor, furniture\n• **Beauty**: Skincare, cosmetics\n• **Sports**: Fitness gear\n\nWhat category interests you?"
             }
