@@ -1,5 +1,4 @@
 export const getImageUrl = (image: string) => {
-	return image?.startsWith("/uploads")
-		? `${process.env.NEXT_PUBLIC_API_URI}${image}`
-		: image;
+	if (!image) return "";
+	return image.startsWith("/uploads") ? image : image;
 };
