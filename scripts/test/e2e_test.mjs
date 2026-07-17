@@ -793,7 +793,12 @@ async function main() {
   }
   console.log();
 
-  await fs.writeFile("./scripts/e2e_test_results.json", JSON.stringify(results, null, 2));
+  // Write the results JSON next to this script (was previously written to
+  // ./scripts/e2e_test_results.json — a path baked in when the script lived
+  // in the old aims-commerce-backend repo). Use import.meta.url so the
+  // path follows the script no matter where it's run from.
+  const resultsPath = new URL("./e2e_test_results.json", import.meta.url);
+  await fs.writeFile(resultsPath, JSON.stringify(results, null, 2));
   process.exit(results.summary.failed === 0 ? 0 : 1);
 }
 
