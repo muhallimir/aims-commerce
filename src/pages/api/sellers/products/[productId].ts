@@ -45,6 +45,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `)[0];
       if (!existing) return res.status(404).json({ message: "Product not found" });
 
+      // Block hard-delete if any order_items still reference this product — the
+      // order history is sacred. Suggest soft-delete (is_active=false) instead.
+      const refs = (await sql`
+        SELECT COUNT(*)::int AS n FROM order_items WHERE product_id = ${productId}
+      `)[0];
+      if (refs.n > 0) {
+        return res.status(409).json({
+          message: `Cannot delete: ${refs.n} order item(s) still reference this product. Use is_active=false to soft-delete instead.`,
+          referencedBy: refs.n,
+        });
+      }
+
       await sql`DELETE FROM products WHERE id = ${productId} AND seller_id = ${seller.id}`;
       return res.status(200).json({ message: "Product deleted successfully" });
     }

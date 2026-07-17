@@ -5,14 +5,25 @@ import bcrypt from "bcryptjs";
 import { mapUser } from "@lib/userMap";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const user = getUserFromRequest(req);
+  if (!user) return res.status(401).json({ message: "No Token" });
+
+  if (req.method === "GET") {
+    try {
+      const current = (await sql`SELECT * FROM users WHERE id = ${user._id} LIMIT 1`)[0];
+      if (!current) return res.status(404).json({ message: "User not found" });
+      return res.status(200).json(mapUser(current));
+    } catch (e: any) {
+      console.error("[/api/users/profile GET]", e);
+      return res.status(500).json({ message: "Internal server error", error: e.message });
+    }
+  }
+
   if (req.method !== "PUT") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
   try {
-    const user = getUserFromRequest(req);
-    if (!user) return res.status(401).json({ message: "No Token" });
-
     const { name, email, phone, address, city, country, storeName, password } = req.body || {};
     const fields: string[] = [];
     const values: any[] = [];

@@ -18,6 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
+    }).catch((err) => {
+      // Bogus / expired / wrong-audience token — return a clean 401 instead of 500.
+      // The error shape from google-auth-library is an instance of GaxiosError;
+      // we don't need to inspect it, just translate to 401.
+      throw Object.assign(new Error("Invalid Google token"), { statusCode: 401, cause: err });
     });
 
     const payload = ticket.getPayload();
@@ -38,6 +43,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(mapUser(user));
   } catch (e: any) {
     console.error("[/api/users/google-auth]", e);
+    // Distinguish auth failures (401) from server errors (500) so the test
+    // suite and the frontend can react appropriately.
+    if (e?.statusCode === 401) {
+      return res.status(401).json({ message: e.message || "Invalid Google token" });
+    }
     return res.status(500).json({ message: "Internal server error", error: e.message });
   }
 }
