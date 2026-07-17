@@ -1,0 +1,412 @@
+{
+  "byRole": {
+    "admin": [
+      {
+        "name": "POST /api/users/signin (admin)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/users/:id (admin fetching any user)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/users/:id (unknown id → 404)",
+        "ok": true,
+        "detail": "status=404"
+      },
+      {
+        "name": "GET /api/users (list all)",
+        "ok": true,
+        "detail": "status=200 count=138"
+      },
+      {
+        "name": "PUT /api/users/:id (admin)",
+        "ok": true,
+        "detail": "status=200 body={\"message\":\"User Updated\",\"user\":{\"_id\":\"f47e2be9-e116-4a22-bd5e-303680f7173d\",\"name\":\"__TEST__Admin"
+      },
+      {
+        "name": "DELETE /api/users/:id (admin)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "POST /api/products (create)",
+        "ok": true,
+        "detail": "status=200 id=508c6a0b-9eea-430c-8fad-8f9ce7ca5624 body={\"message\":\"New Product Created\",\"product\":{\"_id\":\"508c6a0b-9eea-430c-8fad-8f9ce7ca5624\",\"name\":\"__T"
+      },
+      {
+        "name": "PUT /api/products:id (update)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "DELETE /api/products:id",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/orders (all)",
+        "ok": true,
+        "detail": "status=200 count=164"
+      },
+      {
+        "name": "GET /api/orders/summary",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "PUT /api/orders:id/deliver",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "DELETE /api/orders:id",
+        "ok": true,
+        "detail": "status=200"
+      }
+    ],
+    "seller": [
+      {
+        "name": "POST /api/users/signin (seller)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "POST /api/sellers/become (already a seller → 400)",
+        "ok": true,
+        "detail": "status=400 body={\"message\":\"User is already a seller\"}"
+      },
+      {
+        "name": "GET /api/sellers/products",
+        "ok": true,
+        "detail": "status=200 count=0"
+      },
+      {
+        "name": "POST /api/sellers/products",
+        "ok": true,
+        "detail": "status=201 id=1466f6b4-aec9-4470-88c3-daa23a9cdd58 body={\"message\":\"Product created successfully\",\"product\":{\"_id\":\"1466f6b4-aec9-4470-88c3-daa23a9cdd58\",\"i"
+      },
+      {
+        "name": "GET /api/sellers/analytics",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/sellers/orders",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "PUT /api/sellers/products/:id",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "PUT /api/sellers/orders/:orderId/status",
+        "ok": true,
+        "detail": "status=200 body={\"message\":\"Order status updated\",\"order\":{\"id\":\"930470db-43a6-4ca1-bc5f-5f6016170d1e\",\"user_id\":\"91"
+      },
+      {
+        "name": "PUT /api/sellers/profile",
+        "ok": true,
+        "detail": "status=200 body={\"message\":\"Seller profile updated successfully\",\"user\":{\"_id\":\"d5a807e9-df62-4693-87da-536e6556ce0c"
+      },
+      {
+        "name": "DELETE /api/sellers/products/:id (has orders → 409)",
+        "ok": true,
+        "detail": "status=409 body={\"message\":\"Cannot delete: 1 order item(s) still reference this product. Use is_active=false to soft-delete instead.\",\"r"
+      },
+      {
+        "name": "DELETE /api/sellers/products/:id (no orders → 200)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "PUT /api/orders:id/deliver (denied — admin only)",
+        "ok": true,
+        "detail": "status=401"
+      }
+    ],
+    "customer": [
+      {
+        "name": "POST /api/users/signin (customer)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/users/:id (own profile, mapped)",
+        "ok": true,
+        "detail": "status=200 isSeller=false keys=_id,name,email,phone,address,city"
+      },
+      {
+        "name": "GET /api/users/:id (other user → 403)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "GET /api/users/:id (different user, even customer → 403)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "GET /api/users (denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "GET /api/users/profile",
+        "ok": true,
+        "detail": "status=200 email=__TEST__customer@aims.test"
+      },
+      {
+        "name": "PUT /api/users/profile",
+        "ok": true,
+        "detail": "status=200 body={\"_id\":\"9138327c-c9d9-4df0-987d-c6c6a2dc038e\",\"name\":\"__TEST__CustomerRenamed\",\"email\":\"__TEST__cust"
+      },
+      {
+        "name": "PUT /api/users/:id (denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "DELETE /api/users/:id (denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/products (denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/products:id/reviews",
+        "ok": true,
+        "detail": "status=201 body={\"message\":\"Review Created\",\"review\":{\"_id\":\"b468112f-5012-4485-a5d1-bbd663ff799b\",\"name\":\"__TEST__Customer\",\"rating\":5,\"comment\":\"__TEST__ review\",\"created_at\":\"2026-07-17T08:03:13.364Z\"}}"
+      },
+      {
+        "name": "GET /api/sellers/products (denied)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "PUT /api/sellers/products/:id (denied)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "PUT /api/sellers/orders/:orderId/status (denied)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "DELETE /api/sellers/products/:id (denied)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "GET /api/orders/mine",
+        "ok": true,
+        "detail": "status=200 count=1"
+      },
+      {
+        "name": "GET /api/orders/purchase (alias of /mine)",
+        "ok": true,
+        "detail": "status=200 count=1"
+      },
+      {
+        "name": "POST /api/orders (create)",
+        "ok": true,
+        "detail": "status=201 id=3dff8803-67d8-4700-ace5-a7e8f1b02ccd body={\"message\":\"New Order Created\",\"order\":{\"_id\":\"3dff8803-67d8-4700-ace5-a7e8f1b02ccd\",\"user\":{\"_id\":\""
+      },
+      {
+        "name": "GET /api/orders:id (own)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/orders (all — denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "GET /api/orders/summary (denied)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/orders/create-payment-intent",
+        "ok": true,
+        "detail": "status=503 keys=message"
+      },
+      {
+        "name": "PUT /api/orders:id/pay",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "PUT /api/orders:id/deliver (denied — admin only)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "register fresh newbie",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /profile (newbie isSeller=false before)",
+        "ok": true,
+        "detail": "status=200 isSeller=false"
+      },
+      {
+        "name": "GET /sellers/products (denied 403 pre-become)",
+        "ok": true,
+        "detail": "status=403"
+      },
+      {
+        "name": "POST /sellers/become (201 + isSeller=true + new JWT)",
+        "ok": true,
+        "detail": "status=201 isSeller=true hasNewToken=true"
+      },
+      {
+        "name": "GET /profile (newbie isSeller=true after, with new JWT)",
+        "ok": true,
+        "detail": "status=200 isSeller=true"
+      },
+      {
+        "name": "GET /sellers/products (accessible 200 post-become, new JWT)",
+        "ok": true,
+        "detail": "status=200 count=0"
+      },
+      {
+        "name": "POST /signin (re-signin returns isSeller=true)",
+        "ok": true,
+        "detail": "status=200 isSeller=true"
+      },
+      {
+        "name": "POST /sellers/products (newbie can create, post-become)",
+        "ok": true,
+        "detail": "status=201 id=bf0bc10d-b74a-4a4f-ad77-7fdd0df54bab"
+      },
+      {
+        "name": "POST /sellers/become (already a seller → 400)",
+        "ok": true,
+        "detail": "status=400"
+      },
+      {
+        "name": "POST /api/uploads (no file → 400)",
+        "ok": true,
+        "detail": "status=400 msg=No image file provided"
+      },
+      {
+        "name": "POST /api/uploads (real multipart PNG)",
+        "ok": true,
+        "detail": "status=200 url=https://tmnsezftbqitxibndtlk.supabase.co/storage/v1/object/public/uploads/178427"
+      }
+    ],
+    "public": [
+      {
+        "name": "GET /api/products",
+        "ok": true,
+        "detail": "status=200 count=15"
+      },
+      {
+        "name": "GET /api/products/categories",
+        "ok": true,
+        "detail": "status=200 count=4"
+      },
+      {
+        "name": "GET /api/_health",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/config/paypal",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/config/google (returns oauth client id)",
+        "ok": true,
+        "detail": "status=200 body={\"googleClientId\":\"\"}"
+      },
+      {
+        "name": "GET /api/sellers/:sellerId",
+        "ok": true,
+        "detail": "status=200 id=0ea15ef1-be4f-9018-708f-eb3235052b7b"
+      },
+      {
+        "name": "GET /api/sellers/:sellerId (not found → 404)",
+        "ok": true,
+        "detail": "status=404"
+      },
+      {
+        "name": "POST /api/users/google-auth (bad token → 400/401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/users/signin (bad creds) → 401",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/users/register",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/users/:id (no token → 401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "GET /api/users/profile (no token → 401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "GET /api/products (with query)",
+        "ok": true,
+        "detail": "status=200"
+      },
+      {
+        "name": "GET /api/products?category=Electronics",
+        "ok": true,
+        "detail": "count=7"
+      },
+      {
+        "name": "GET /api/products:id",
+        "ok": "ASUS UX534FTC",
+        "detail": "name=ASUS UX534FTC"
+      },
+      {
+        "name": "GET /api/orders/purchase (no token → 401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "GET /api/orders:id (no token → 401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/orders/create-payment-intent (no auth → 401)",
+        "ok": true,
+        "detail": "status=401"
+      },
+      {
+        "name": "POST /api/uploads (no auth → 401)",
+        "ok": true,
+        "detail": "status=401"
+      }
+    ]
+  },
+  "summary": {
+    "total": 79,
+    "passed": 79,
+    "failed": 0
+  }
+}

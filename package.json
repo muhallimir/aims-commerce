@@ -11,7 +11,12 @@
     "test": "jest",
     "pre-commit": "npm run lint:fix",
     "prepare": "husky install && chmod ug+x .husky/*",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "test:e2e": "node scripts/test/e2e_test.mjs",
+    "test:browser": "node scripts/test/browser_e2e_start_selling.mjs",
+    "test:chat": "node scripts/test/chat_test.mjs",
+    "test:all": "node scripts/test/e2e_test.mjs && node scripts/test/browser_e2e_start_selling.mjs && node scripts/test/chat_test.mjs",
+    "test:scan": "node scripts/test/scan_test_data.mjs"
   },
   "dependencies": {
     "@emotion/react": "11.10.5",
@@ -92,6 +97,8 @@
     "lint-staged": "13.1.0",
     "msw": "1.2.2",
     "patch-package": "8.0.0",
+    "playwright": "^1.61.1",
+    "dotenv": "^16.4.7",
     "prettier": "2.8.3",
     "svgo": "3.2.0",
     "tsconfig-paths-webpack-plugin": "4.1.0",
