@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { useGetUserToManageMutation } from "@store/user.slice";
 import { updateUserInfo } from "@store/user.slice";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { useBecomeSellerMutation } from "@store/seller.slice";
@@ -18,7 +17,6 @@ const validationSchema = yup.object({
 const BecomeSellerForm: React.FC = () => {
 	const [becomeSeller, { isLoading, isError, error, isSuccess }] =
 		useBecomeSellerMutation();
-	const [getUser] = useGetUserToManageMutation();
 	const userInfo = useSelector((state: any) => state.user.userInfo);
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -31,19 +29,24 @@ const BecomeSellerForm: React.FC = () => {
 				name: values.name,
 				storeName: values.storeName,
 			});
-			if (!("error" in res)) {
-				// Refetch user info to update isSeller
-				const userRes = await getUser({ userId: userInfo._id });
-				if (userRes && "data" in userRes && userRes.data) {
-					dispatch(updateUserInfo(userRes.data));
+			if ("error" in res) return;
 
-					// If the API returned a new token, update it
-					if (res.data && res.data.token) {
-						Cookies.set("token", res.data.token, { path: "/" });
-					}
-				}
-				router.push("/seller/start-selling");
+			// The /api/sellers/become response is the single source of truth:
+			//   res.data.user  → updated user in CAMELCASE (isSeller, storeName, ...)
+			//   res.data.token → fresh JWT with isSeller=true
+			// We must NOT call getUser here. The /api/users/:id endpoint returns
+			// raw snake_case data, and dispatching that into userInfo would
+			// overwrite isSeller (camelCase) with is_seller (snake_case), making
+			// userInfo.isSeller undefined. The destination /seller/* page then
+			// sees !userInfo.isSeller → true and bounces the user back to this
+			// form, which is the "clicked Start Selling, nothing happened" bug.
+			if (res.data?.user) {
+				dispatch(updateUserInfo(res.data.user));
 			}
+			if (res.data?.token) {
+				Cookies.set("token", res.data.token, { path: "/" });
+			}
+			router.push("/seller/dashboard");
 		},
 	});
 

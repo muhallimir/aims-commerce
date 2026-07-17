@@ -12,9 +12,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method === "GET") {
+      // SECURITY: this endpoint exposes the full user row (email, phone,
+      // address, store_name, is_admin, is_seller, created_at, etc). It must
+      // not be world-readable. Allow only:
+      //   - the user themselves, or
+      //   - an admin
+      // Anything else returns 401. This was previously open to anyone
+      // (unauthenticated GET returned the full row), which is what the
+      // StartSellingForm was abusing as a "refetch my profile" call —
+      // it then dispatched the raw snake_case data into Redux and broke
+      // userInfo.isSeller. The form is now fixed to use the /become response
+      // directly, but we still need this gate.
+      const auth = getUserFromRequest(req);
+      if (!auth) return res.status(401).json({ message: "Authentication required" });
+      const isSelf = auth._id === id;
+      const isAdminUser = !!auth.isAdmin;
+      if (!isSelf && !isAdminUser) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
       const user = (await sql`SELECT * FROM users WHERE id = ${id} LIMIT 1`)[0];
       if (!user) return res.status(404).json({ message: "User Not Found" });
-      return res.status(200).json(user);
+      return res.status(200).json(mapUser(user));
     }
 
     if (req.method === "PUT") {
