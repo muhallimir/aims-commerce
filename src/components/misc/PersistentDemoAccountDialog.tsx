@@ -65,10 +65,7 @@ const PersistentDemoAccountDialog: React.FC = () => {
 
     const handleClose = () => {
         setOpen(false);
-        // Keep the localStorage marker and the Redux isDemo state intact when
-        // the user closes the dialog. They're still a demo user — closing the
-        // "your credentials" popup doesn't change that. isDemo is only reset
-        // on explicit sign-out (see useAuthentication.handleSignOut).
+        localStorage.removeItem('demoAccountInfo');
         setCopiedField(null);
     };
 
