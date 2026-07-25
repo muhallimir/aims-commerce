@@ -13,10 +13,11 @@ npm run dev          # Next.js dev on port 3005 with Turbopack
 npm run build        # production build
 npm run lint         # ESLint
 npm run lint:fix     # ESLint auto-fix (also runs on pre-commit via husky)
-npm run test:e2e     # 79 API tests against http://127.0.0.1:3005/api/*
-npm run test:browser # 16 Playwright browser tests (Start Selling flow)
-npm run test:chat    # 4 Supabase Realtime chat tests
-npm run test:scan    # post-run DB cleanup verification
+npm run test:e2e            # 79 API tests against http://127.0.0.1:3005/api/*
+npm run test:browser        # 16 Playwright browser tests (Start Selling flow)
+npm run test:browser:purchase # 43 Playwright browser tests (role-based purchase flow)
+npm run test:chat           # 4 Supabase Realtime chat tests
+npm run test:scan           # post-run DB cleanup verification
 ```
 
 ## Environment variables (required)

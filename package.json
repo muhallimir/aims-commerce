@@ -14,8 +14,9 @@
     "postinstall": "patch-package",
     "test:e2e": "node scripts/test/e2e_test.mjs",
     "test:browser": "node scripts/test/browser_e2e_start_selling.mjs",
+    "test:browser:purchase": "node scripts/test/browser_e2e_purchase.mjs",
     "test:chat": "node scripts/test/chat_test.mjs",
-    "test:all": "node scripts/test/e2e_test.mjs && node scripts/test/browser_e2e_start_selling.mjs && node scripts/test/chat_test.mjs",
+    "test:all": "node scripts/test/e2e_test.mjs && node scripts/test/browser_e2e_start_selling.mjs && node scripts/test/browser_e2e_purchase.mjs && node scripts/test/chat_test.mjs",
     "test:scan": "node scripts/test/scan_test_data.mjs"
   },
   "dependencies": {

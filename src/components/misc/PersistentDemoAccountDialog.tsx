@@ -41,10 +41,17 @@ const PersistentDemoAccountDialog: React.FC = () => {
                     const accountInfo = JSON.parse(storedDemoInfo);
                     setDemoAccountInfo(accountInfo);
                     setOpen(true);
+                    // Always set isDemo true when the marker exists. We never
+                    // set it back to false here — the only place that resets
+                    // isDemo is useAuthentication.handleSignOut, so the demo
+                    // purchase flow keeps PayPal disabled / Stripe pre-selected
+                    // for as long as the demo account is signed in.
                     dispatch(setIsDemo(true));
                 } catch (error) {
+                    // Corrupt marker — silently clear it. Don't touch isDemo
+                    // here either; if the user is still a demo user, the
+                    // SignInForm already set isDemo = true on creation.
                     localStorage.removeItem('demoAccountInfo');
-                    dispatch(setIsDemo(false));
                 }
             }
         };
@@ -58,8 +65,10 @@ const PersistentDemoAccountDialog: React.FC = () => {
 
     const handleClose = () => {
         setOpen(false);
-        localStorage.removeItem('demoAccountInfo');
-        setDemoAccountInfo(null);
+        // Keep the localStorage marker and the Redux isDemo state intact when
+        // the user closes the dialog. They're still a demo user — closing the
+        // "your credentials" popup doesn't change that. isDemo is only reset
+        // on explicit sign-out (see useAuthentication.handleSignOut).
         setCopiedField(null);
     };
 

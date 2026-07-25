@@ -85,7 +85,11 @@ const OrderPlacementLayout: React.FC = () => {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
-	const isPaymentVisible = userId === userInfo?._id;
+	// Normalise the order's user to an id string. The API can return either
+	// a flat string id (legacy MongoDB shape) or a populated
+	// { _id, name, email } object (current Next.js / Supabase shape).
+	const orderUserId = typeof userId === "string" ? userId : userId?._id;
+	const isPaymentVisible = orderUserId === userInfo?._id;
 
 	useEffect(() => {
 		if (!loadedOrderId && orderId) {

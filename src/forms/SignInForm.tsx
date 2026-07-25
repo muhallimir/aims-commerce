@@ -25,6 +25,8 @@ import useAuthentication from "src/hooks/useAuthentication";
 import { getErrorMessage } from "@helpers/getErrorMessage";
 import { PlayArrow as PlayArrowIcon, Info as InfoIcon, Person as PersonIcon, Email as EmailIcon, Lock as LockIcon, ContentCopy as CopyIcon, Check as CheckIcon } from "@mui/icons-material";
 import useThemeMode from "src/hooks/useThemeMode";
+import { useDispatch } from "react-redux";
+import { setIsDemo } from "@store/app.slice";
 
 const validationSchema = yup.object({
 	email: yup
@@ -45,6 +47,7 @@ const SignInForm: React.FC = () => {
 	const [demoAccountInfo, setDemoAccountInfo] = useState<any>(null);
 	const [copiedField, setCopiedField] = useState<string | null>(null);
 	const { isDarkMode } = useThemeMode();
+	const dispatch = useDispatch();
 
 	const formik = useFormik<SignInFormValues>({
 		initialValues: { email: "", password: "" },
@@ -88,6 +91,12 @@ const SignInForm: React.FC = () => {
 		try {
 			const demoCredentials = generateDemoCredentials();
 
+			// Mark demo mode BEFORE the API call so any other component reading
+			// isDemo (e.g. SelectPaymentMethodForm) sees the correct value as
+			// soon as the user lands on the next page, even if the
+			// PersistentDemoAccountDialog hasn't ticked yet.
+			dispatch(setIsDemo(true));
+
 			const registrationResult = await reqRegister(demoCredentials).unwrap();
 
 			if (registrationResult) {
@@ -127,6 +136,7 @@ const SignInForm: React.FC = () => {
 
 	const handleSignInWithDemo = () => {
 		if (demoAccountInfo) {
+			dispatch(setIsDemo(true));
 			reqSignIn({
 				email: demoAccountInfo.email,
 				password: demoAccountInfo.password
@@ -136,7 +146,10 @@ const SignInForm: React.FC = () => {
 
 	const handleCloseDemoDialog = () => {
 		setShowDemoCredentials(false);
-		localStorage.removeItem('demoAccountInfo');
+		// NOTE: do NOT clear localStorage 'demoAccountInfo' here, and do NOT
+		// reset isDemo. The user is still a demo user until they sign out —
+		// clearing the state here would break the demo-mode purchase flow
+		// (PayPal would get re-enabled, Stripe would get un-pre-selected).
 		setCopiedField(null);
 	};
 
@@ -157,6 +170,11 @@ const SignInForm: React.FC = () => {
 				const accountInfo = JSON.parse(storedDemoInfo);
 				setDemoAccountInfo(accountInfo);
 				setShowDemoCredentials(true);
+				// The user came back to /signin with a stored demo marker.
+				// Make sure Redux isDemo stays in sync — the persistent dialog
+				// already does this on the first tick, but if the user lands
+				// here before that interval fires we want the right state too.
+				dispatch(setIsDemo(true));
 			} catch (error) {
 				localStorage.removeItem('demoAccountInfo');
 			}

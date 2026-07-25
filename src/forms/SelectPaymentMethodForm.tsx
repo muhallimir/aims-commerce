@@ -25,6 +25,7 @@ const SelectPaymentMethodForm: React.FC = () => {
 	const router = useRouter();
 	const formik = useFormik({
 		initialValues: { paymentMethod: isDemo ? "stripe" : "paypal" },
+		enableReinitialize: true,
 		validationSchema: validationSchema,
 		onSubmit: ({ paymentMethod }) => {
 			dispatch(updatePaymentMethod(paymentMethod));

@@ -147,7 +147,12 @@ export interface OrderItem {
 
 export interface OrderData {
 	_id: string;
-	user: string;
+	// The order's user can come back from the API in two shapes:
+	//   1. A flat string id (the original MongoDB / legacy layout)
+	//   2. A populated { _id, name, email } object (current Next.js API)
+	// The store-side mapOrder produces an object, so consumers should use
+	// user?._id rather than user directly. Accept both for compatibility.
+	user: string | { _id: string; name?: string; email?: string };
 	shippingAddress: ShippingAddress;
 	orderItems: OrderItem[];
 	paymentMethod: string;
