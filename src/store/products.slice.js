@@ -150,7 +150,8 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(setCurrentProduct(mapProduct(data)));
+          const raw = data?.product ?? data;
+          if (raw?.id || raw?._id) dispatch(setCurrentProduct(mapProduct(raw)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {
@@ -168,7 +169,8 @@ export const productApiSlice = apiSlice.injectEndpoints({
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
-          dispatch(setCurrentProduct(mapProduct(data)));
+          const raw = data?.product ?? data;
+          if (raw?.id || raw?._id) dispatch(setCurrentProduct(mapProduct(raw)));
         } catch ({ error }) {
           dispatch(setAppError(error.status));
         } finally {

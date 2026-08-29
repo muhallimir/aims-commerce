@@ -65,24 +65,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let ownerId = seller_id || null;
       if (!ownerId) {
-        const adminUser = (await sql`
-          SELECT u.id FROM users u
-          WHERE u.id = ${user._id} AND (u.is_admin = true OR u.is_seller = true)
-          LIMIT 1
-        `)[0];
-        if (adminUser) {
-          const seller = (await sql`
-            SELECT id FROM sellers WHERE user_id = ${adminUser.id} LIMIT 1
-          `)[0];
-          ownerId = seller?.id || null;
+        let seller = (await sql`SELECT id FROM sellers WHERE user_id = ${user._id} LIMIT 1`)[0] as any;
+        if (!seller) {
+          // Auto-create seller profile for admin without one (monorepo migration fix:
+          // admins were not auto-assigned a seller row, so generate new product would
+          // fail with seller_id NOT NULL violation). Use the users.is_seller trigger
+          // path when possible, fallback to direct insert.
+          const adminRow = (await sql`SELECT name, store_name FROM users WHERE id = ${user._id}`)[0] as any;
+          const storeName = adminRow?.store_name || `${adminRow?.name || "Admin"}'s Store`;
+          await sql`UPDATE users SET is_seller = true, store_name = COALESCE(store_name, ${storeName}) WHERE id = ${user._id}`;
+          seller = (await sql`SELECT id FROM sellers WHERE user_id = ${user._id} LIMIT 1`)[0] as any;
+          if (!seller) {
+            const inserted = (await sql`
+              INSERT INTO sellers (id, user_id, name, store_name, is_active_store, rating, num_reviews)
+              VALUES (gen_random_uuid(), ${user._id}, ${adminRow?.name || "Admin"}, ${storeName}, true, 0, 0)
+              RETURNING id;
+            `)[0] as any;
+            seller = inserted;
+          } else {
+            await sql`UPDATE sellers SET is_active_store = true WHERE id = ${seller.id} AND is_active_store = false`;
+          }
+        } else {
+          await sql`UPDATE sellers SET is_active_store = true WHERE id = ${seller.id} AND is_active_store = false`;
         }
+        ownerId = seller?.id || null;
+      }
+      if (!ownerId) {
+        return res.status(500).json({ message: "Failed to resolve seller for admin" });
       }
 
       const product = (await sql`
         INSERT INTO products (id, name, image, price, category, brand,
                               count_in_stock, rating, num_reviews, description, seller_id, is_active)
         VALUES (gen_random_uuid(),
-                ${name || `New Product ${Date.now()}`},
+                ${name || `New Product ${Date.now()}-${Math.random().toString(36).slice(2, 6)}`},
                 ${image || "/images/sample.jpg"},
                 ${price ?? 0},
                 ${category || "Category"},
