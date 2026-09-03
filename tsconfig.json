@@ -45,6 +45,9 @@
       ],
       "@public/assets/*": [
         "public/assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
       ]
     },
     "incremental": true
