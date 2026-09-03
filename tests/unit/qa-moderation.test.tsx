@@ -11,6 +11,6 @@ describe('ModerationQueue', () => {
   })
   it('renders empty state', () => {
     render(<ModerationQueue questions={[]} />)
-    expect(screen.getByText(/queue empty/i)).toBeInTheDocument()
+    expect(screen.getByTestId('mq-empty').textContent).toMatch(/queue is empty/i)
   })
 })
