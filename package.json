@@ -12,12 +12,14 @@
     "pre-commit": "npm run lint:fix",
     "prepare": "husky install && chmod ug+x .husky/*",
     "postinstall": "patch-package",
-    "test:e2e": "node scripts/test/e2e_test.mjs",
+    "test:e2e": "playwright test",
     "test:browser": "node scripts/test/browser_e2e_start_selling.mjs",
     "test:browser:purchase": "node scripts/test/browser_e2e_purchase.mjs",
     "test:chat": "node scripts/test/chat_test.mjs",
     "test:all": "node scripts/test/e2e_test.mjs && node scripts/test/browser_e2e_start_selling.mjs && node scripts/test/browser_e2e_purchase.mjs && node scripts/test/chat_test.mjs",
-    "test:scan": "node scripts/test/scan_test_data.mjs"
+    "test:scan": "node scripts/test/scan_test_data.mjs",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@emotion/react": "11.10.5",
@@ -74,6 +76,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@svgr/webpack": "8.1.0",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
@@ -86,6 +89,7 @@
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
     "babel-plugin-react-inline-svg-unique-id": "1.4.0",
+    "dotenv": "^16.4.7",
     "eslint": "^9.27.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-next": "^15.3.3",
@@ -99,7 +103,6 @@
     "msw": "1.2.2",
     "patch-package": "8.0.0",
     "playwright": "^1.61.1",
-    "dotenv": "^16.4.7",
     "prettier": "2.8.3",
     "svgo": "3.2.0",
     "tsconfig-paths-webpack-plugin": "4.1.0",
@@ -110,5 +113,11 @@
   "engines": {
     "node": ">=24.0.0",
     "npm": ">=10.8.2"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEach": [
+      "<rootDir>/jest.setup.js"
+    ]
   }
 }

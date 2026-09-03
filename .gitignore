@@ -44,3 +44,9 @@ next-env.d.ts
 scripts/test/e2e_test_results.json
 scripts/test/chat_test_results.json
 scripts/test/browser_e2e_*_results.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
