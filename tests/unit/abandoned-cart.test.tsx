@@ -12,6 +12,6 @@ describe('RecoveryStatsCard', () => {
       />,
     )
     expect(screen.getByTestId('rsc-rate').textContent).toMatch(/40%/)
-    expect(screen.getByTestId('rsc').textContent).toMatch(/4\/10/)
+    expect(screen.getByTestId('rsc').textContent).toMatch(/4 of 10/)
   })
 })
