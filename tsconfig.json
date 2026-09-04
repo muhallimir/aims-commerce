@@ -48,6 +48,9 @@
       ],
       "@components/*": [
         "src/components/*"
+      ],
+      "@services/*": [
+        "src/services/*"
       ]
     },
     "incremental": true
