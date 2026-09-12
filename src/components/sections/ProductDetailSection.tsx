@@ -18,6 +18,7 @@ import { AppState, ProductListState } from "@common/interface";
 import { updateCartList } from "@store/cart.slice";
 import useCartHandling from "src/hooks/useCartHandling";
 import { getImageUrl } from "@helpers/commonFn";
+import { ShareButton } from "src/components/ShareButton";
 
 const ProductDetailSection: React.FC = ({ }) => {
 	const { currentProduct: product } = useSelector(
@@ -295,6 +296,7 @@ const ProductDetailSection: React.FC = ({ }) => {
 							{product?.description}
 						</Typography>
 					)}
+					{!loading && <ShareButton name={product?.name ?? "This product"} />}
 
 					{loading ? (
 						<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
