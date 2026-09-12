@@ -33,6 +33,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm from "src/forms/StripePaymentForm";
 import { attractiveGlow, orangeGlow } from "@common/animations";
+import { OrderTimeline } from "src/components/OrderTimeline";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
@@ -236,6 +237,7 @@ const OrderPlacementLayout: React.FC = () => {
 								sx={{ ml: 1, fontWeight: "bold" }}
 							/>
 						</Typography>
+						<OrderTimeline isPaid={Boolean(paymentStatus || isPaid)} isDelivered={Boolean(isDelivered)} />
 					</Paper>
 					<Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 2 }}>
 						<Typography variant="h6" gutterBottom fontWeight="bold">
