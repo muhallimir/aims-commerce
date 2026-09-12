@@ -8,6 +8,7 @@ import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT } from "@common/constants";
 import { setFromPurchaseHistory } from "@store/order.slice";
 import SearchBar from "src/components/bars/SearchBar";
+import { FlashSaleBar } from "src/components/FlashSaleBar";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 
@@ -84,10 +85,11 @@ const ProductsGridLayout: React.FC = () => {
 			sx={{ py: 4, width: "100vw", minHeight: "100vh", position: "relative" }}
 		>
 			<SearchBar onSearch={handleSearch} value={searchQuery} />
+			<FlashSaleBar />
 			{showOverlay && (
 				<LoadingOverlay loadingMessage={LOADERTEXT.INITIAL_LOAD} />
 			)}
-			<Grid container spacing={{ xs: 1, sm: 3 }} justifyContent="center">
+			<Grid container spacing={{ xs: 1, sm: 3 }} justifyContent="center" id="store-grid" data-testid="store-grid">
 				{loading
 					? Array.from(new Array(15)).map((_, index) => (
 						<Grid
