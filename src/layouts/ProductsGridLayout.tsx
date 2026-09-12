@@ -10,6 +10,7 @@ import { setFromPurchaseHistory } from "@store/order.slice";
 import SearchBar from "src/components/bars/SearchBar";
 import { FlashSaleBar } from "src/components/FlashSaleBar";
 import { CategoryChips } from "src/components/CategoryChips";
+import { SortSelect, type SortKey } from "src/components/SortSelect";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 
@@ -26,6 +27,7 @@ const ProductsGridLayout: React.FC = () => {
 	const initialSearchQuery = (router.query.search as string) || "";
 	const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery || "");
 	const [category, setCategory] = useState<string>("All");
+	const [sort, setSort] = useState<SortKey>("featured");
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -75,6 +77,8 @@ const ProductsGridLayout: React.FC = () => {
 
 	const categories = ["All", ...Array.from(new Set(products.map((p: any) => p.category).filter(Boolean)))];
 
+	const priceOf = (p: any) => Number(p.price ?? p.sellingPrice ?? 0);
+
 	const filteredProducts = products
 		.filter((product: any) => product.isActive === true)
 		.filter((product: any) => category === "All" || product.category === category)
@@ -83,7 +87,14 @@ const ProductsGridLayout: React.FC = () => {
 				.join(" ")
 				.toLowerCase()
 				.includes(searchQuery.toLowerCase()),
-		);
+		)
+		.slice()
+		.sort((a: any, b: any) => {
+			if (sort === "price-asc") return priceOf(a) - priceOf(b);
+			if (sort === "price-desc") return priceOf(b) - priceOf(a);
+			if (sort === "name") return String(a.title ?? a.name ?? "").localeCompare(String(b.title ?? b.name ?? ""));
+			return 0;
+		});
 
 	return (
 		<Container
@@ -92,6 +103,7 @@ const ProductsGridLayout: React.FC = () => {
 			<SearchBar onSearch={handleSearch} value={searchQuery} />
 			<FlashSaleBar />
 			<CategoryChips categories={categories} value={category} onChange={setCategory} />
+			<SortSelect value={sort} onChange={setSort} />
 			{showOverlay && (
 				<LoadingOverlay loadingMessage={LOADERTEXT.INITIAL_LOAD} />
 			)}
