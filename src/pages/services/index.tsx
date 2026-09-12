@@ -8,6 +8,7 @@ import { InsuranceCalculator } from "@components/InsuranceCalculator";
 import { WarrantyPlanner } from "@components/WarrantyPlanner";
 import { PriceMatchDesk } from "@components/PriceMatchDesk";
 import { RepairDesk } from "@components/RepairDesk";
+import { TradeInDesk } from "@components/TradeInDesk";
 
 export default function ServicesPage() {
   return (
@@ -76,11 +77,18 @@ export default function ServicesPage() {
         <PriceMatchDesk />
       </Box>
 
-      <Box data-testid="service-repair" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-repair" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Repairs
         </Typography>
         <RepairDesk />
+      </Box>
+
+      <Box data-testid="service-tradein" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Trade-in
+        </Typography>
+        <TradeInDesk />
       </Box>
     </Container>
   );
