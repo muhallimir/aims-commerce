@@ -148,3 +148,21 @@ export function engravingQuote(text: string, material: string): EngravingQuote {
   const fee = Math.round(((Math.max(0, chars - 10) * 0.5) + (MATERIAL_FEES[material.toLowerCase()] ?? 0)) * 100) / 100;
   return { fee, ok: true, note: chars <= 10 ? "Short and sweet: free." : `${chars - 10} paid characters plus ${material} setup.` };
 }
+
+export interface SubscriptionQuote {
+  perDelivery: number;
+  annualTotal: number;
+  annualSavings: number;
+  discountPct: number;
+}
+
+/** Subscribe-and-save: frequent plans save 5%, relaxed plans 10%. */
+export function subscriptionQuote(unitPrice: number, qty: number, intervalWeeks: number): SubscriptionQuote {
+  const safeWeeks = Math.max(1, intervalWeeks);
+  const discountPct = safeWeeks <= 2 ? 5 : 10;
+  const perDelivery = Math.round(Math.max(0, unitPrice) * Math.max(0, qty) * (1 - discountPct / 100) * 100) / 100;
+  const deliveries = 52 / safeWeeks;
+  const annualTotal = Math.round(perDelivery * deliveries * 100) / 100;
+  const annualSavings = Math.round((Math.max(0, unitPrice) * Math.max(0, qty) * deliveries - annualTotal) * 100) / 100;
+  return { perDelivery, annualTotal, annualSavings, discountPct };
+}
