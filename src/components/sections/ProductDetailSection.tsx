@@ -19,6 +19,7 @@ import { updateCartList } from "@store/cart.slice";
 import useCartHandling from "src/hooks/useCartHandling";
 import { getImageUrl } from "@helpers/commonFn";
 import { ShareButton } from "src/components/ShareButton";
+import { DeliveryPromise } from "src/components/DeliveryPromise";
 
 const ProductDetailSection: React.FC = ({ }) => {
 	const { currentProduct: product } = useSelector(
@@ -297,6 +298,7 @@ const ProductDetailSection: React.FC = ({ }) => {
 						</Typography>
 					)}
 					{!loading && <ShareButton name={product?.name ?? "This product"} />}
+					{!loading && (product?.countInStock ?? 0) > 0 && <DeliveryPromise />}
 
 					{loading ? (
 						<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
