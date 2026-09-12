@@ -26,6 +26,7 @@ import useCartAnimation from "src/hooks/useCartAnimation";
 import { getImageUrl } from "@helpers/commonFn";
 import { QuickViewDialog } from "src/components/QuickViewDialog";
 import { stockUrgency } from "@lib/countdown";
+import { isNewArrival } from "@lib/countdown";
 import Chip from "@mui/material/Chip";
 
 const CardsContent: React.FC<CardsContentProps> = ({
@@ -107,6 +108,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 	};
 
 	const urgency = stockUrgency(countInStock ?? 0);
+	const isNew = isNewArrival((product as any).created_at ?? (product as any).createdAt);
 
 	return (
 		<Card
@@ -146,6 +148,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 							color="warning"
 							size="small"
 							sx={{ position: "absolute", top: 8, left: 8, zIndex: 1 }}
+						/>
+					)}
+					{isNew && (
+						<Chip
+							data-testid="new-arrival"
+							label="New"
+							color="success"
+							size="small"
+							sx={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
 						/>
 					)}
 					<Image

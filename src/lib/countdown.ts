@@ -37,3 +37,11 @@ export function stockUrgency(countInStock: number): string | null {
   if (countInStock <= 0 || countInStock > 5) return null;
   return `Only ${countInStock} left`;
 }
+
+/** New arrivals: listed within the last `days` days. */
+export function isNewArrival(createdAt: string | null | undefined, days = 14, now: Date = new Date()): boolean {
+  if (!createdAt) return false;
+  const created = new Date(createdAt);
+  if (Number.isNaN(created.getTime())) return false;
+  return now.getTime() - created.getTime() <= days * 86400000;
+}
