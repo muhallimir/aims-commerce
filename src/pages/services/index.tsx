@@ -4,6 +4,7 @@ import { DeliveryEstimator } from "@components/DeliveryEstimator";
 import { ReturnsPickup } from "@components/ReturnsPickup";
 import { CoverageChecker } from "@components/CoverageChecker";
 import { SlotBooking } from "@components/SlotBooking";
+import { InsuranceCalculator } from "@components/InsuranceCalculator";
 
 export default function ServicesPage() {
   return (
@@ -44,11 +45,18 @@ export default function ServicesPage() {
         <CoverageChecker />
       </Box>
 
-      <Box data-testid="service-slots" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-slots" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Delivery windows
         </Typography>
         <SlotBooking />
+      </Box>
+
+      <Box data-testid="service-insurance" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Parcel protection
+        </Typography>
+        <InsuranceCalculator />
       </Box>
     </Container>
   );

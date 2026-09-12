@@ -30,3 +30,15 @@ export function coverageFor(postcode: string): CoverageResult {
   }
   return { served: false, etaDays: null, fee: null, zone: "unserved" };
 }
+
+export interface InsuranceQuote {
+  fee: number;
+  covers: string;
+}
+
+/** Parcel protection: 1.2% of declared value plus handling extras. */
+export function insuranceFee(declaredValue: number, fragile: boolean, international: boolean): InsuranceQuote {
+  const raw = Math.max(0, declaredValue) * 0.012 + (fragile ? 2 : 0) + (international ? 3 : 0);
+  const fee = Math.round(Math.max(1.99, raw) * 100) / 100;
+  return { fee, covers: `Loss, damage and theft up to $${Math.max(0, declaredValue).toFixed(2)}` };
+}
