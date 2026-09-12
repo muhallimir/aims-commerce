@@ -36,6 +36,7 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import SearchBar from "src/components/bars/SearchBar";
+import { PayoutPreview } from "src/components/PayoutPreview";
 
 const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
@@ -196,6 +197,8 @@ const SellerOrdersLayout: React.FC = () => {
             </Box>
 
             <SearchBar onSearch={handleSearch} placeholder="Search orders..." />
+
+            <PayoutPreview orders={filteredOrders} />
 
             <Grid container spacing={3} sx={{ mt: 1 }}>
                 {currentOrders.length > 0 ? (
