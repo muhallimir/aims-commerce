@@ -28,6 +28,7 @@ import NightsStayIcon from "@mui/icons-material/NightsStay";
 import PersonIcon from "@mui/icons-material/Person";
 import LoginIcon from "@mui/icons-material/Login";
 import useScreenSize from "src/hooks/useScreenSize";
+import { WishlistNavButton } from "src/components/WishlistNavButton";
 import { switchSection } from "@store/admin.slice";
 import { attractiveGlow, shimmer, orangeGlow } from "@common/animations";
 
@@ -473,6 +474,7 @@ function MainHeader() {
 			</Box>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<SignInButton isDarkMode={isDarkMode} />
+				<WishlistNavButton iconColor={isDarkMode ? "common.white" : "common.black"} />
 				<IconButton
 					onClick={toggleCartDrawer}
 					sx={{ mr: 1 }}

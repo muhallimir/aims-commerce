@@ -25,6 +25,7 @@ import {
 import useCartAnimation from "src/hooks/useCartAnimation";
 import { getImageUrl } from "@helpers/commonFn";
 import { QuickViewDialog } from "src/components/QuickViewDialog";
+import { WishlistHeart } from "src/components/WishlistHeart";
 import { stockUrgency } from "@lib/countdown";
 import { isNewArrival } from "@lib/countdown";
 import Chip from "@mui/material/Chip";
@@ -159,6 +160,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 							sx={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
 						/>
 					)}
+					<WishlistHeart item={{ _id, name, price: product.price, image: getImageUrl(image) }} />
 					<Image
 						src={getImageUrl(image)}
 						alt={name}
