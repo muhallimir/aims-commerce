@@ -21,6 +21,7 @@ import { getImageUrl } from "@helpers/commonFn";
 import { ShareButton } from "src/components/ShareButton";
 import { DeliveryPromise } from "src/components/DeliveryPromise";
 import { StockNotifier } from "src/components/StockNotifier";
+import { BoughtTogether } from "src/components/BoughtTogether";
 
 const ProductDetailSection: React.FC = ({ }) => {
 	const { currentProduct: product } = useSelector(
@@ -380,6 +381,22 @@ const ProductDetailSection: React.FC = ({ }) => {
 								View Cart
 							</Button>
 						</Stack>
+					)}
+					{!loading && product?._id && (product?.countInStock ?? 0) > 0 && (
+						<BoughtTogether
+							productId={product._id}
+							category={product?.category ?? ""}
+							price={Number(product?.price ?? 0)}
+							onAddBoth={(pairId) => {
+								dispatch(updateCartList(product));
+								fetch(`/api/products/${pairId}`)
+									.then((r) => (r.ok ? r.json() : null))
+									.then((pair) => {
+										if (pair) dispatch(updateCartList({ ...pair, _id: pair._id ?? pair.id }));
+									})
+									.catch(() => {});
+							}}
+						/>
 					)}
 				</Box>
 			</Box>
