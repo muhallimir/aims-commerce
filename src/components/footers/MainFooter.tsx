@@ -8,6 +8,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import Image from "next/image";
 import useThemeMode from "src/hooks/useThemeMode";
+import { NewsletterSignup } from "src/components/NewsletterSignup";
 
 const Footer: React.FC = () => {
 	const { isDarkMode } = useThemeMode();
@@ -63,6 +64,7 @@ const Footer: React.FC = () => {
 					<Typography variant="body2" sx={{ mt: 1 }}>
 						AIMS-COMMERCE 2024. All rights reserved™
 					</Typography>
+					<NewsletterSignup />
 					<IconButton
 						component="a"
 						href="/"
