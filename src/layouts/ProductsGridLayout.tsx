@@ -11,6 +11,7 @@ import SearchBar from "src/components/bars/SearchBar";
 import { FlashSaleBar } from "src/components/FlashSaleBar";
 import { CategoryChips } from "src/components/CategoryChips";
 import { SortSelect, type SortKey } from "src/components/SortSelect";
+import { CompareTray, CompareCheckbox, type TrayItem } from "src/components/CompareTray";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 
@@ -28,7 +29,12 @@ const ProductsGridLayout: React.FC = () => {
 	const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery || "");
 	const [category, setCategory] = useState<string>("All");
 	const [sort, setSort] = useState<SortKey>("featured");
+	const [compare, setCompare] = useState<TrayItem[]>([]);
 	const dispatch = useDispatch();
+
+	function toggleCompare(p: TrayItem) {
+		setCompare((c) => (c.some((x) => x.id === p.id) ? c.filter((x) => x.id !== p.id) : [...c, p].slice(-3)));
+	}
 
 	useEffect(() => {
 		if (initialSearchQuery) {
@@ -135,14 +141,21 @@ const ProductsGridLayout: React.FC = () => {
 							key={product._id}
 							sx={{
 								display: "flex",
+								flexDirection: "column",
 								justifyContent: "center",
 								transition: "transform 0.3s ease",
 							}}
 						>
 							<ProductCard product={product} />
+							<CompareCheckbox
+								item={{ id: product._id, name: product.name ?? product.title, price: Number(product.price ?? 0), rating: Number(product.rating ?? 0), inStock: Number(product.countInStock ?? product.count_in_stock ?? 0) > 0, brand: product.brand }}
+								checked={compare.some((x) => x.id === product._id)}
+								onToggle={toggleCompare}
+							/>
 						</Grid>
 					))}
 			</Grid>
+			<CompareTray items={compare} onToggle={toggleCompare} onClear={() => setCompare([])} />
 		</Container>
 	);
 };
