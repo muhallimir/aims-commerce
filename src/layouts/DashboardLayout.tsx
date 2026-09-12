@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { useGetStoreSummaryMutation } from "@store/summary.slice";
 import { RootState } from "@common/interface";
 import CountUp from "react-countup";
+import { AnnouncementComposer } from "src/components/AnnouncementComposer";
 
 interface User {
 	_id: string | null;
@@ -78,6 +79,7 @@ const DashboardLayout: React.FC = () => {
 
 	return (
 		<Box sx={{ backgroundColor: "transparent", paddingTop: "20px" }}>
+			<AnnouncementComposer />
 			<Grid container spacing={3}>
 				<Grid item xs={12} md={4}>
 					<Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
