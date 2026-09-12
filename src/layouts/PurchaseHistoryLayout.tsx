@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import { ViewList, ShoppingCart } from "@mui/icons-material";
 import { AppState, Order } from "@common/interface";
+import { ReorderButton, type ReorderItem } from "src/components/ReorderButton";
+import { updateCartList } from "@store/cart.slice";
 
 const PurchaseHistoryLayout: React.FC = () => {
 	const { loading } = useSelector((state: { app: AppState }) => state.app);
@@ -165,6 +167,17 @@ const PurchaseHistoryLayout: React.FC = () => {
 									>
 										View Details
 									</Button>
+									<ReorderButton
+										items={(order.orderItems ?? []) as ReorderItem[]}
+										onReorder={(items) => {
+											for (const item of items) {
+												for (let n = 0; n < Math.min(99, Math.max(0, item.qty)); n++) {
+													dispatch(updateCartList({ ...item, _id: item.product }));
+												}
+											}
+											router.push("/store/cart");
+										}}
+									/>
 								</CardContent>
 							</Card>
 						</Grid>
