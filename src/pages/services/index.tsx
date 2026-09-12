@@ -28,6 +28,7 @@ import { AddressChecker } from "@components/AddressChecker";
 import { TaxEstimator } from "@components/TaxEstimator";
 import { ServiceFaq } from "@components/ServiceFaq";
 import { VisitStore } from "@components/VisitStore";
+import { RecentlyViewedStrip } from "@components/RecentlyViewedStrip";
 
 export default function ServicesPage() {
   return (
@@ -236,11 +237,18 @@ export default function ServicesPage() {
         <ServiceFaq />
       </Box>
 
-      <Box data-testid="service-visit" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-visit" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Visit us
         </Typography>
         <VisitStore />
+      </Box>
+
+      <Box data-testid="service-recent" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Recently viewed
+        </Typography>
+        <RecentlyViewedStrip />
       </Box>
     </Container>
   );
