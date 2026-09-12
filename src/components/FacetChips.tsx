@@ -5,7 +5,7 @@ export function FacetChips({ facets }: { facets: { value: string; count: number 
     return <Typography data-testid="fc-empty" variant="body2" color="text.secondary">No facets.</Typography>
   }
   return (
-    <Stack data-testid="fc" direction="row" spacing={1} useFlexGap flexWrap="wrap">
+    <Stack data-testid="fc" direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
       {facets.map((f) => (
         <Chip
           key={f.value}

@@ -14,7 +14,7 @@ export function FraudBadge({ score, level, flags }: { score: number; level: 'low
         <Typography variant="body2" fontWeight={600}>{score}/100</Typography>
       </Stack>
       {flags.length > 0 && (
-        <Stack direction="row" spacing={0.5} mt={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={0.5} mt={1} flexWrap="wrap" sx={{ gap: 0.5 }}>
           {flags.map((f) => <Chip key={f} size="small" variant="outlined" label={f} />)}
         </Stack>
       )}

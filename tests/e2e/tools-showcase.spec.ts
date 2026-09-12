@@ -73,7 +73,7 @@ test('running a feature in the browser drives the API and renders a preview', as
   for (const id of FEATURES.slice(0, 5)) {
     await page.evaluate((testid) => {
       const el = document.querySelector('[data-testid="' + testid + '"]')
-      if (el) (el).click()
+      if (el) (el as HTMLElement).click()
     }, 'run-' + id)
     await expect(page.getByTestId('payload-' + id), `no payload for ${id}`).toBeVisible({ timeout: 15_000 })
     const text = await page.getByTestId('payload-' + id).textContent()

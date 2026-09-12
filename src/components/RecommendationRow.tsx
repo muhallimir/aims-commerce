@@ -1,6 +1,6 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material'
 
-export function RecommendationRow({ items }: { items: { product: { id: string; name: string; category: string; price: number }; score: number }[] }) {
+export function RecommendationRow({ items }: { items: { product: { id: string; name: string; category: string; price: number; tags?: string[] }; score: number }[] }) {
   if (items.length === 0) {
     return <Typography data-testid="rr-empty" variant="body2" color="text.secondary">No recommendations yet.</Typography>
   }

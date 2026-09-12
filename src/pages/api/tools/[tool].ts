@@ -24,7 +24,7 @@ import { computeInvoiceTotals, renderInvoiceText } from '@lib/invoice'
 import { redeem, topUp, isUsable } from '@lib/gift-card'
 import { earnPoints, redeemPoints, tierFor, TIER_MULTIPLIER } from '@lib/loyalty'
 import { validateAddress, formatAddress } from '@lib/address-validate'
-import { jaccard, buildCompareRows, compareLimit } from '@lib/compare'
+import { buildCompareRows, compareLimit } from '@lib/compare'
 import { abandonedCarts, recoveryStats, nextReminderDelayHours } from '@lib/abandoned-cart'
 import { buildAxes, findVariant, stockFor, priceFor } from '@lib/variants'
 import { taxRateFor, computeTax } from '@lib/tax'
@@ -84,7 +84,7 @@ const TOOL_HANDLERS: Record<string, { methods: string[]; handle: Handler; descri
     nextTier: nextTierSavings(r.body?.unitPrice != null ? r.body : { unitPrice: 10, qty: r.body?.qty ?? 1, tiers: r.body?.tiers ?? [] }),
   }) },
   'recently-viewed': { methods: ['POST'], description: 'Recently viewed tracker', handle: (r) => {
-    let s = { userId: r.body?.userId ?? 'u1', views: r.body?.views ?? [], maxItems: 20 }
+    let s: { userId: string; views: any[]; maxItems?: number } = { userId: r.body?.userId ?? 'u1', views: r.body?.views ?? [], maxItems: 20 }
     if (r.body?.track) s = trackView(s, r.body.track)
     if (r.body?.clear) s = clearViews(s)
     return { state: s, recent: mostRecent(s, r.body?.n ?? 5) }
