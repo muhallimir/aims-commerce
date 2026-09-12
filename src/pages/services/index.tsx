@@ -9,6 +9,7 @@ import { WarrantyPlanner } from "@components/WarrantyPlanner";
 import { PriceMatchDesk } from "@components/PriceMatchDesk";
 import { RepairDesk } from "@components/RepairDesk";
 import { TradeInDesk } from "@components/TradeInDesk";
+import { GiftWrapPicker } from "@components/GiftWrapPicker";
 
 export default function ServicesPage() {
   return (
@@ -84,11 +85,18 @@ export default function ServicesPage() {
         <RepairDesk />
       </Box>
 
-      <Box data-testid="service-tradein" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-tradein" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Trade-in
         </Typography>
         <TradeInDesk />
+      </Box>
+
+      <Box data-testid="service-giftwrap" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Gift wrap
+        </Typography>
+        <GiftWrapPicker />
       </Box>
     </Container>
   );

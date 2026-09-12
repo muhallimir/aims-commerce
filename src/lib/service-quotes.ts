@@ -117,3 +117,17 @@ export function tradeInQuote(category: string, condition: string, ageYears: numb
   const credit = Math.round(base * mult * ageFactor * 100) / 100;
   return { credit, note: credit >= 50 ? "Paid as store credit on your next order." : "Below the $50 minimum: recycle it free instead." };
 }
+
+export interface GiftWrapQuote {
+  perItem: number;
+  messageFee: number;
+  total: number;
+}
+
+/** Gift wrap: per-item wrap plus a fee for long messages. */
+export function giftWrapQuote(items: number, premium: boolean, message: string): GiftWrapQuote {
+  const perItem = premium ? 4.99 : 2.99;
+  const messageFee = message.trim().length > 140 ? 1.99 : 0;
+  const total = Math.round((Math.max(0, items) * perItem + messageFee) * 100) / 100;
+  return { perItem, messageFee, total };
+}
