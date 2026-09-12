@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { OrderTracker } from "@components/OrderTracker";
 import { DeliveryEstimator } from "@components/DeliveryEstimator";
+import { ReturnsPickup } from "@components/ReturnsPickup";
 
 export default function ServicesPage() {
   return (
@@ -9,7 +10,8 @@ export default function ServicesPage() {
         Services
       </Typography>
       <Typography variant="body1" color="text.secondary" gutterBottom>
-        Track your parcels live on the map, and estimate delivery before you buy.
+        Track your parcels live on the map, estimate delivery before you
+        buy, and book doorstep returns in seconds.
       </Typography>
 
       <Box data-testid="service-tracking" sx={{ mt: 4 }}>
@@ -19,11 +21,18 @@ export default function ServicesPage() {
         <OrderTracker />
       </Box>
 
-      <Box data-testid="service-estimator" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-estimator" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Delivery estimates
         </Typography>
         <DeliveryEstimator />
+      </Box>
+
+      <Box data-testid="service-returns" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Returns pickup
+        </Typography>
+        <ReturnsPickup />
       </Box>
     </Container>
   );
