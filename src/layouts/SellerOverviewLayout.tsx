@@ -42,6 +42,7 @@ import {
     useGetSellerAnalyticsQuery,
     useGetSellerProductsQuery,
     useGetSellerOrdersQuery,
+    useUpdateSellerProductMutation,
     switchSection,
 } from "@store/seller.slice";
 import CountUp from "react-countup";
@@ -55,6 +56,7 @@ import {
     AreaChart,
 } from "recharts";
 import variables from "src/styles/theme/variables";
+import { RestockButton } from "src/components/RestockButton";
 
 const SellerOverviewLayout: React.FC = () => {
     const dispatch = useDispatch();
@@ -68,7 +70,7 @@ const SellerOverviewLayout: React.FC = () => {
     const { error: analyticsError, isFetching: analyticsFetching, refetch: refetchAnalytics } = useGetSellerAnalyticsQuery({});
     const { error: productsError, isFetching: productsFetching, refetch: refetchProducts } = useGetSellerProductsQuery({});
     const { error: ordersError, isFetching: ordersFetching, refetch: refetchOrders } = useGetSellerOrdersQuery({});
-
+    const [reqRestock] = useUpdateSellerProductMutation();
     const isRefreshing = analyticsFetching || productsFetching || ordersFetching;
 
     const [selectedPeriod, setSelectedPeriod] = useState<'1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL'>('1D');
@@ -771,12 +773,19 @@ const SellerOverviewLayout: React.FC = () => {
                                 {lowStockProducts?.length} products are running low
                             </Typography>
                             {lowStockProducts?.slice(0, 3).map((product: any) => (
-                                <Box key={product?._id || Math.random()} sx={{ mb: 1 }}>
-                                    <Typography variant="body2">{product?.name || 'Unknown Product'}</Typography>
-                                    <Chip
-                                        label={`${product?.countInStock || 0} left`}
-                                        size="small"
-                                        color="warning"
+                                <Box key={product?._id || Math.random()} sx={{ mb: 1, display: "flex", alignItems: "center", gap: 1 }}>
+                                    <Box sx={{ flexGrow: 1 }}>
+                                        <Typography variant="body2">{product?.name || 'Unknown Product'}</Typography>
+                                        <Chip
+                                            label={`${product?.countInStock || 0} left`}
+                                            size="small"
+                                            color="warning"
+                                        />
+                                    </Box>
+                                    <RestockButton
+                                        productId={product?._id}
+                                        current={Number(product?.countInStock || 0)}
+                                        onRestock={(id, next) => reqRestock({ productId: id, countInStock: next }).unwrap()}
                                     />
                                 </Box>
                             ))}

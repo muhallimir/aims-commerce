@@ -8,8 +8,12 @@ const SellerDashboard: React.FC = () => {
     const router = useRouter();
     const { userInfo } = useSelector((state: any) => state.user);
     const { loading } = useSelector((state: any) => state.app);
+    const rehydrated = useSelector((state: any) => state._persist?.rehydrated);
 
     useEffect(() => {
+        // Wait for redux-persist: first paint runs on initial state,
+        // so deciding too early bounces returning sellers away.
+        if (!rehydrated) return;
         // Check if user is authenticated
         if (!userInfo && !loading) {
             router.push("/signin");
@@ -21,10 +25,10 @@ const SellerDashboard: React.FC = () => {
             router.push("/start-selling");
             return;
         }
-    }, [userInfo, router, loading]);
+    }, [userInfo, router, loading, rehydrated]);
 
     // Show loading while checking authentication
-    if (loading || !userInfo) {
+    if (!rehydrated || loading || !userInfo) {
         return (
             <Box
                 sx={{
