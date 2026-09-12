@@ -258,3 +258,17 @@ export function alterationQuote(jobs: string[]): AlterationQuote {
   const total = jobs.reduce((s, j) => s + (ALTERATION_PRICES[j.toLowerCase()] ?? 0), 0);
   return { total, days: 2 + jobs.length };
 }
+
+export interface RentalQuote {
+  rentalFee: number;
+  deposit: number;
+  totalDue: number;
+}
+
+/** Try-before-you-buy: weekly rate plus a refundable deposit. */
+export function rentalQuote(retail: number, days: number): RentalQuote {
+  const weeks = Math.max(1, Math.ceil(Math.max(1, days) / 7));
+  const rentalFee = Math.round(Math.max(0, retail) * 0.05 * weeks * 100) / 100;
+  const deposit = Math.round(Math.max(0, retail) * 0.3 * 100) / 100;
+  return { rentalFee, deposit, totalDue: Math.round((rentalFee + deposit) * 100) / 100 };
+}

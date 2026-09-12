@@ -18,6 +18,7 @@ import { AssemblyBooking } from "@components/AssemblyBooking";
 import { InstallationScheduler } from "@components/InstallationScheduler";
 import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
 import { AlterationCounter } from "@components/AlterationCounter";
+import { RentalPlanner } from "@components/RentalPlanner";
 
 export default function ServicesPage() {
   return (
@@ -156,11 +157,18 @@ export default function ServicesPage() {
         <WhiteGlovePicker />
       </Box>
 
-      <Box data-testid="service-alteration" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-alteration" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Tailoring
         </Typography>
         <AlterationCounter />
+      </Box>
+
+      <Box data-testid="service-rental" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Try before you buy
+        </Typography>
+        <RentalPlanner />
       </Box>
     </Container>
   );
