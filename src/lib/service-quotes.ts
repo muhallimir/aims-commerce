@@ -272,3 +272,18 @@ export function rentalQuote(retail: number, days: number): RentalQuote {
   const deposit = Math.round(Math.max(0, retail) * 0.3 * 100) / 100;
   return { rentalFee, deposit, totalDue: Math.round((rentalFee + deposit) * 100) / 100 };
 }
+
+export interface BulkQuote {
+  discountPct: number;
+  total: number;
+  tier: string;
+}
+
+/** B2B tiers: 10+ saves 5%, 20+ saves 10%, 50+ saves 15%, 100+ saves 20%. */
+export function bulkQuote(unitPrice: number, qty: number): BulkQuote {
+  const q = Math.max(0, Math.floor(qty));
+  const discountPct = q >= 100 ? 20 : q >= 50 ? 15 : q >= 20 ? 10 : q >= 10 ? 5 : 0;
+  const total = Math.round(Math.max(0, unitPrice) * q * (1 - discountPct / 100) * 100) / 100;
+  const tier = discountPct === 0 ? "retail" : `bulk-${discountPct}`;
+  return { discountPct, total, tier };
+}

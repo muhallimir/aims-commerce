@@ -19,6 +19,7 @@ import { InstallationScheduler } from "@components/InstallationScheduler";
 import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
 import { AlterationCounter } from "@components/AlterationCounter";
 import { RentalPlanner } from "@components/RentalPlanner";
+import { BulkDesk } from "@components/BulkDesk";
 
 export default function ServicesPage() {
   return (
@@ -164,11 +165,18 @@ export default function ServicesPage() {
         <AlterationCounter />
       </Box>
 
-      <Box data-testid="service-rental" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-rental" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Try before you buy
         </Typography>
         <RentalPlanner />
+      </Box>
+
+      <Box data-testid="service-bulk" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Bulk orders
+        </Typography>
+        <BulkDesk />
       </Box>
     </Container>
   );
