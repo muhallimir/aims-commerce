@@ -28,7 +28,7 @@ import { AddressChecker } from "@components/AddressChecker";
 import { TaxEstimator } from "@components/TaxEstimator";
 import { ServiceFaq } from "@components/ServiceFaq";
 import { VisitStore } from "@components/VisitStore";
-import { RecentlyViewedStrip } from "@components/RecentlyViewedStrip";
+import { BrowsingTrail } from "@components/BrowsingTrail";
 
 export default function ServicesPage() {
   return (
@@ -248,7 +248,7 @@ export default function ServicesPage() {
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Recently viewed
         </Typography>
-        <RecentlyViewedStrip />
+        <BrowsingTrail />
       </Box>
     </Container>
   );
