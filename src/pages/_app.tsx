@@ -7,6 +7,7 @@ import setGlobalStyles from "@styles/setGlobalStyles";
 import Theme from "@styles/theme";
 import { wrapper } from "@store/index";
 import "../styles/globals.css";
+import "leaflet/dist/leaflet.css";
 import createEmotionCache from "@helpers/createEmotionCache";
 import MainLayout from "src/layouts/MainLayout";
 import MainHeader from "src/components/headers/MainHeader";
