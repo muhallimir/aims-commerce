@@ -12,6 +12,7 @@ import { TradeInDesk } from "@components/TradeInDesk";
 import { GiftWrapPicker } from "@components/GiftWrapPicker";
 import { EngravingStudio } from "@components/EngravingStudio";
 import { SubscriptionPlanner } from "@components/SubscriptionPlanner";
+import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
 
 export default function ServicesPage() {
   return (
@@ -108,11 +109,18 @@ export default function ServicesPage() {
         <EngravingStudio />
       </Box>
 
-      <Box data-testid="service-subscription" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-subscription" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Subscriptions
         </Typography>
         <SubscriptionPlanner />
+      </Box>
+
+      <Box data-testid="service-eco" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Green packaging
+        </Typography>
+        <EcoPackagingPicker />
       </Box>
     </Container>
   );

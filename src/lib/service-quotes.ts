@@ -166,3 +166,21 @@ export function subscriptionQuote(unitPrice: number, qty: number, intervalWeeks:
   const annualSavings = Math.round((Math.max(0, unitPrice) * Math.max(0, qty) * deliveries - annualTotal) * 100) / 100;
   return { perDelivery, annualTotal, annualSavings, discountPct };
 }
+
+export interface EcoPackageQuote {
+  option: "compostable" | "recycled" | "reusable";
+  fee: number;
+  blurb: string;
+}
+
+/** Greenest viable packaging: reusable for big hauls, compostable unless fragile. */
+export function ecoPackageQuote(items: number, fragile: boolean): EcoPackageQuote {
+  const n = Math.max(1, items);
+  if (n > 5) {
+    return { option: "reusable", fee: Math.round(n * 0.4 * 100) / 100 + 2, blurb: "A reusable tote the courier takes back next time." };
+  }
+  if (!fragile) {
+    return { option: "compostable", fee: Math.round(n * 0.4 * 100) / 100, blurb: "Compostable mailers that break down in 90 days." };
+  }
+  return { option: "recycled", fee: Math.round(n * 0.4 * 100) / 100, blurb: "100% recycled box with paper padding, no plastic." };
+}
