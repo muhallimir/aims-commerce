@@ -8,14 +8,15 @@ import { formatLeft, nextMidnight, timeLeft } from "@lib/countdown";
  */
 export function FlashSaleBar() {
   const endsAt = useMemo(() => nextMidnight(), []);
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const t = timeLeft(now, endsAt);
+  const t = now ? timeLeft(now, endsAt) : null;
 
   return (
     <Box
@@ -35,7 +36,7 @@ export function FlashSaleBar() {
       }}
     >
       <Typography variant="h6" fontWeight={700}>
-        Flash sale ends in <span data-testid="flash-sale-timer">{formatLeft(t)}</span>
+        Flash sale ends in <span data-testid="flash-sale-timer">{t ? formatLeft(t) : "--h --m --s"}</span>
       </Typography>
       <Button
         data-testid="flash-sale-cta"
