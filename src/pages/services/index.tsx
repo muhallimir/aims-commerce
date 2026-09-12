@@ -22,6 +22,7 @@ import { RentalPlanner } from "@components/RentalPlanner";
 import { BulkDesk } from "@components/BulkDesk";
 import { CurrencyConverter } from "@components/CurrencyConverter";
 import { BundleSaver } from "@components/BundleSaver";
+import { OrderInvoice } from "@components/OrderInvoice";
 
 export default function ServicesPage() {
   return (
@@ -188,11 +189,18 @@ export default function ServicesPage() {
         <CurrencyConverter />
       </Box>
 
-      <Box data-testid="service-bundle" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-bundle" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Bundle savings
         </Typography>
         <BundleSaver />
+      </Box>
+
+      <Box data-testid="service-invoice" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Invoices
+        </Typography>
+        <OrderInvoice />
       </Box>
     </Container>
   );
