@@ -4,6 +4,7 @@ import ProfileForm from "src/forms/ProfileForm";
 import { AddressBook } from "src/components/AddressBook";
 import { NotificationPrefs } from "src/components/NotificationPrefs";
 import { ReferralCard } from "src/components/ReferralCard";
+import { DataExportCard } from "src/components/DataExportCard";
 
 const Profile: React.FC = () => {
 	return (
@@ -12,6 +13,7 @@ const Profile: React.FC = () => {
 			<AddressBook />
 			<NotificationPrefs />
 			<ReferralCard />
+			<DataExportCard />
 		</Container>
 	);
 };
