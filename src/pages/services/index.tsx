@@ -26,6 +26,7 @@ import { OrderInvoice } from "@components/OrderInvoice";
 import { LoyaltyPreview } from "@components/LoyaltyPreview";
 import { AddressChecker } from "@components/AddressChecker";
 import { TaxEstimator } from "@components/TaxEstimator";
+import { ServiceFaq } from "@components/ServiceFaq";
 
 export default function ServicesPage() {
   return (
@@ -220,11 +221,18 @@ export default function ServicesPage() {
         <AddressChecker />
       </Box>
 
-      <Box data-testid="service-tax" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-tax" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Tax estimates
         </Typography>
         <TaxEstimator />
+      </Box>
+
+      <Box data-testid="service-faq" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Good to know
+        </Typography>
+        <ServiceFaq />
       </Box>
     </Container>
   );
