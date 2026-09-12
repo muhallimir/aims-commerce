@@ -10,8 +10,11 @@ const SellerNewProduct = () => {
 	const router = useRouter();
 	const { userInfo } = useSelector((state: any) => state.user);
 	const { loading } = useSelector((state: any) => state.app);
+	const rehydrated = useSelector((state: any) => state._persist?.rehydrated);
 
 	useEffect(() => {
+		// Wait for redux-persist: first paint runs on initial state.
+		if (!rehydrated) return;
 		// Check if user is authenticated
 		if (!userInfo && !loading) {
 			router.push("/signin");
@@ -23,10 +26,10 @@ const SellerNewProduct = () => {
 			router.push("/start-selling");
 			return;
 		}
-	}, [userInfo, router, loading]);
+	}, [userInfo, router, loading, rehydrated]);
 
 	// Show loading while checking authentication
-	if (loading || !userInfo) {
+	if (!rehydrated || loading || !userInfo) {
 		return <LoadingOverlay loadingMessage="Loading..." />;
 	}
 

@@ -28,6 +28,7 @@ import { useCreateSellerProductMutation } from "@store/seller.slice";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT, PRODUCT_CATEGORIES } from "@common/constants";
 import SuccessModal from "src/components/modals/SuccessModal";
+import { SeoPreview } from "src/components/SeoPreview";
 
 const SellerProductForm: React.FC = () => {
     const router = useRouter();
@@ -389,6 +390,7 @@ const SellerProductForm: React.FC = () => {
                         </Box>
 
                         {renderTextField("description", "Description", "text", true, 4)}
+                        <SeoPreview title={formik.values.name} description={formik.values.description} />
 
                         <Button
                             type="submit"
