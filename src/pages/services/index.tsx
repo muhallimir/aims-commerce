@@ -23,6 +23,7 @@ import { BulkDesk } from "@components/BulkDesk";
 import { CurrencyConverter } from "@components/CurrencyConverter";
 import { BundleSaver } from "@components/BundleSaver";
 import { OrderInvoice } from "@components/OrderInvoice";
+import { LoyaltyPreview } from "@components/LoyaltyPreview";
 
 export default function ServicesPage() {
   return (
@@ -196,11 +197,18 @@ export default function ServicesPage() {
         <BundleSaver />
       </Box>
 
-      <Box data-testid="service-invoice" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-invoice" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Invoices
         </Typography>
         <OrderInvoice />
+      </Box>
+
+      <Box data-testid="service-loyalty" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Loyalty rewards
+        </Typography>
+        <LoyaltyPreview />
       </Box>
     </Container>
   );
