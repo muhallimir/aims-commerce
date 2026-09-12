@@ -17,6 +17,7 @@ import { CarbonOffsetter } from "@components/CarbonOffsetter";
 import { AssemblyBooking } from "@components/AssemblyBooking";
 import { InstallationScheduler } from "@components/InstallationScheduler";
 import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
+import { AlterationCounter } from "@components/AlterationCounter";
 
 export default function ServicesPage() {
   return (
@@ -148,11 +149,18 @@ export default function ServicesPage() {
         <InstallationScheduler />
       </Box>
 
-      <Box data-testid="service-whiteglove" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-whiteglove" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           White-glove delivery
         </Typography>
         <WhiteGlovePicker />
+      </Box>
+
+      <Box data-testid="service-alteration" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Tailoring
+        </Typography>
+        <AlterationCounter />
       </Box>
     </Container>
   );

@@ -245,3 +245,16 @@ export function whiteGloveQuote(floor: number, bulky: boolean, rooms: number): W
   const tier: WhiteGloveTier = fee > 150 ? "premium" : fee > 90 ? "plus" : "standard";
   return { tier, fee };
 }
+
+export interface AlterationQuote {
+  total: number;
+  days: number;
+}
+
+const ALTERATION_PRICES: Record<string, number> = { hem: 12, taper: 18, zip: 15, resize: 25, patch: 9 };
+
+/** Tailoring: per-job prices, two days plus a day per job. */
+export function alterationQuote(jobs: string[]): AlterationQuote {
+  const total = jobs.reduce((s, j) => s + (ALTERATION_PRICES[j.toLowerCase()] ?? 0), 0);
+  return { total, days: 2 + jobs.length };
+}
