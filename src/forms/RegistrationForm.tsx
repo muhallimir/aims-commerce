@@ -7,6 +7,7 @@ import useAuthentication from "src/hooks/useAuthentication";
 import { LOADERTEXT } from "@common/constants";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import DemoBanner from "src/components/misc/DemoBanner";
+import { PasswordStrength } from "src/components/PasswordStrength";
 import { getErrorMessage } from "@helpers/getErrorMessage";
 import { setIsRegisteringNewUser } from "@store/user.slice";
 import { useRouter } from "next/router";
@@ -116,6 +117,7 @@ const RegistrationForm: React.FC = () => {
 					helperText={formik.touched.password && formik.errors.password}
 					InputProps={{ autoComplete: "off" }}
 				/>
+				<PasswordStrength password={formik.values.password} />
 
 				<TextField
 					fullWidth
