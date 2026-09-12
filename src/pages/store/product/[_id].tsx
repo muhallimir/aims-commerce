@@ -7,12 +7,17 @@ import ProductReviewSection from "src/components/sections/ProductReviewSection";
 import { BreadcrumbTrail } from "src/components/BreadcrumbTrail";
 import { useSelector } from "react-redux";
 import { useGetProductMutation } from "src/store/products.slice";
+import { recordProductView } from "@lib/recentViews";
 
 const Product: React.FC = () => {
 	const router = useRouter();
 	const [reqGetProduct] = useGetProductMutation();
 	const productId = router.query._id as string;
 	const currentProduct = useSelector((state: any) => state.productLists?.currentProduct);
+
+	useEffect(() => {
+		if (productId) recordProductView(productId);
+	}, [productId]);
 
 	useEffect(() => {
 		if (productId) {
