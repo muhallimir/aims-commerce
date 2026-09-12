@@ -14,6 +14,7 @@ import { Order } from "@common/interface";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import SearchBar from "src/components/bars/SearchBar";
+import { OrderLookup } from "src/components/OrderLookup";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 import useScreenSize from "src/hooks/useScreenSize";
 
@@ -86,6 +87,7 @@ const OrderManagementLayout: React.FC = ({}) => {
 
 	return (
 		<Box sx={{ p: 2 }}>
+			<OrderLookup />
 			<SearchBar onSearch={handleSearch} placeholder="Search order..." />
 			<Grid container spacing={3} textAlign="center">
 				{currentOrders.map((order: any, index: any) => (
