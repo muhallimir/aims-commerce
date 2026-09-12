@@ -35,6 +35,7 @@ import StripePaymentForm from "src/forms/StripePaymentForm";
 import { attractiveGlow, orangeGlow } from "@common/animations";
 import { OrderTimeline } from "src/components/OrderTimeline";
 import { RefundPreview } from "src/components/RefundPreview";
+import { FraudHint } from "src/components/FraudHint";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
@@ -240,6 +241,8 @@ const OrderPlacementLayout: React.FC = () => {
 							/>
 						</Typography>
 						<OrderTimeline isPaid={Boolean(paymentStatus || isPaid)} isDelivered={Boolean(isDelivered)} />
+						<RefundPreview deliveredAt={deliveredAt ?? null} total={Number(totalPrice ?? 0)} />
+						{isAdmin && <FraudHint total={Number(totalPrice ?? 0)} />}
 						<RefundPreview deliveredAt={deliveredAt ?? null} total={Number(totalPrice ?? 0)} />
 					</Paper>
 					<Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 2 }}>
