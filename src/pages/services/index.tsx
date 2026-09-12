@@ -25,6 +25,7 @@ import { BundleSaver } from "@components/BundleSaver";
 import { OrderInvoice } from "@components/OrderInvoice";
 import { LoyaltyPreview } from "@components/LoyaltyPreview";
 import { AddressChecker } from "@components/AddressChecker";
+import { TaxEstimator } from "@components/TaxEstimator";
 
 export default function ServicesPage() {
   return (
@@ -212,11 +213,18 @@ export default function ServicesPage() {
         <LoyaltyPreview />
       </Box>
 
-      <Box data-testid="service-address" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-address" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Address check
         </Typography>
         <AddressChecker />
+      </Box>
+
+      <Box data-testid="service-tax" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Tax estimates
+        </Typography>
+        <TaxEstimator />
       </Box>
     </Container>
   );
