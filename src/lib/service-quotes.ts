@@ -42,3 +42,21 @@ export function insuranceFee(declaredValue: number, fragile: boolean, internatio
   const fee = Math.round(Math.max(1.99, raw) * 100) / 100;
   return { fee, covers: `Loss, damage and theft up to $${Math.max(0, declaredValue).toFixed(2)}` };
 }
+
+export interface WarrantyQuote {
+  premium: number;
+  perYear: string[];
+}
+
+const WARRANTY_RATES: Record<number, number> = { 1: 0.08, 2: 0.14, 3: 0.19 };
+
+/** Extended warranty: percentage of item price by cover length. */
+export function warrantyQuote(price: number, years: 1 | 2 | 3): WarrantyQuote {
+  const premium = Math.round(Math.max(0, price) * WARRANTY_RATES[years] * 100) / 100;
+  const perYear = [
+    "Accidental damage and breakdowns",
+    ...(years >= 2 ? ["Battery and wear-and-tear"] : []),
+    ...(years >= 3 ? ["Free annual health check"] : []),
+  ];
+  return { premium, perYear };
+}

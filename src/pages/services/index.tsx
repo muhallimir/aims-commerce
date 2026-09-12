@@ -5,6 +5,7 @@ import { ReturnsPickup } from "@components/ReturnsPickup";
 import { CoverageChecker } from "@components/CoverageChecker";
 import { SlotBooking } from "@components/SlotBooking";
 import { InsuranceCalculator } from "@components/InsuranceCalculator";
+import { WarrantyPlanner } from "@components/WarrantyPlanner";
 
 export default function ServicesPage() {
   return (
@@ -52,11 +53,18 @@ export default function ServicesPage() {
         <SlotBooking />
       </Box>
 
-      <Box data-testid="service-insurance" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-insurance" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Parcel protection
         </Typography>
         <InsuranceCalculator />
+      </Box>
+
+      <Box data-testid="service-warranty" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Extended warranty
+        </Typography>
+        <WarrantyPlanner />
       </Box>
     </Container>
   );
