@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
 	Box,
 	Card,
@@ -24,6 +24,7 @@ import {
 } from "@common/interface";
 import useCartAnimation from "src/hooks/useCartAnimation";
 import { getImageUrl } from "@helpers/commonFn";
+import { QuickViewDialog } from "src/components/QuickViewDialog";
 
 const CardsContent: React.FC<CardsContentProps> = ({
 	product,
@@ -93,6 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
 	const productCardRef = useRef<HTMLDivElement>(null);
 	const { setIsFlying, startFlyToCartAnimation } = useCartAnimation();
+	const [quickView, setQuickView] = useState(false);
 
 	const handleAddToCart = () => {
 		startFlyToCartAnimation(productCardRef);
@@ -164,12 +166,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 						...(xs && { fontSize: "0.75rem", padding: "6px" }),
 					}}
 				/>
+				<Typography
+					data-testid="quick-view-open"
+					variant="body2"
+					color="primary"
+					sx={{ cursor: "pointer", alignSelf: "center" }}
+					onClick={(e) => {
+						e.stopPropagation();
+						setQuickView(true);
+					}}
+				>
+					Quick view
+				</Typography>
 				{countInStock > 0 && !xs && (
 					<Typography variant="body2" color="common.black">
 						In stock: {countInStock}
 					</Typography>
 				)}
 			</CardActions>
+			<QuickViewDialog
+				product={quickView ? { _id, name, price: product.price, image: getImageUrl(image), description: product.description, category: product.category, brand: product.brand, countInStock } : null}
+				onClose={() => setQuickView(false)}
+				onAdd={(p) => dispatch(updateCartList(p))}
+				onDetails={() => handleCardClick()}
+			/>
 		</Card>
 	);
 };
