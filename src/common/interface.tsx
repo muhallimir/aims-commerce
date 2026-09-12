@@ -163,6 +163,7 @@ export interface OrderData {
 	isPaid: boolean;
 	isDelivered: boolean;
 	paidAt: string;
+	deliveredAt?: string | null;
 }
 
 export interface PaymentDetails {
