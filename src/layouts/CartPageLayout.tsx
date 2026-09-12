@@ -16,6 +16,7 @@ import useCartHandling from "src/hooks/useCartHandling";
 import useThemeMode from "src/hooks/useThemeMode";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
 import { FreeShippingBar } from "src/components/FreeShippingBar";
+import { GiftOptionsPanel } from "src/components/GiftOptionsPanel";
 import { CartItem } from "@common/interface";
 import { useRouter } from "next/router";
 import { ShoppingCart } from "@mui/icons-material";
@@ -200,6 +201,7 @@ const CartPageLayout: React.FC = () => {
 						</Grid>
 						<Grid item xs={12} md={4}>
 							<FreeShippingBar subtotal={totalPrice} />
+							<GiftOptionsPanel />
 							<Box
 								sx={{
 									padding: 2,
