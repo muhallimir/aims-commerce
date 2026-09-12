@@ -16,6 +16,7 @@ import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
 import { CarbonOffsetter } from "@components/CarbonOffsetter";
 import { AssemblyBooking } from "@components/AssemblyBooking";
 import { InstallationScheduler } from "@components/InstallationScheduler";
+import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
 
 export default function ServicesPage() {
   return (
@@ -140,11 +141,18 @@ export default function ServicesPage() {
         <AssemblyBooking />
       </Box>
 
-      <Box data-testid="service-install" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-install" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Appliance installation
         </Typography>
         <InstallationScheduler />
+      </Box>
+
+      <Box data-testid="service-whiteglove" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          White-glove delivery
+        </Typography>
+        <WhiteGlovePicker />
       </Box>
     </Container>
   );

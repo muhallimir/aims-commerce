@@ -231,3 +231,17 @@ export function installOptions(daysOut: number[]): InstallOption[] {
     return { date: dt.toISOString().slice(0, 10), windows: INSTALL_WINDOWS };
   });
 }
+
+export type WhiteGloveTier = "standard" | "plus" | "premium";
+
+export interface WhiteGloveQuote {
+  tier: WhiteGloveTier;
+  fee: number;
+}
+
+/** White-glove: room-of-choice delivery priced by stairs, bulk and rooms. */
+export function whiteGloveQuote(floor: number, bulky: boolean, rooms: number): WhiteGloveQuote {
+  const fee = 49 + Math.max(0, floor) * 10 + (bulky ? 40 : 0) + Math.max(0, rooms - 1) * 15;
+  const tier: WhiteGloveTier = fee > 150 ? "premium" : fee > 90 ? "plus" : "standard";
+  return { tier, fee };
+}
