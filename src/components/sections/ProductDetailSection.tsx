@@ -22,6 +22,7 @@ import { ShareButton } from "src/components/ShareButton";
 import { DeliveryPromise } from "src/components/DeliveryPromise";
 import { StockNotifier } from "src/components/StockNotifier";
 import { BoughtTogether } from "src/components/BoughtTogether";
+import { SizeGuide } from "src/components/SizeGuide";
 
 const ProductDetailSection: React.FC = ({ }) => {
 	const { currentProduct: product } = useSelector(
@@ -300,6 +301,7 @@ const ProductDetailSection: React.FC = ({ }) => {
 						</Typography>
 					)}
 					{!loading && <ShareButton name={product?.name ?? "This product"} />}
+					{!loading && product?.category && <SizeGuide category={product.category} />}
 					{!loading && (product?.countInStock ?? 0) > 0 && <DeliveryPromise />}
 					{!loading && (product?.countInStock ?? 0) === 0 && product?._id && (
 						<StockNotifier productId={product._id} productName={product?.name ?? "this item"} />
