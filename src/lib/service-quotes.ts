@@ -131,3 +131,20 @@ export function giftWrapQuote(items: number, premium: boolean, message: string):
   const total = Math.round((Math.max(0, items) * perItem + messageFee) * 100) / 100;
   return { perItem, messageFee, total };
 }
+
+export interface EngravingQuote {
+  fee: number;
+  ok: boolean;
+  note: string;
+}
+
+const MATERIAL_FEES: Record<string, number> = { wood: 0, metal: 5, glass: 8, leather: 3 };
+
+/** Engraving: 10 chars free, then per-character plus material setup. */
+export function engravingQuote(text: string, material: string): EngravingQuote {
+  const chars = text.length;
+  if (chars === 0) return { fee: 0, ok: true, note: "Type something to preview the engraving." };
+  if (chars > 50) return { fee: 0, ok: false, note: "Over the 50-character limit: shorten the text." };
+  const fee = Math.round(((Math.max(0, chars - 10) * 0.5) + (MATERIAL_FEES[material.toLowerCase()] ?? 0)) * 100) / 100;
+  return { fee, ok: true, note: chars <= 10 ? "Short and sweet: free." : `${chars - 10} paid characters plus ${material} setup.` };
+}
