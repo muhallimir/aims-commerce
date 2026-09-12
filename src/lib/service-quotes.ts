@@ -200,3 +200,17 @@ export function carbonQuote(distanceKm: number, weightKg: number, mode: CarbonMo
   const offsetFee = Math.round(kgCO2 * 1.5 * 100) / 100;
   return { kgCO2, offsetFee };
 }
+
+export interface AssemblyQuote {
+  minutes: number;
+  fee: number;
+}
+
+const ASSEMBLY_MINUTES: Record<string, number> = { chair: 20, table: 45, wardrobe: 90, bed: 75, desk: 40 };
+
+/** Furniture assembly: half-hour blocks at $15, scaled by quantity. */
+export function assemblyQuote(itemType: string, qty: number): AssemblyQuote {
+  const minutes = ASSEMBLY_MINUTES[itemType.toLowerCase()] ?? 30;
+  const fee = Math.ceil(minutes / 30) * 15 * Math.max(1, qty);
+  return { minutes, fee };
+}

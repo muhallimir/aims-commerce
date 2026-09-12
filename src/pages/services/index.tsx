@@ -14,6 +14,7 @@ import { EngravingStudio } from "@components/EngravingStudio";
 import { SubscriptionPlanner } from "@components/SubscriptionPlanner";
 import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
 import { CarbonOffsetter } from "@components/CarbonOffsetter";
+import { AssemblyBooking } from "@components/AssemblyBooking";
 
 export default function ServicesPage() {
   return (
@@ -124,11 +125,18 @@ export default function ServicesPage() {
         <EcoPackagingPicker />
       </Box>
 
-      <Box data-testid="service-carbon" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-carbon" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Carbon-neutral delivery
         </Typography>
         <CarbonOffsetter />
+      </Box>
+
+      <Box data-testid="service-assembly" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Furniture assembly
+        </Typography>
+        <AssemblyBooking />
       </Box>
     </Container>
   );
