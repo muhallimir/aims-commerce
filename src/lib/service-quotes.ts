@@ -60,3 +60,23 @@ export function warrantyQuote(price: number, years: 1 | 2 | 3): WarrantyQuote {
   ];
   return { premium, perYear };
 }
+
+export interface PriceMatchVerdict {
+  approved: boolean;
+  matchPrice: number | null;
+  reason: string;
+}
+
+const ELIGIBLE = ["amazon", "bestbuy", "target", "walmart", "costco"];
+
+/** Price-match desk: eligible competitor, lower price, in stock. */
+export function priceMatchVerdict(ourPrice: number, competitorPrice: number, competitor: string): PriceMatchVerdict {
+  const name = competitor.trim().toLowerCase();
+  if (!ELIGIBLE.includes(name)) {
+    return { approved: false, matchPrice: null, reason: `${competitor || "That store"} is outside our matched retailers.` };
+  }
+  if (!(competitorPrice > 0) || competitorPrice >= ourPrice) {
+    return { approved: false, matchPrice: null, reason: "The competitor price must be lower than ours to match." };
+  }
+  return { approved: true, matchPrice: competitorPrice, reason: `Approved: we match ${competitor} at $${competitorPrice.toFixed(2)}.` };
+}

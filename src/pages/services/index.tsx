@@ -6,6 +6,7 @@ import { CoverageChecker } from "@components/CoverageChecker";
 import { SlotBooking } from "@components/SlotBooking";
 import { InsuranceCalculator } from "@components/InsuranceCalculator";
 import { WarrantyPlanner } from "@components/WarrantyPlanner";
+import { PriceMatchDesk } from "@components/PriceMatchDesk";
 
 export default function ServicesPage() {
   return (
@@ -60,11 +61,18 @@ export default function ServicesPage() {
         <InsuranceCalculator />
       </Box>
 
-      <Box data-testid="service-warranty" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-warranty" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Extended warranty
         </Typography>
         <WarrantyPlanner />
+      </Box>
+
+      <Box data-testid="service-pricematch" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Price match
+        </Typography>
+        <PriceMatchDesk />
       </Box>
     </Container>
   );
