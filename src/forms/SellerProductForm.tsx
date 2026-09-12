@@ -29,6 +29,7 @@ import LoadingOverlay from "src/components/loaders/TextLoader";
 import { LOADERTEXT, PRODUCT_CATEGORIES } from "@common/constants";
 import SuccessModal from "src/components/modals/SuccessModal";
 import { SeoPreview } from "src/components/SeoPreview";
+import { ListingChecklist } from "src/components/ListingChecklist";
 
 const SellerProductForm: React.FC = () => {
     const router = useRouter();
@@ -391,6 +392,16 @@ const SellerProductForm: React.FC = () => {
 
                         {renderTextField("description", "Description", "text", true, 4)}
                         <SeoPreview title={formik.values.name} description={formik.values.description} />
+                        <ListingChecklist
+                            draft={{
+                                name: formik.values.name,
+                                price: Number(formik.values.price),
+                                category: formik.values.category,
+                                description: formik.values.description,
+                                countInStock: Number(formik.values.countInStock),
+                                image: formik.values.image,
+                            }}
+                        />
 
                         <Button
                             type="submit"
