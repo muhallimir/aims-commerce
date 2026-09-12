@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import SearchBar from "src/components/bars/SearchBar";
+import { CampaignCreator } from "src/components/CampaignCreator";
 import ConfirmModal from "src/components/modals/ConfirmModal";
 import { CONFIRMATIONMESSAGE, PRODUCT_CATEGORIES } from "@common/constants";
 import {
@@ -269,6 +270,10 @@ const SellerProductsLayout: React.FC = () => {
             </Box>
 
             <SearchBar onSearch={handleSearch} placeholder="Search products..." />
+
+            <Box sx={{ mt: 2 }}>
+                <CampaignCreator />
+            </Box>
 
             {error && (
                 <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
