@@ -214,3 +214,20 @@ export function assemblyQuote(itemType: string, qty: number): AssemblyQuote {
   const fee = Math.ceil(minutes / 30) * 15 * Math.max(1, qty);
   return { minutes, fee };
 }
+
+export interface InstallOption {
+  date: string;
+  windows: string[];
+}
+
+const INSTALL_WINDOWS = ["08:00 – 12:00", "12:00 – 16:00", "16:00 – 20:00"];
+
+/** Installation visits: next open days from the chosen lead time. */
+export function installOptions(daysOut: number[]): InstallOption[] {
+  const today = new Date();
+  return daysOut.map((d) => {
+    const dt = new Date(today);
+    dt.setDate(dt.getDate() + d);
+    return { date: dt.toISOString().slice(0, 10), windows: INSTALL_WINDOWS };
+  });
+}

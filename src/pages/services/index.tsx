@@ -15,6 +15,7 @@ import { SubscriptionPlanner } from "@components/SubscriptionPlanner";
 import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
 import { CarbonOffsetter } from "@components/CarbonOffsetter";
 import { AssemblyBooking } from "@components/AssemblyBooking";
+import { InstallationScheduler } from "@components/InstallationScheduler";
 
 export default function ServicesPage() {
   return (
@@ -132,11 +133,18 @@ export default function ServicesPage() {
         <CarbonOffsetter />
       </Box>
 
-      <Box data-testid="service-assembly" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-assembly" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Furniture assembly
         </Typography>
         <AssemblyBooking />
+      </Box>
+
+      <Box data-testid="service-install" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Appliance installation
+        </Typography>
+        <InstallationScheduler />
       </Box>
     </Container>
   );
