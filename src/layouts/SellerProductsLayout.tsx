@@ -35,6 +35,7 @@ import * as yup from "yup";
 import SearchBar from "src/components/bars/SearchBar";
 import { CampaignCreator } from "src/components/CampaignCreator";
 import { ShippingPresets } from "src/components/ShippingPresets";
+import { CsvTemplateCard } from "src/components/CsvTemplateCard";
 import ConfirmModal from "src/components/modals/ConfirmModal";
 import { CONFIRMATIONMESSAGE, PRODUCT_CATEGORIES } from "@common/constants";
 import {
@@ -273,6 +274,7 @@ const SellerProductsLayout: React.FC = () => {
             <SearchBar onSearch={handleSearch} placeholder="Search products..." />
 
             <Box sx={{ mt: 2 }}>
+                <CsvTemplateCard />
                 <CampaignCreator />
                 <ShippingPresets />
             </Box>
