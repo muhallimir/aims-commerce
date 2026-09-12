@@ -10,6 +10,7 @@ import useCartHandling from "src/hooks/useCartHandling";
 import useAddressAutoComplete from "src/hooks/useAddressAutoComplete";
 import { LocationOn as LocationIcon, AutoFixHigh as AutoIcon } from "@mui/icons-material";
 import { orangeGlow, shimmer } from "@common/animations";
+import { DeliveryInstructions } from "src/components/DeliveryInstructions";
 
 const validationSchema = yup.object({
 	fullName: yup.string().required("Full name is required"),
@@ -258,6 +259,8 @@ const ShippingForm: React.FC = () => {
 				{renderTextField("city", "City")}
 				{renderTextField("postalCode", "Postal Code")}
 				{renderTextField("country", "Country")}
+
+				<DeliveryInstructions />
 
 				<Button
 					type="submit"
