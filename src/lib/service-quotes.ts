@@ -80,3 +80,23 @@ export function priceMatchVerdict(ourPrice: number, competitorPrice: number, com
   }
   return { approved: true, matchPrice: competitorPrice, reason: `Approved: we match ${competitor} at $${competitorPrice.toFixed(2)}.` };
 }
+
+export interface RepairQuote {
+  low: number;
+  high: number;
+  viable: boolean;
+}
+
+const REPAIR_BASES: Record<string, [number, number]> = {
+  phone: [39, 129],
+  laptop: [79, 249],
+  shoe: [15, 45],
+  watch: [49, 199],
+  bike: [25, 120],
+};
+
+/** Repair desk: category price band, unviable once the item is 8+ years old. */
+export function repairQuote(category: string, ageYears: number): RepairQuote {
+  const [low, high] = REPAIR_BASES[category.toLowerCase()] ?? [30, 100];
+  return { low, high, viable: Math.max(0, ageYears) < 8 };
+}
