@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { geocodeAddress } from "@lib/geocode";
+import { apiFetch } from "@lib/authFetch";
 
 const TrackingMap = dynamic(
   () => import("@components/TrackingMap").then((m) => m.TrackingMap),
@@ -74,7 +75,7 @@ export function OrderTracker() {
   useEffect(() => {
     if (!signedIn) return;
     setLoading(true);
-    fetch("/api/orders/mine")
+    apiFetch("/api/orders/mine")
       .then(async (r) => {
         if (!r.ok) throw new Error(`Orders request failed (${r.status})`);
         return r.json();
@@ -171,7 +172,7 @@ export function OrderTracker() {
                 <Typography variant="body2" color="text.secondary">
                   To: {order.shippingAddress.city}, {order.shippingAddress.country} {order.shippingAddress.postalCode}
                 </Typography>
-                <Box sx={{ mt: 2 }}>
+                <Box data-testid="tracker-map" sx={{ mt: 2 }}>
                   <TrackingMap origin={WAREHOUSE} destination={dest} progress={meta.percent / 100} />
                   {geoNote && <Typography data-testid="tracker-geo-note" variant="caption" color="text.secondary">{geoNote}</Typography>}
                   {dest && <Typography variant="caption" color="text.secondary">Destination: {dest.label}</Typography>}

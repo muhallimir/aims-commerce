@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { computeInvoiceTotals, renderInvoiceText } from "@lib/invoice";
+import { apiFetch } from "@lib/authFetch";
 
 interface Order {
   _id: string;
@@ -39,7 +40,7 @@ export function OrderInvoice() {
 
   useEffect(() => {
     if (!signedIn) return;
-    fetch("/api/orders/mine")
+    apiFetch("/api/orders/mine")
       .then((r) => {
         if (!r.ok) throw new Error("orders failed");
         return r.json();
