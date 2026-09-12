@@ -75,7 +75,10 @@ const ProductsGridLayout: React.FC = () => {
 	};
 
 
-	const categories = ["All", ...Array.from(new Set(products.map((p: any) => p.category).filter(Boolean)))];
+	const categories: string[] = ["All"];
+	for (const p of products as any[]) {
+		if (p?.category && !categories.includes(p.category)) categories.push(p.category);
+	}
 
 	const priceOf = (p: any) => Number(p.price ?? p.sellingPrice ?? 0);
 
