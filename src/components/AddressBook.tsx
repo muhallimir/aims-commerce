@@ -73,7 +73,7 @@ export function AddressBook() {
     setDraft(EMPTY);
   }
 
-  function useAddress(a: SavedAddress) {
+  function applyAddress(a: SavedAddress) {
     dispatch(
       updateShippingAddress({
         fullName: a.fullName,
@@ -101,7 +101,7 @@ export function AddressBook() {
               {a.fullName} · {a.address}, {a.city} {a.postalCode}
             </Typography>
             <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
-              <Button data-testid={`address-use-${a.id}`} size="small" variant="contained" onClick={() => useAddress(a)}>
+              <Button data-testid={`address-use-${a.id}`} size="small" variant="contained" onClick={() => applyAddress(a)}>
                 Deliver here
               </Button>
               <Button
