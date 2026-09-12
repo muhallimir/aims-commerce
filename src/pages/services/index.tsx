@@ -3,6 +3,7 @@ import { OrderTracker } from "@components/OrderTracker";
 import { DeliveryEstimator } from "@components/DeliveryEstimator";
 import { ReturnsPickup } from "@components/ReturnsPickup";
 import { CoverageChecker } from "@components/CoverageChecker";
+import { SlotBooking } from "@components/SlotBooking";
 
 export default function ServicesPage() {
   return (
@@ -36,11 +37,18 @@ export default function ServicesPage() {
         <ReturnsPickup />
       </Box>
 
-      <Box data-testid="service-coverage" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-coverage" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Delivery coverage
         </Typography>
         <CoverageChecker />
+      </Box>
+
+      <Box data-testid="service-slots" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Delivery windows
+        </Typography>
+        <SlotBooking />
       </Box>
     </Container>
   );
