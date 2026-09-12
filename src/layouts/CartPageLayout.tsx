@@ -15,6 +15,7 @@ import useScreenSize from "src/hooks/useScreenSize";
 import useCartHandling from "src/hooks/useCartHandling";
 import useThemeMode from "src/hooks/useThemeMode";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
+import { FreeShippingBar } from "src/components/FreeShippingBar";
 import { CartItem } from "@common/interface";
 import { useRouter } from "next/router";
 import { ShoppingCart } from "@mui/icons-material";
@@ -198,6 +199,7 @@ const CartPageLayout: React.FC = () => {
 							</Box>
 						</Grid>
 						<Grid item xs={12} md={4}>
+							<FreeShippingBar subtotal={totalPrice} />
 							<Box
 								sx={{
 									padding: 2,
@@ -217,8 +219,7 @@ const CartPageLayout: React.FC = () => {
 									}}
 								>
 									Total:
-								</Typography>
-								<Typography variant="h4" color="primary">
+								</Typography>								<Typography variant="h4" color="primary">
 									${totalPrice.toFixed(2)}
 								</Typography>
 								<Button
