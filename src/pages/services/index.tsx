@@ -27,6 +27,7 @@ import { LoyaltyPreview } from "@components/LoyaltyPreview";
 import { AddressChecker } from "@components/AddressChecker";
 import { TaxEstimator } from "@components/TaxEstimator";
 import { ServiceFaq } from "@components/ServiceFaq";
+import { VisitStore } from "@components/VisitStore";
 
 export default function ServicesPage() {
   return (
@@ -228,11 +229,18 @@ export default function ServicesPage() {
         <TaxEstimator />
       </Box>
 
-      <Box data-testid="service-faq" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-faq" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Good to know
         </Typography>
         <ServiceFaq />
+      </Box>
+
+      <Box data-testid="service-visit" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Visit us
+        </Typography>
+        <VisitStore />
       </Box>
     </Container>
   );
