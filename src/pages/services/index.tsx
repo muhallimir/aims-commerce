@@ -20,6 +20,7 @@ import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
 import { AlterationCounter } from "@components/AlterationCounter";
 import { RentalPlanner } from "@components/RentalPlanner";
 import { BulkDesk } from "@components/BulkDesk";
+import { CurrencyConverter } from "@components/CurrencyConverter";
 
 export default function ServicesPage() {
   return (
@@ -172,11 +173,18 @@ export default function ServicesPage() {
         <RentalPlanner />
       </Box>
 
-      <Box data-testid="service-bulk" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-bulk" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Bulk orders
         </Typography>
         <BulkDesk />
+      </Box>
+
+      <Box data-testid="service-fx" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Currency converter
+        </Typography>
+        <CurrencyConverter />
       </Box>
     </Container>
   );
