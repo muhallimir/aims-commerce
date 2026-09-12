@@ -13,6 +13,7 @@ import { GiftWrapPicker } from "@components/GiftWrapPicker";
 import { EngravingStudio } from "@components/EngravingStudio";
 import { SubscriptionPlanner } from "@components/SubscriptionPlanner";
 import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
+import { CarbonOffsetter } from "@components/CarbonOffsetter";
 
 export default function ServicesPage() {
   return (
@@ -116,11 +117,18 @@ export default function ServicesPage() {
         <SubscriptionPlanner />
       </Box>
 
-      <Box data-testid="service-eco" sx={{ mt: 4, mb: 4 }}>
+      <Box data-testid="service-eco" sx={{ mt: 4 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           Green packaging
         </Typography>
         <EcoPackagingPicker />
+      </Box>
+
+      <Box data-testid="service-carbon" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Carbon-neutral delivery
+        </Typography>
+        <CarbonOffsetter />
       </Box>
     </Container>
   );

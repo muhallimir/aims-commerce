@@ -184,3 +184,19 @@ export function ecoPackageQuote(items: number, fragile: boolean): EcoPackageQuot
   }
   return { option: "recycled", fee: Math.round(n * 0.4 * 100) / 100, blurb: "100% recycled box with paper padding, no plastic." };
 }
+
+export type CarbonMode = "bike" | "van" | "air";
+
+export interface CarbonQuote {
+  kgCO2: number;
+  offsetFee: number;
+}
+
+const CARBON_FACTORS: Record<CarbonMode, number> = { bike: 0.01, van: 0.12, air: 0.55 };
+
+/** Carbon footprint of a delivery leg plus the offset price. */
+export function carbonQuote(distanceKm: number, weightKg: number, mode: CarbonMode): CarbonQuote {
+  const kgCO2 = Math.round(Math.max(0, distanceKm) * Math.max(0, weightKg) * (CARBON_FACTORS[mode] / 1000) * 1000) / 1000;
+  const offsetFee = Math.round(kgCO2 * 1.5 * 100) / 100;
+  return { kgCO2, offsetFee };
+}
