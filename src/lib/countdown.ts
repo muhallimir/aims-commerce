@@ -28,3 +28,12 @@ export function formatLeft(t: TimeLeft): string {
   const p = (n: number) => String(n).padStart(2, "0");
   return `${p(t.hours)}h ${p(t.minutes)}m ${p(t.seconds)}s`;
 }
+
+/**
+ * Shelf urgency: nudge shoppers when stock runs thin, silence
+ * otherwise (including out-of-stock, which has its own state).
+ */
+export function stockUrgency(countInStock: number): string | null {
+  if (countInStock <= 0 || countInStock > 5) return null;
+  return `Only ${countInStock} left`;
+}

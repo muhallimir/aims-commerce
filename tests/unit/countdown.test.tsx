@@ -1,4 +1,5 @@
 import { nextMidnight, timeLeft } from "@lib/countdown";
+import { stockUrgency } from "@lib/countdown";
 
 describe("countdown", () => {
   it("counts down to midnight", () => {
@@ -12,5 +13,13 @@ describe("countdown", () => {
     const now = new Date("2026-09-13T00:00:01");
     const t = timeLeft(now, nextMidnight(new Date("2026-09-12T20:00:00")));
     expect(t.ended).toBe(true);
+  });
+
+  it("flags thin stock and stays quiet otherwise", () => {
+    expect(stockUrgency(0)).toBeNull();
+    expect(stockUrgency(1)).toBe("Only 1 left");
+    expect(stockUrgency(5)).toBe("Only 5 left");
+    expect(stockUrgency(6)).toBeNull();
+    expect(stockUrgency(51)).toBeNull();
   });
 });

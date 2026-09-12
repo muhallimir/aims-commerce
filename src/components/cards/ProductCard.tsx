@@ -25,6 +25,8 @@ import {
 import useCartAnimation from "src/hooks/useCartAnimation";
 import { getImageUrl } from "@helpers/commonFn";
 import { QuickViewDialog } from "src/components/QuickViewDialog";
+import { stockUrgency } from "@lib/countdown";
+import Chip from "@mui/material/Chip";
 
 const CardsContent: React.FC<CardsContentProps> = ({
 	product,
@@ -104,6 +106,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 		}, 500);
 	};
 
+	const urgency = stockUrgency(countInStock ?? 0);
+
 	return (
 		<Card
 			ref={productCardRef}
@@ -135,6 +139,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 						width: "100%",
 					}}
 				>
+					{urgency && (
+						<Chip
+							data-testid="stock-urgency"
+							label={urgency}
+							color="warning"
+							size="small"
+							sx={{ position: "absolute", top: 8, left: 8, zIndex: 1 }}
+						/>
+					)}
 					<Image
 						src={getImageUrl(image)}
 						alt={name}
