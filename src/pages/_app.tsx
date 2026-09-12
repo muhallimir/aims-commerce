@@ -13,6 +13,7 @@ import MainLayout from "src/layouts/MainLayout";
 import MainHeader from "src/components/headers/MainHeader";
 import Footer from "src/components/footers/MainFooter";
 import PersistentDemoAccountDialog from "src/components/misc/PersistentDemoAccountDialog";
+import { CookieConsent } from "src/components/CookieConsent";
 import { useRouter } from "next/router";
 import { useGoogleAuth } from "src/hooks/useGoogleAuth";
 import { Analytics } from '@vercel/analytics/next';
@@ -67,6 +68,7 @@ const MyApp = ({
 				)}
 				{/* Global Demo Account Dialog */}
 				<PersistentDemoAccountDialog />
+				<CookieConsent />
 			</ThemeProvider>
 			<Analytics />
 		</CacheProvider>
