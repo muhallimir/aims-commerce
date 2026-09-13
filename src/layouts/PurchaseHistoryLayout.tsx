@@ -23,6 +23,7 @@ import { ViewList, ShoppingCart } from "@mui/icons-material";
 import { AppState, Order } from "@common/interface";
 import { ReorderButton, type ReorderItem } from "src/components/ReorderButton";
 import { IssueReporter } from "src/components/IssueReporter";
+import { ArrivalEstimate } from "src/components/ArrivalEstimate";
 import { updateCartList } from "@store/cart.slice";
 
 const PurchaseHistoryLayout: React.FC = () => {
@@ -150,6 +151,7 @@ const PurchaseHistoryLayout: React.FC = () => {
 									<Typography variant="body2" marginBottom="4px">
 										Ordered By: {order?.shippingAddress?.fullName}
 									</Typography>
+									<ArrivalEstimate createdAt={order.createdAt} isDelivered={order.isDelivered} />
 									<Chip
 										label={order.isPaid ? "Paid" : "Not Paid"}
 										color={order.isPaid ? "success" : "error"}
