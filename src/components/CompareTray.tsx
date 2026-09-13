@@ -17,7 +17,19 @@ import {
 } from "@mui/material";
 import { buildCompareRows, compareLimit, type CompareProduct } from "@lib/compare";
 
-export interface TrayItem extends CompareProduct {}
+export interface TrayItem extends CompareProduct {
+  category?: string;
+}
+
+export type GuardDecision = { ok: true } | { ok: false; trayCategory: string };
+
+/** Compare stays meaningful inside one category. */
+export function canCompare(existing: TrayItem[], next: TrayItem): GuardDecision {
+  if (existing.length === 0) return { ok: true };
+  const trayCategory = existing[0].category ?? "";
+  if (!trayCategory || trayCategory === (next.category ?? "")) return { ok: true };
+  return { ok: false, trayCategory };
+}
 
 /**
  * Compare tray: tick up to 3 products anywhere on the grid, open a
@@ -97,5 +109,35 @@ export function CompareCheckbox({ item, checked, onToggle }: { item: TrayItem; c
       }
       label={<Typography variant="body2" sx={{ color: "#1a1a1a" }}>Compare</Typography>}
     />
+  );
+}
+
+/**
+ * Category guard: comparing across categories explains why it stops
+ * you, and offers a one-tap switch.
+ */
+export function CompareCategoryGuard({ trayCategory, nextCategory, onSwitch, onKeep }: {
+  trayCategory: string;
+  nextCategory: string;
+  onSwitch: () => void;
+  onKeep: () => void;
+}) {
+  return (
+    <Dialog data-testid="compare-guard" open onClose={onKeep} maxWidth="xs" fullWidth>
+      <DialogTitle>One category at a time</DialogTitle>
+      <DialogContent>
+        <Typography data-testid="compare-guard-text" variant="body2" color="text.secondary">
+          You&apos;re comparing {trayCategory}. Specs only line up within a category — switch to {nextCategory} or keep your current tray.
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button data-testid="compare-guard-keep" onClick={onKeep}>
+          Keep {trayCategory}
+        </Button>
+        <Button data-testid="compare-guard-switch" variant="contained" onClick={onSwitch} autoFocus>
+          Switch to {nextCategory}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

@@ -11,7 +11,7 @@ import SearchBar from "src/components/bars/SearchBar";
 import { FlashSaleBar } from "src/components/FlashSaleBar";
 import { CategoryChips } from "src/components/CategoryChips";
 import { SortSelect, type SortKey } from "src/components/SortSelect";
-import { CompareTray, CompareCheckbox, type TrayItem } from "src/components/CompareTray";
+import { CompareTray, CompareCheckbox, CompareCategoryGuard, canCompare, type TrayItem } from "src/components/CompareTray";
 import { TopRatedSpotlight } from "src/components/TopRatedSpotlight";
 import { SearchSuggestions } from "src/components/SearchSuggestions";
 import { useGetProductListMutation } from "@store/products.slice";
@@ -32,10 +32,20 @@ const ProductsGridLayout: React.FC = () => {
 	const [category, setCategory] = useState<string>("All");
 	const [sort, setSort] = useState<SortKey>("featured");
 	const [compare, setCompare] = useState<TrayItem[]>([]);
+	const [guardItem, setGuardItem] = useState<TrayItem | null>(null);
 	const dispatch = useDispatch();
 
 	function toggleCompare(p: TrayItem) {
-		setCompare((c) => (c.some((x) => x.id === p.id) ? c.filter((x) => x.id !== p.id) : [...c, p].slice(-3)));
+		if (compare.some((x) => x.id === p.id)) {
+			setCompare(compare.filter((x) => x.id !== p.id));
+			return;
+		}
+		const decision = canCompare(compare, p);
+		if (!decision.ok) {
+			setGuardItem(p);
+			return;
+		}
+		setCompare([...compare, p].slice(-3));
 	}
 
 	useEffect(() => {
@@ -152,7 +162,7 @@ const ProductsGridLayout: React.FC = () => {
 						>
 							<ProductCard product={product} />
 							<CompareCheckbox
-								item={{ id: product._id, name: product.name ?? product.title, price: Number(product.price ?? 0), rating: Number(product.rating ?? 0), inStock: Number(product.countInStock ?? product.count_in_stock ?? 0) > 0, brand: product.brand }}
+								item={{ id: product._id, name: product.name ?? product.title, price: Number(product.price ?? 0), rating: Number(product.rating ?? 0), inStock: Number(product.countInStock ?? product.count_in_stock ?? 0) > 0, brand: product.brand, category: product.category }}
 								checked={compare.some((x) => x.id === product._id)}
 								onToggle={toggleCompare}
 							/>
@@ -160,6 +170,17 @@ const ProductsGridLayout: React.FC = () => {
 					))}
 			</Grid>
 			<CompareTray items={compare} onToggle={toggleCompare} onClear={() => setCompare([])} />
+			{guardItem && (
+				<CompareCategoryGuard
+					trayCategory={compare[0]?.category ?? "this category"}
+					nextCategory={guardItem.category ?? "that category"}
+					onKeep={() => setGuardItem(null)}
+					onSwitch={() => {
+						setCompare([guardItem]);
+						setGuardItem(null);
+					}}
+				/>
+			)}
 		</Container>
 	);
 };
