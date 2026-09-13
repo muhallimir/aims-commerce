@@ -1,254 +1,37 @@
-import { Box, Container, Typography } from "@mui/material";
-import { OrderTracker } from "@components/OrderTracker";
-import { DeliveryEstimator } from "@components/DeliveryEstimator";
-import { ReturnsPickup } from "@components/ReturnsPickup";
-import { CoverageChecker } from "@components/CoverageChecker";
-import { SlotBooking } from "@components/SlotBooking";
-import { InsuranceCalculator } from "@components/InsuranceCalculator";
-import { WarrantyPlanner } from "@components/WarrantyPlanner";
-import { PriceMatchDesk } from "@components/PriceMatchDesk";
-import { RepairDesk } from "@components/RepairDesk";
-import { TradeInDesk } from "@components/TradeInDesk";
-import { GiftWrapPicker } from "@components/GiftWrapPicker";
-import { EngravingStudio } from "@components/EngravingStudio";
-import { SubscriptionPlanner } from "@components/SubscriptionPlanner";
-import { EcoPackagingPicker } from "@components/EcoPackagingPicker";
-import { CarbonOffsetter } from "@components/CarbonOffsetter";
-import { AssemblyBooking } from "@components/AssemblyBooking";
-import { InstallationScheduler } from "@components/InstallationScheduler";
-import { WhiteGlovePicker } from "@components/WhiteGlovePicker";
-import { AlterationCounter } from "@components/AlterationCounter";
-import { RentalPlanner } from "@components/RentalPlanner";
-import { BulkDesk } from "@components/BulkDesk";
-import { CurrencyConverter } from "@components/CurrencyConverter";
-import { BundleSaver } from "@components/BundleSaver";
-import { OrderInvoice } from "@components/OrderInvoice";
-import { LoyaltyPreview } from "@components/LoyaltyPreview";
-import { AddressChecker } from "@components/AddressChecker";
-import { TaxEstimator } from "@components/TaxEstimator";
-import { ServiceFaq } from "@components/ServiceFaq";
-import { VisitStore } from "@components/VisitStore";
-import { BrowsingTrail } from "@components/BrowsingTrail";
+import { Box, Card, CardActionArea, CardContent, Container, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
-export default function ServicesPage() {
+const HUBS = [
+  { id: "tracking", title: "Order tracking", blurb: "Live parcel map plus printable invoices.", href: "/services/tracking" },
+  { id: "delivery", title: "Delivery", blurb: "Rates, coverage, windows and green options.", href: "/services/delivery" },
+  { id: "returns", title: "Returns", blurb: "Doorstep pickup booked in seconds.", href: "/services/returns" },
+  { id: "protection", title: "Protection and repairs", blurb: "Parcel cover, warranties, price match, fixes.", href: "/services/protection" },
+  { id: "home-services", title: "Home services", blurb: "Assembly, installation, white glove, tailoring.", href: "/services/home-services" },
+  { id: "shopping", title: "Smart shopping", blurb: "Gifts, trade-ins, bulk deals and loyalty.", href: "/services/shopping" },
+  { id: "help", title: "Help and answers", blurb: "Addresses, taxes, FAQs and the flagship store.", href: "/services/help" },
+];
+
+export default function ServicesHub() {
+  const router = useRouter();
   return (
     <Container data-testid="services-page" maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h3" fontWeight={700} gutterBottom>
         Services
       </Typography>
       <Typography variant="body1" color="text.secondary" gutterBottom>
-        Track your parcels live on the map, estimate delivery before you
-        buy, and book doorstep returns in seconds.
+        Thirty services, seven rooms. Pick where to go.
       </Typography>
-
-      <Box data-testid="service-tracking" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Order tracking
-        </Typography>
-        <OrderTracker />
-      </Box>
-
-      <Box data-testid="service-estimator" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Delivery estimates
-        </Typography>
-        <DeliveryEstimator />
-      </Box>
-
-      <Box data-testid="service-returns" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Returns pickup
-        </Typography>
-        <ReturnsPickup />
-      </Box>
-
-      <Box data-testid="service-coverage" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Delivery coverage
-        </Typography>
-        <CoverageChecker />
-      </Box>
-
-      <Box data-testid="service-slots" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Delivery windows
-        </Typography>
-        <SlotBooking />
-      </Box>
-
-      <Box data-testid="service-insurance" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Parcel protection
-        </Typography>
-        <InsuranceCalculator />
-      </Box>
-
-      <Box data-testid="service-warranty" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Extended warranty
-        </Typography>
-        <WarrantyPlanner />
-      </Box>
-
-      <Box data-testid="service-pricematch" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Price match
-        </Typography>
-        <PriceMatchDesk />
-      </Box>
-
-      <Box data-testid="service-repair" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Repairs
-        </Typography>
-        <RepairDesk />
-      </Box>
-
-      <Box data-testid="service-tradein" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Trade-in
-        </Typography>
-        <TradeInDesk />
-      </Box>
-
-      <Box data-testid="service-giftwrap" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Gift wrap
-        </Typography>
-        <GiftWrapPicker />
-      </Box>
-
-      <Box data-testid="service-engraving" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Engraving
-        </Typography>
-        <EngravingStudio />
-      </Box>
-
-      <Box data-testid="service-subscription" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Subscriptions
-        </Typography>
-        <SubscriptionPlanner />
-      </Box>
-
-      <Box data-testid="service-eco" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Green packaging
-        </Typography>
-        <EcoPackagingPicker />
-      </Box>
-
-      <Box data-testid="service-carbon" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Carbon-neutral delivery
-        </Typography>
-        <CarbonOffsetter />
-      </Box>
-
-      <Box data-testid="service-assembly" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Furniture assembly
-        </Typography>
-        <AssemblyBooking />
-      </Box>
-
-      <Box data-testid="service-install" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Appliance installation
-        </Typography>
-        <InstallationScheduler />
-      </Box>
-
-      <Box data-testid="service-whiteglove" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          White-glove delivery
-        </Typography>
-        <WhiteGlovePicker />
-      </Box>
-
-      <Box data-testid="service-alteration" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Tailoring
-        </Typography>
-        <AlterationCounter />
-      </Box>
-
-      <Box data-testid="service-rental" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Try before you buy
-        </Typography>
-        <RentalPlanner />
-      </Box>
-
-      <Box data-testid="service-bulk" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Bulk orders
-        </Typography>
-        <BulkDesk />
-      </Box>
-
-      <Box data-testid="service-fx" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Currency converter
-        </Typography>
-        <CurrencyConverter />
-      </Box>
-
-      <Box data-testid="service-bundle" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Bundle savings
-        </Typography>
-        <BundleSaver />
-      </Box>
-
-      <Box data-testid="service-invoice" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Invoices
-        </Typography>
-        <OrderInvoice />
-      </Box>
-
-      <Box data-testid="service-loyalty" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Loyalty rewards
-        </Typography>
-        <LoyaltyPreview />
-      </Box>
-
-      <Box data-testid="service-address" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Address check
-        </Typography>
-        <AddressChecker />
-      </Box>
-
-      <Box data-testid="service-tax" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Tax estimates
-        </Typography>
-        <TaxEstimator />
-      </Box>
-
-      <Box data-testid="service-faq" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Good to know
-        </Typography>
-        <ServiceFaq />
-      </Box>
-
-      <Box data-testid="service-visit" sx={{ mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Visit us
-        </Typography>
-        <VisitStore />
-      </Box>
-
-      <Box data-testid="service-recent" sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Recently viewed
-        </Typography>
-        <BrowsingTrail />
+      <Box sx={{ mt: 3, display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 4 }}>
+        {HUBS.map((h) => (
+          <Card key={h.id} data-testid={`hub-${h.id}`} variant="outlined">
+            <CardActionArea data-testid={`hub-go-${h.id}`} onClick={() => router.push(h.href)} sx={{ p: 1 }}>
+              <CardContent>
+                <Typography variant="h6">{h.title}</Typography>
+                <Typography variant="body2" color="text.secondary">{h.blurb}</Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
       </Box>
     </Container>
   );
