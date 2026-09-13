@@ -1,20 +1,27 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CompareTray, CompareCategoryGuard, canCompare } from "@components/CompareTray";
+import { CompareTray, CompareCategoryGuard, canCompare, groupOf } from "@components/CompareTray";
 
 const A = { id: "a", name: "Alpha", price: 100, rating: 4, inStock: true };
 const B = { id: "b", name: "Beta", price: 80, rating: 3, inStock: false };
 
 describe("canCompare", () => {
-  const phone = { id: "a", name: "A", price: 1, inStock: true, category: "Electronics" };
-  const shirt = { id: "b", name: "B", price: 2, inStock: true, category: "Shirts" };
+  const laptop = { id: "a", name: "A", price: 1, inStock: true, category: "Electronics" };
+  const gpu = { id: "b", name: "B", price: 2, inStock: true, category: "Gaming" };
+  const shirt = { id: "c", name: "C", price: 3, inStock: true, category: "Shirts" };
 
-  it("allows empty trays and same categories", () => {
-    expect(canCompare([], phone)).toEqual({ ok: true });
-    expect(canCompare([phone], { ...phone, id: "c" })).toEqual({ ok: true });
+  it("groups tech together", () => {
+    expect(groupOf("Electronics")).toBe("tech");
+    expect(groupOf("Gaming")).toBe("tech");
+    expect(groupOf("Shirts")).toBe("apparel");
   });
 
-  it("blocks cross-category picks with the tray name", () => {
-    expect(canCompare([phone], shirt)).toEqual({ ok: false, trayCategory: "Electronics" });
+  it("allows empty trays and same families", () => {
+    expect(canCompare([], laptop)).toEqual({ ok: true });
+    expect(canCompare([laptop], gpu)).toEqual({ ok: true });
+  });
+
+  it("blocks tech versus apparel with the family name", () => {
+    expect(canCompare([laptop], shirt)).toEqual({ ok: false, trayCategory: "tech" });
   });
 });
 
@@ -22,8 +29,8 @@ describe("CompareCategoryGuard", () => {
   it("offers switch or keep", () => {
     const onSwitch = jest.fn();
     const onKeep = jest.fn();
-    render(<CompareCategoryGuard trayCategory="Electronics" nextCategory="Shirts" onSwitch={onSwitch} onKeep={onKeep} />);
-    expect(screen.getByTestId("compare-guard-text")).toHaveTextContent(/within a category/i);
+    render(<CompareCategoryGuard trayCategory="tech" nextCategory="apparel" onSwitch={onSwitch} onKeep={onKeep} />);
+    expect(screen.getByTestId("compare-guard-text")).toHaveTextContent(/within a family/i);
     fireEvent.click(screen.getByTestId("compare-guard-switch"));
     expect(onSwitch).toHaveBeenCalled();
   });

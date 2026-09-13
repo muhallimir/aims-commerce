@@ -17,14 +17,18 @@ async function tickFirstInCategory(page: any, category: string) {
   await check.click();
 }
 
-test("cross-category pick raises the guard modal", async ({ page }) => {
+test("tech compares with tech, apparel raises the guard", async ({ page }) => {
   await page.goto("/store", { waitUntil: "networkidle" });
   await dismissCookies(page);
   await expect(page.getByTestId("category-chip-Electronics")).toBeVisible({ timeout: 15000 });
   await tickFirstInCategory(page, "Electronics");
+  await tickFirstInCategory(page, "Gaming");
+  // Same family: no guard, tray holds both.
+  await expect(page.getByTestId("compare-guard")).toHaveCount(0);
+  await expect(page.getByTestId("compare-count")).toContainText("2 to compare");
   await tickFirstInCategory(page, "Shirts");
   await expect(page.getByTestId("compare-guard")).toBeVisible({ timeout: 10000 });
-  await expect(page.getByTestId("compare-guard-text")).toContainText(/within a category/i);
+  await expect(page.getByTestId("compare-guard-text")).toContainText(/within a family/i);
 });
 
 test("switching replaces the tray, keeping preserves it", async ({ page }) => {

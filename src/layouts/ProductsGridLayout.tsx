@@ -11,7 +11,7 @@ import SearchBar from "src/components/bars/SearchBar";
 import { FlashSaleBar } from "src/components/FlashSaleBar";
 import { CategoryChips } from "src/components/CategoryChips";
 import { SortSelect, type SortKey } from "src/components/SortSelect";
-import { CompareTray, CompareCheckbox, CompareCategoryGuard, canCompare, type TrayItem } from "src/components/CompareTray";
+import { CompareTray, CompareCheckbox, CompareCategoryGuard, canCompare, groupOf, groupLabel, type TrayItem } from "src/components/CompareTray";
 import { TopRatedSpotlight } from "src/components/TopRatedSpotlight";
 import { SearchSuggestions } from "src/components/SearchSuggestions";
 import { useGetProductListMutation } from "@store/products.slice";
@@ -172,8 +172,8 @@ const ProductsGridLayout: React.FC = () => {
 			<CompareTray items={compare} onToggle={toggleCompare} onClear={() => setCompare([])} />
 			{guardItem && (
 				<CompareCategoryGuard
-					trayCategory={compare[0]?.category ?? "this category"}
-					nextCategory={guardItem.category ?? "that category"}
+					trayCategory={groupLabel(groupOf(compare[0]?.category))}
+					nextCategory={groupLabel(groupOf(guardItem.category))}
 					onKeep={() => setGuardItem(null)}
 					onSwitch={() => {
 						setCompare([guardItem]);

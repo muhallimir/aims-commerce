@@ -21,14 +21,32 @@ export interface TrayItem extends CompareProduct {
   category?: string;
 }
 
+const TECH = ["electronics", "gaming", "computers", "audio", "phones"];
+const APPAREL = ["shirts", "pants", "dresses", "jackets", "shoes", "clothing", "fashion", "apparel"];
+
+/** Comparable families: tech compares with tech, apparel with apparel. */
+export function groupOf(category: string | undefined): string {
+  const c = (category ?? "").toLowerCase();
+  if (TECH.includes(c)) return "tech";
+  if (APPAREL.includes(c)) return "apparel";
+  return c || "misc";
+}
+
+export function groupLabel(group: string): string {
+  if (group === "tech") return "tech";
+  if (group === "apparel") return "apparel";
+  return group || "this category";
+}
+
 export type GuardDecision = { ok: true } | { ok: false; trayCategory: string };
 
-/** Compare stays meaningful inside one category. */
+/** Compare stays meaningful inside one family. */
 export function canCompare(existing: TrayItem[], next: TrayItem): GuardDecision {
   if (existing.length === 0) return { ok: true };
-  const trayCategory = existing[0].category ?? "";
-  if (!trayCategory || trayCategory === (next.category ?? "")) return { ok: true };
-  return { ok: false, trayCategory };
+  const trayGroup = groupOf(existing[0].category);
+  const nextGroup = groupOf(next.category);
+  if (!trayGroup || trayGroup === "misc" || trayGroup === nextGroup) return { ok: true };
+  return { ok: false, trayCategory: groupLabel(trayGroup) };
 }
 
 /**
@@ -124,10 +142,10 @@ export function CompareCategoryGuard({ trayCategory, nextCategory, onSwitch, onK
 }) {
   return (
     <Dialog data-testid="compare-guard" open onClose={onKeep} maxWidth="xs" fullWidth>
-      <DialogTitle>One category at a time</DialogTitle>
+      <DialogTitle>One family at a time</DialogTitle>
       <DialogContent>
         <Typography data-testid="compare-guard-text" variant="body2" color="text.secondary">
-          You&apos;re comparing {trayCategory}. Specs only line up within a category — switch to {nextCategory} or keep your current tray.
+          You&apos;re comparing {trayCategory}. Specs only line up within a family — switch to {nextCategory} or keep your current tray.
         </Typography>
       </DialogContent>
       <DialogActions>
