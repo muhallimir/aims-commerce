@@ -57,7 +57,7 @@ export function NewsletterSignup() {
         helperText={error}
         sx={{ bgcolor: "white", borderRadius: 1, minWidth: 240 }}
       />
-      <Button data-testid="newsletter-submit" variant="contained" color="warning" onClick={subscribe}>
+      <Button data-testid="newsletter-submit" variant="contained" color="warning" onClick={subscribe} sx={{ color: "#1a1a1a", fontWeight: 700 }}>
         Join
       </Button>
     </Box>

@@ -1,5 +1,6 @@
 import { Box, Card, CardActionArea, CardContent, Container, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import { PageTitle, PageIntro } from "@components/ServiceText";
 
 const HUBS = [
   { id: "tracking", title: "Order tracking", blurb: "Live parcel map plus printable invoices.", href: "/services/tracking" },
@@ -15,12 +16,8 @@ export default function ServicesHub() {
   const router = useRouter();
   return (
     <Container data-testid="services-page" maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h3" fontWeight={700} gutterBottom>
-        Services
-      </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
-        Thirty services, seven rooms. Pick where to go.
-      </Typography>
+      <PageTitle>Services</PageTitle>
+      <PageIntro>Thirty services, seven rooms. Pick where to go.</PageIntro>
       <Box sx={{ mt: 3, display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 4 }}>
         {HUBS.map((h) => (
           <Card key={h.id} data-testid={`hub-${h.id}`} variant="outlined">

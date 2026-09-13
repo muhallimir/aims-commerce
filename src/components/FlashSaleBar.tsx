@@ -43,6 +43,7 @@ export function FlashSaleBar() {
         variant="contained"
         color="warning"
         onClick={() => document.getElementById("store-grid")?.scrollIntoView({ behavior: "smooth" })}
+        sx={{ color: "#1a1a1a", fontWeight: 700 }}
       >
         Shop the sale
       </Button>

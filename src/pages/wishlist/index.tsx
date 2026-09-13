@@ -13,6 +13,7 @@ import {
 import { loadWishlist, saveWishlist, type SavedProduct } from "@lib/wishlistStore";
 import { updateCartList } from "@store/cart.slice";
 import { dropFor } from "@lib/priceDrops";
+import { PageTitle } from "@components/ServiceText";
 import { Chip } from "@mui/material";
 
 /**
@@ -60,9 +61,7 @@ export default function WishlistPage() {
 
   return (
     <Container data-testid="wishlist-page" maxWidth="md" sx={{ py: 4, minHeight: "60vh" }}>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Wishlist
-      </Typography>
+      <PageTitle>Wishlist</PageTitle>
       {list.length === 0 ? (
         <Alert data-testid="wishlist-empty" severity="info">
           Nothing saved yet. Tap the heart on any product to keep it here.

@@ -1,15 +1,16 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { PageTitle, PageIntro, SectionTitle } from "@components/ServiceText";
 import { ReturnsPickup } from "@components/ReturnsPickup";
 
 export default function ReturnsPage() {
   return (
     <Container data-testid="services-returns-page" maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h3" fontWeight={700} gutterBottom>
+      <PageTitle>
         Returns
-      </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
+      </PageTitle>
+      <PageIntro>
         Doorstep pickup in seconds. Instant quote, no phone calls.
-      </Typography>
+      </PageIntro>
       <Box data-testid="service-returns" sx={{ mt: 4, mb: 4 }}>
         <ReturnsPickup />
       </Box>
