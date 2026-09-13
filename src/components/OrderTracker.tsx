@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 import {
   Alert,
   Box,
@@ -64,6 +65,8 @@ function fmtDate(iso: string | null): string {
  */
 export function OrderTracker() {
   const { userInfo } = useSelector(({ user }: any) => user ?? {});
+  const router = useRouter();
+  const deepLink = typeof router.query.order === "string" ? router.query.order : "";
   const signedIn = Boolean(userInfo?._id);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedId, setSelectedId] = useState("");
@@ -82,13 +85,18 @@ export function OrderTracker() {
       })
       .then((data: Order[]) => {
         setOrders(data);
-        if (data.length > 0) setSelectedId(data[0]._id);
+        const match = deepLink ? data.find((o) => o._id === deepLink) : null;
+        setSelectedId(match?._id ?? data[0]?._id ?? "");
       })
       .catch((e) => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false));
   }, [signedIn]);
 
   const order = useMemo(() => orders.find((o) => o._id === selectedId) ?? null, [orders, selectedId]);
+
+  useEffect(() => {
+    if (deepLink && orders.some((o) => o._id === deepLink)) setSelectedId(deepLink);
+  }, [deepLink, orders]);
 
   useEffect(() => {
     setDest(null);

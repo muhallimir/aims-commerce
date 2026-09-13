@@ -168,6 +168,14 @@ const PurchaseHistoryLayout: React.FC = () => {
 									>
 										View Details
 									</Button>
+									<Button
+										data-testid="track-package"
+										variant="outlined"
+										sx={{ ml: 1 }}
+										onClick={() => router.push(`/services?order=${order._id}`)}
+									>
+										Track package
+									</Button>
 									<ReorderButton
 										items={(order.orderItems ?? []) as ReorderItem[]}
 										onReorder={(items) => {
