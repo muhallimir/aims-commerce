@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import SearchBar from "src/components/bars/SearchBar";
+import { DuplicateButton } from "src/components/DuplicateButton";
 import { CampaignCreator } from "src/components/CampaignCreator";
 import { ShippingPresets } from "src/components/ShippingPresets";
 import { CsvTemplateCard } from "src/components/CsvTemplateCard";
@@ -349,6 +350,10 @@ const SellerProductsLayout: React.FC = () => {
                                     >
                                         Edit
                                     </Button>
+                                    <DuplicateButton
+                                        product={product}
+                                        onDuplicate={(payload) => createProduct(payload).unwrap()}
+                                    />
                                     <Button
                                         startIcon={<Delete />}
                                         color="error"
