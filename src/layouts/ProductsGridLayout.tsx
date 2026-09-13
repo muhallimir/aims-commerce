@@ -13,6 +13,7 @@ import { CategoryChips } from "src/components/CategoryChips";
 import { SortSelect, type SortKey } from "src/components/SortSelect";
 import { CompareTray, CompareCheckbox, type TrayItem } from "src/components/CompareTray";
 import { TopRatedSpotlight } from "src/components/TopRatedSpotlight";
+import { SearchSuggestions } from "src/components/SearchSuggestions";
 import { useGetProductListMutation } from "@store/products.slice";
 import { useRouter } from "next/router";
 
@@ -111,6 +112,7 @@ const ProductsGridLayout: React.FC = () => {
 			sx={{ py: 4, width: "100vw", minHeight: "100vh", position: "relative" }}
 		>
 			<SearchBar onSearch={handleSearch} value={searchQuery} />
+			<SearchSuggestions products={products} query={searchQuery} onPick={(name) => handleSearch(name)} />
 			<FlashSaleBar />
 			<TopRatedSpotlight products={products} onOpen={(id) => router.push(`/store/product/${id}`)} />
 			<CategoryChips categories={categories} value={category} onChange={setCategory} />
