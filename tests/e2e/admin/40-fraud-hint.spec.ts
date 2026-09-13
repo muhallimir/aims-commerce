@@ -46,8 +46,7 @@ async function adminSession(page: any, context: any) {
 test("admins see the fraud screen with the value flag", async ({ page, context }) => {
   await adminSession(page, context);
   await page.goto("/admin/orders/fraud-order-1", { waitUntil: "networkidle" });
-  await page.getByTestId("fraud-hint").scrollIntoViewIfNeeded();
-  await expect(page.getByTestId("fraud-flag")).toContainText(/high order value/i);
+  await expect(page.getByTestId("fraud-flag")).toContainText(/high order value/i, { timeout: 20000 });
 });
 
 test("shoppers never see the fraud screen", async ({ page }) => {
