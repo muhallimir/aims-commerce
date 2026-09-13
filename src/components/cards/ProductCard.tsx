@@ -177,26 +177,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 			<CardActions
 				sx={{
 					display: "flex",
-					justifyContent: countInStock === 0 || xs ? "center" : "space-between",
-					gap: xs ? "20px" : "1px",
+					flexDirection: "column",
+					alignItems: "stretch",
+					gap: 0.75,
 					padding: theme.spacing(1, 2),
 				}}
 			>
-				<ProductCTA
-					variant="contained"
-					onClick={handleAddToCart}
-					color="primary"
-					buttonText={countInStock > 0 ? "Add to Cart" : "Out of Stock"}
-					disabled={countInStock === 0}
-					sx={{
-						...(xs && { fontSize: "0.75rem", padding: "6px" }),
-					}}
-				/>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: xs ? "wrap" : "nowrap" }}>
+					<ProductCTA
+						variant="contained"
+						onClick={handleAddToCart}
+						color="primary"
+						buttonText={countInStock > 0 ? "Add to Cart" : "Out of Stock"}
+						disabled={countInStock === 0}
+						sx={{
+							flexGrow: 1,
+							whiteSpace: "nowrap",
+							...(xs && { flexBasis: "100%", fontSize: "0.75rem", padding: "6px" }),
+						}}
+					/>
+					{countInStock > 0 && (
+						<Typography variant="caption" color="common.black" noWrap data-testid="card-stock">
+							In stock: {countInStock}
+						</Typography>
+					)}
+				</Box>
 				<Typography
 					data-testid="quick-view-open"
 					variant="body2"
 					color="primary"
-					sx={{ cursor: "pointer", alignSelf: "center" }}
+					noWrap
+					align="center"
+					sx={{ cursor: "pointer" }}
 					onClick={(e) => {
 						e.stopPropagation();
 						setQuickView(true);
@@ -204,11 +216,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 				>
 					Quick view
 				</Typography>
-				{countInStock > 0 && !xs && (
-					<Typography variant="body2" color="common.black">
-						In stock: {countInStock}
-					</Typography>
-				)}
 			</CardActions>
 			<QuickViewDialog
 				product={quickView ? { _id, name, price: product.price, image: getImageUrl(image), description: product.description, category: product.category, brand: product.brand, countInStock } : null}
