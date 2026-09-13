@@ -22,6 +22,8 @@ import {
 } from "@store/user.slice";
 import AdminManagementSkeleton from "src/components/loaders/AdminManagementSkeleton";
 import SearchBar from "src/components/bars/SearchBar";
+import { RoleFilterSelect } from "src/components/RoleFilterSelect";
+import { filterByRole, type RoleFilter } from "@lib/roleFilter";
 import useScreenSize from "src/hooks/useScreenSize";
 import LoadingOverlay from "src/components/loaders/TextLoader";
 
@@ -36,6 +38,7 @@ const UserManagementLayout: React.FC = () => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const [searchQuery, setSearchQuery] = useState("");
+	const [role, setRole] = useState<RoleFilter>("all");
 	const { xs } = useScreenSize();
 
 	const indexOfLastUser = currentPage * usersPerPage;
@@ -46,11 +49,14 @@ const UserManagementLayout: React.FC = () => {
 			new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
 	);
 
-	const filteredUsers = sortedUsers.filter((user: any) =>
-		[user?.name, user?.email]
-			.join(" ")
-			.toLowerCase()
-			.includes(searchQuery.toLowerCase()),
+	const filteredUsers = filterByRole(
+		sortedUsers.filter((user: any) =>
+			[user?.name, user?.email]
+				.join(" ")
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase()),
+		),
+		role,
 	);
 
 	const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -109,6 +115,7 @@ const UserManagementLayout: React.FC = () => {
 	return (
 		<>
 			<SearchBar onSearch={handleSearch} placeholder="Search user..." />
+			<RoleFilterSelect value={role} onChange={(r) => { setRole(r); setCurrentPage(1); }} />
 			<Box
 				sx={{
 					maxWidth: 1000,
