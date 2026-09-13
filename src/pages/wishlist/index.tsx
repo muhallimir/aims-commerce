@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { loadWishlist, saveWishlist, type SavedProduct } from "@lib/wishlistStore";
 import { updateCartList } from "@store/cart.slice";
+import { dropFor } from "@lib/priceDrops";
+import { Chip } from "@mui/material";
 
 /**
  * Wishlist page: saved products with move-to-cart and remove.
@@ -20,6 +22,7 @@ export default function WishlistPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [list, setList] = useState<SavedProduct[]>([]);
+  const [livePrices, setLivePrices] = useState<Record<string, number>>({});
 
   useEffect(() => {
     setList(loadWishlist());
@@ -27,6 +30,21 @@ export default function WishlistPage() {
     window.addEventListener("aims:wishlist", refresh);
     return () => window.removeEventListener("aims:wishlist", refresh);
   }, []);
+
+  useEffect(() => {
+    if (list.length === 0) return;
+    fetch("/api/products")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((all: any[]) => {
+        const map: Record<string, number> = {};
+        for (const p of Array.isArray(all) ? all : []) {
+          const id = p._id ?? p.id;
+          if (id) map[id] = Number(p.price ?? 0);
+        }
+        setLivePrices(map);
+      })
+      .catch(() => {});
+  }, [list]);
 
   function remove(id: string) {
     const next = list.filter((p) => p._id !== id);
@@ -57,6 +75,15 @@ export default function WishlistPage() {
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="subtitle1" fontWeight={600}>{p.name}</Typography>
                   <Typography variant="body2" color="text.secondary">${Number(p.price).toFixed(2)}</Typography>
+                  {dropFor(Number(p.price), livePrices[p._id] ?? null) != null && (
+                    <Chip
+                      data-testid={`price-drop-${p._id}`}
+                      label={`Dropped $${(dropFor(Number(p.price), livePrices[p._id]) ?? 0).toFixed(2)} — now $${livePrices[p._id].toFixed(2)}`}
+                      color="success"
+                      size="small"
+                      sx={{ mt: 0.5 }}
+                    />
+                  )}
                 </Box>
                 <Button data-testid={`wishlist-move-${p._id}`} size="small" variant="contained" onClick={() => moveToCart(p)}>
                   Move to cart
