@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("silver tier on $250 yearly spend", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-loyalty").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("loyalty-tier-name")).toContainText("silver");
   await expect(page.getByTestId("loyalty-result")).toContainText("250 points");
@@ -13,7 +13,7 @@ test("silver tier on $250 yearly spend", async ({ page }) => {
 });
 
 test("big spend reaches platinum", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-loyalty").scrollIntoViewIfNeeded();
   const slider = page.getByTestId("loyalty-spend");
   const box = await slider.boundingBox();

@@ -5,14 +5,14 @@
 import { test, expect } from "@playwright/test";
 
 test("trade-in credits a one-year-old phone in good shape", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-tradein").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("tradein-result")).toContainText("$119.00");
   await expect(page.getByTestId("tradein-result")).toContainText(/store credit/i);
 });
 
 test("a battered old device falls below the minimum", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-tradein").scrollIntoViewIfNeeded();
   await page.getByTestId("tradein-condition").click();
   await page.getByRole("option", { name: "poor" }).click();

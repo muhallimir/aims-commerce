@@ -5,14 +5,14 @@
 import { test, expect } from "@playwright/test";
 
 test("25 units unlocks the 10 percent tier", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-bulk").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("bulk-result")).toContainText("10% off");
   await expect(page.getByTestId("bulk-result")).toContainText("$225.00");
 });
 
 test("dropping below 10 units loses the discount", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-bulk").scrollIntoViewIfNeeded();
   const slider = page.getByTestId("bulk-qty");
   const box = await slider.boundingBox();

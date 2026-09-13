@@ -5,13 +5,13 @@
 import { test, expect } from "@playwright/test";
 
 test("gift wrap totals two standard items", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-giftwrap").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("giftwrap-result")).toContainText("$5.98");
 });
 
 test("long message adds the ink fee", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-giftwrap").scrollIntoViewIfNeeded();
   await page.getByTestId("giftwrap-premium").check();
   await page.getByTestId("giftwrap-message").fill("x".repeat(150));

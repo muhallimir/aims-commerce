@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("three units unlock the first tier", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-bundle").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("bundle-result")).toContainText("$27.00");
   await expect(page.getByTestId("bundle-result")).toContainText("save $3.00");
@@ -13,7 +13,7 @@ test("three units unlock the first tier", async ({ page }) => {
 });
 
 test("five units max out the tiers", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/shopping", { waitUntil: "networkidle" });
   await page.getByTestId("service-bundle").scrollIntoViewIfNeeded();
   const slider = page.getByTestId("bundle-qty");
   const box = await slider.boundingBox();
