@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("returns widget quotes the pickup", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/returns", { waitUntil: "networkidle" });
   await page.getByTestId("service-returns").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("returns-pickup")).toBeVisible();
   await expect(page.getByTestId("returns-quote")).toContainText(/pickup/i);
@@ -15,7 +15,7 @@ test("returns widget quotes the pickup", async ({ page }) => {
 });
 
 test("returns pickup schedules with a booking reference", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/returns", { waitUntil: "networkidle" });
   await page.getByTestId("service-returns").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("returns-schedule")).toBeDisabled();
   await page.getByTestId("returns-order-ref-input").fill("64f2abcd");
