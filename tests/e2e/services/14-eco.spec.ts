@@ -5,13 +5,13 @@
 import { test, expect } from "@playwright/test";
 
 test("small sturdy order gets compostable packaging", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-eco").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("eco-option")).toContainText("compostable");
 });
 
 test("big haul upgrades to the reusable tote", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-eco").scrollIntoViewIfNeeded();
   const slider = page.getByTestId("eco-items");
   const box = await slider.boundingBox();

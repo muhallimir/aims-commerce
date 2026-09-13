@@ -11,7 +11,7 @@ function tomorrowISO(): string {
 }
 
 test("slot booking needs a date before confirming", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-slots").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("slot-book")).toBeDisabled();
   await page.getByTestId("slot-date").fill(tomorrowISO());
@@ -19,7 +19,7 @@ test("slot booking needs a date before confirming", async ({ page }) => {
 });
 
 test("slot booking confirms the chosen window", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-slots").scrollIntoViewIfNeeded();
   await page.getByTestId("slot-date").fill(tomorrowISO());
   await page.getByTestId("slot-option-12").check();

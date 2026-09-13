@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("coverage checker serves a metro postcode free", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-coverage").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("coverage-check")).toBeDisabled();
   await page.getByTestId("coverage-postcode").fill("10001");
@@ -14,7 +14,7 @@ test("coverage checker serves a metro postcode free", async ({ page }) => {
 });
 
 test("coverage checker turns away an unserved postcode", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-coverage").scrollIntoViewIfNeeded();
   await page.getByTestId("coverage-postcode").fill("99999");
   await page.getByTestId("coverage-check").click();

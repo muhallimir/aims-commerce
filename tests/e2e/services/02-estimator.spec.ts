@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("estimator quotes all three service levels", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-estimator").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("delivery-estimator")).toBeVisible();
   for (const level of ["standard", "expedited", "overnight"]) {
@@ -16,7 +16,7 @@ test("estimator quotes all three service levels", async ({ page }) => {
 });
 
 test("changing destination re-quotes the rates", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/delivery", { waitUntil: "networkidle" });
   await page.getByTestId("service-estimator").scrollIntoViewIfNeeded();
   const row = page.getByTestId("estimator-row-standard");
   const before = await row.textContent();
