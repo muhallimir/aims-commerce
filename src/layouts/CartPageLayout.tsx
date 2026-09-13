@@ -17,6 +17,7 @@ import useThemeMode from "src/hooks/useThemeMode";
 import PurchaseProgressBar from "src/components/bars/PurchaseProgressBar";
 import { FreeShippingBar } from "src/components/FreeShippingBar";
 import { GiftOptionsPanel } from "src/components/GiftOptionsPanel";
+import { EmptyCartPicks } from "src/components/EmptyCartPicks";
 import { CartItem } from "@common/interface";
 import { useRouter } from "next/router";
 import { ShoppingCart } from "@mui/icons-material";
@@ -81,6 +82,7 @@ const CartPageLayout: React.FC = () => {
 								Go to Store
 							</Button>
 						</Box>
+						<EmptyCartPicks />
 					</>
 				) : (
 					<Grid container spacing={2}>
