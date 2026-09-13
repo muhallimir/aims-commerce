@@ -5,14 +5,14 @@
 import { test, expect } from "@playwright/test";
 
 test("insurance quotes the base fee", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/protection", { waitUntil: "networkidle" });
   await page.getByTestId("service-insurance").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("insurance-result")).toContainText(/\$3\.00/);
   await expect(page.getByTestId("insurance-result")).toContainText(/up to \$250/);
 });
 
 test("fragile and international options raise the fee", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/protection", { waitUntil: "networkidle" });
   await page.getByTestId("service-insurance").scrollIntoViewIfNeeded();
   await page.getByTestId("insurance-fragile").check();
   await page.getByTestId("insurance-intl").check();
