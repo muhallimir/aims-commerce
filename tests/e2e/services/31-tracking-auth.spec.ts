@@ -60,7 +60,7 @@ test("tracker sends the Bearer token and renders the order", async ({ page }) =>
   await signedIn(page, (h) => {
     authHeader = h;
   });
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/tracking", { waitUntil: "networkidle" });
   await page.getByTestId("service-tracking").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("tracker-detail")).toBeVisible({ timeout: 15000 });
   expect(authHeader).toBe("Bearer test-token-123");
@@ -70,7 +70,7 @@ test("tracker sends the Bearer token and renders the order", async ({ page }) =>
 
 test("live map renders with the geocoded destination", async ({ page }) => {
   await signedIn(page, () => {});
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/tracking", { waitUntil: "networkidle" });
   await page.getByTestId("service-tracking").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("tracker-map")).toBeVisible({ timeout: 15000 });
   const tiles = page.locator('[data-testid="tracker-map"] img.leaflet-tile');

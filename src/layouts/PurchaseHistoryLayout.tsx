@@ -174,7 +174,7 @@ const PurchaseHistoryLayout: React.FC = () => {
 										data-testid="track-package"
 										variant="outlined"
 										sx={{ ml: 1 }}
-										onClick={() => router.push(`/services?order=${order._id}`)}
+										onClick={() => router.push(`/services/tracking?order=${order._id}`)}
 									>
 										Track package
 									</Button>

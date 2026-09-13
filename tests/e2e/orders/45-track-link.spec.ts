@@ -56,7 +56,7 @@ test("track package opens services with the order preselected", async ({ page, c
   await expect(track).toBeVisible({ timeout: 15000 });
   await track.scrollIntoViewIfNeeded();
   await track.click();
-  await expect(page).toHaveURL(/\/services\?order=track-me-1/, { timeout: 15000 });
+  await expect(page).toHaveURL(/\/services\/tracking\?order=track-me-1/, { timeout: 15000 });
   await expect(page.getByTestId("tracker-detail")).toBeVisible({ timeout: 15000 });
   await expect(page.getByTestId("tracker-detail")).toContainText("track-me-1".slice(0, 8));
 });

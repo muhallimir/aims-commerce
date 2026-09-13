@@ -7,8 +7,8 @@ import { test, expect } from "@playwright/test";
 test("services page shows the tracking section", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
-  await page.goto("/services", { waitUntil: "networkidle" });
-  await expect(page.getByTestId("services-page")).toBeVisible();
+  await page.goto("/services/tracking", { waitUntil: "networkidle" });
+  await expect(page.getByTestId("services-tracking-page")).toBeVisible();
   await expect(page.getByTestId("service-tracking")).toBeVisible();
   await page.getByTestId("service-tracking").scrollIntoViewIfNeeded();
   const fatal = errors.filter(
@@ -22,7 +22,7 @@ test("services page shows the tracking section", async ({ page }) => {
 });
 
 test("tracking prompts logged-out visitors to sign in", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/tracking", { waitUntil: "networkidle" });
   await page.getByTestId("tracker-signin-prompt").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("tracker-signin-prompt")).toBeVisible();
   await expect(page.getByTestId("tracker-signin-link")).toHaveAttribute("href", "/signin");
