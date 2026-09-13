@@ -39,7 +39,7 @@ export function CompareTray({ items, onToggle, onClear }: {
           data-testid="compare-tray"
           sx={{ position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 1200, bgcolor: "background.paper", boxShadow: 4, borderRadius: 2, px: 2, py: 1, display: "flex", gap: 1, alignItems: "center" }}
         >
-          <Typography data-testid="compare-count" variant="body2">
+          <Typography data-testid="compare-count" variant="body2" sx={{ color: "#1a1a1a" }}>
             {items.length} to compare
           </Typography>
           <Button data-testid="compare-open" size="small" variant="contained" disabled={items.length < 2} onClick={() => setOpen(true)}>
@@ -95,7 +95,7 @@ export function CompareCheckbox({ item, checked, onToggle }: { item: TrayItem; c
           onChange={() => onToggle(item)}
         />
       }
-      label="Compare"
+      label={<Typography variant="body2" sx={{ color: "#1a1a1a" }}>Compare</Typography>}
     />
   );
 }

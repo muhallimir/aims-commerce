@@ -35,8 +35,9 @@ const CardsContent: React.FC<CardsContentProps> = ({
 	theme,
 	isMobile,
 }) => {
-	const { name, category, brand, price, description, rating, numReviews } =
+	const { name, category, brand, price, description, rating } =
 		product;
+	const reviewCount = Number((product as any).numReviews ?? (product as any).num_reviews ?? 0);
 
 	return (
 		<CardContent
@@ -69,7 +70,7 @@ const CardsContent: React.FC<CardsContentProps> = ({
 				<Rating value={rating} readOnly precision={0.5} size="small" />
 				{!isMobile && (
 					<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-						({numReviews} {numReviews > 1 ? "reviews" : "review"})
+						{reviewCount === 0 ? "No reviews yet" : `(${reviewCount} ${reviewCount > 1 ? "reviews" : "review"})`}
 					</Typography>
 				)}
 			</Box>

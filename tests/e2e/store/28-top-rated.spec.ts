@@ -9,6 +9,8 @@ test("spotlight names the crowd favorite and opens it", async ({ page }) => {
   await expect(spot).toBeVisible({ timeout: 15000 });
   const name = await page.getByTestId("top-rated-name").textContent();
   expect(name?.trim().length).toBeGreaterThan(0);
+  // A crowd favorite needs a crowd: never zero reviews.
+  await expect(spot).not.toContainText("(0)");
   await page.getByTestId("top-rated-open").click();
   await expect(page).toHaveURL(/\/store\/product\//, { timeout: 15000 });
 });
