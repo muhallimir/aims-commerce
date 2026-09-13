@@ -20,7 +20,7 @@ async function seed(page: any) {
 }
 
 test("empty trail invites browsing", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-recent").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("recent-empty")).toBeVisible();
   await expect(page.getByTestId("recent-browse")).toHaveAttribute("href", "/store");
@@ -28,7 +28,7 @@ test("empty trail invites browsing", async ({ page }) => {
 
 test("trail renders, removes and clears", async ({ page }) => {
   await seed(page);
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-recent").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("recent-item-sneaker-red")).toBeVisible();
   await expect(page.getByTestId("recent-item-wool-cap")).toBeVisible();

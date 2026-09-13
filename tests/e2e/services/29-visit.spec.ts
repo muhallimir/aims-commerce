@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("store section shows address and live map", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-visit").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("visit-address")).toContainText(/orchard road/i);
   await expect(page.getByTestId("store-map")).toBeVisible({ timeout: 15000 });
@@ -14,7 +14,7 @@ test("store section shows address and live map", async ({ page }) => {
 });
 
 test("directions link opens OpenStreetMap routing", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-visit").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("visit-directions")).toHaveAttribute(
     "href",

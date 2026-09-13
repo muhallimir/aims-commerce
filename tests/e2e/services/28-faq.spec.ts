@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("first answer is open, others expand on click", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-faq").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("faq-answer-0")).toBeVisible();
   await expect(page.getByTestId("faq-answer-0")).toContainText(/metro postcodes/i);

@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("california sales tax on $100", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-tax").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("tax-rule")).toContainText("California");
   await expect(page.getByTestId("tax-result")).toContainText("$7.25");
@@ -13,7 +13,7 @@ test("california sales tax on $100", async ({ page }) => {
 });
 
 test("german VAT replaces the state rate", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/help", { waitUntil: "networkidle" });
   await page.getByTestId("service-tax").scrollIntoViewIfNeeded();
   await page.getByTestId("tax-country").click();
   await page.getByRole("option", { name: "DE" }).click();
