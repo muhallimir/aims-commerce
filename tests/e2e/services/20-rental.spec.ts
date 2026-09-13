@@ -5,14 +5,14 @@
 import { test, expect } from "@playwright/test";
 
 test("one week on an $800 item", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-rental").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("rental-result")).toContainText("$40.00");
   await expect(page.getByTestId("rental-result")).toContainText("$240.00 refundable");
 });
 
 test("two weeks doubles the rental, not the deposit", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-rental").scrollIntoViewIfNeeded();
   const days = page.getByTestId("rental-days");
   const box = await days.boundingBox();

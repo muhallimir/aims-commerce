@@ -11,7 +11,7 @@ function nextWeekISO(): string {
 }
 
 test("assembly quotes a wardrobe visit", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-assembly").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("assembly-result")).toContainText("~90 min");
   await expect(page.getByTestId("assembly-result")).toContainText("$45.00");
@@ -19,7 +19,7 @@ test("assembly quotes a wardrobe visit", async ({ page }) => {
 });
 
 test("assembly books the chosen day", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-assembly").scrollIntoViewIfNeeded();
   await page.getByTestId("assembly-item").click();
   await page.getByRole("option", { name: "chair" }).click();

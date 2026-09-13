@@ -5,14 +5,14 @@
 import { test, expect } from "@playwright/test";
 
 test("ground-floor small order stays standard", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-whiteglove").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("whiteglove-tier")).toContainText("standard");
   await expect(page.getByTestId("whiteglove-result")).toContainText("$49.00");
 });
 
 test("bulky top-floor job upgrades to premium", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-whiteglove").scrollIntoViewIfNeeded();
   await page.getByTestId("whiteglove-bulky").check();
   const floor = page.getByTestId("whiteglove-floor");

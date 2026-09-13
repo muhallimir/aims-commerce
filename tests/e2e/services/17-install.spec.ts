@@ -5,7 +5,7 @@
 import { test, expect } from "@playwright/test";
 
 test("installation turns away an uncovered postcode", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-install").scrollIntoViewIfNeeded();
   await page.getByTestId("install-postcode").fill("99999");
   await page.getByTestId("install-check").click();
@@ -13,7 +13,7 @@ test("installation turns away an uncovered postcode", async ({ page }) => {
 });
 
 test("installation books a window in a served area", async ({ page }) => {
-  await page.goto("/services", { waitUntil: "networkidle" });
+  await page.goto("/services/home-services", { waitUntil: "networkidle" });
   await page.getByTestId("service-install").scrollIntoViewIfNeeded();
   await page.getByTestId("install-postcode").fill("10001");
   await page.getByTestId("install-check").click();
