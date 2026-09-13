@@ -243,7 +243,6 @@ const OrderPlacementLayout: React.FC = () => {
 						<OrderTimeline isPaid={Boolean(paymentStatus || isPaid)} isDelivered={Boolean(isDelivered)} />
 						<RefundPreview deliveredAt={deliveredAt ?? null} total={Number(totalPrice ?? 0)} />
 						{isAdmin && <FraudHint total={Number(totalPrice ?? 0)} />}
-						<RefundPreview deliveredAt={deliveredAt ?? null} total={Number(totalPrice ?? 0)} />
 					</Paper>
 					<Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 2 }}>
 						<Typography variant="h6" gutterBottom fontWeight="bold">
