@@ -37,6 +37,7 @@ import {
 import { useSelector } from "react-redux";
 import SearchBar from "src/components/bars/SearchBar";
 import { PayoutPreview } from "src/components/PayoutPreview";
+import { PackingSlip } from "src/components/PackingSlip";
 
 const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
@@ -257,6 +258,7 @@ const SellerOrdersLayout: React.FC = () => {
                                     >
                                         View Details
                                     </Button>
+                                    <PackingSlip order={order} />
                                     {order?.isPaid && !order?.isDelivered && (
                                         <Button
                                             startIcon={<Update />}
