@@ -39,15 +39,47 @@ export function topRatedList(products: SpotlightProduct[], limit = 8): Spotlight
     .slice(0, limit);
 }
 
+export function stockOf(p: SpotlightProduct): number {
+  return Number(p.countInStock ?? p.count_in_stock ?? 0);
+}
+
 export function topRated(products: SpotlightProduct[]): SpotlightProduct | null {
   // A crowd favorite needs a crowd: only products with real reviews
   // qualify, highest rating wins, review count breaks ties.
   return topRatedList(products, 1)[0] ?? null;
 }
 
+/**
+ * Carousel fill: honest winners first, then in-stock products so the shelf
+ * never looks empty when only a few items have reviews yet. Fillers keep
+ * honest labels ("No reviews yet") instead of fake social proof.
+ */
+export function topRatedCarousel(products: SpotlightProduct[], limit = 8): SpotlightProduct[] {
+  const winners = topRatedList(products, limit);
+  if (winners.length >= limit) return winners;
+  const seen = new Set(winners.map((p) => p._id));
+  const inStockFill = products
+    .filter((p) => !seen.has(p._id) && stockOf(p) > 0)
+    .slice()
+    .sort((a, b) => {
+      const r = Number(b.rating ?? 0) - Number(a.rating ?? 0);
+      if (r !== 0) return r;
+      const s = stockOf(b) - stockOf(a);
+      if (s !== 0) return s;
+      return String(a.name ?? a.title ?? "").localeCompare(String(b.name ?? b.title ?? ""));
+    });
+  const filled = [...winners, ...inStockFill].slice(0, limit);
+  if (filled.length >= Math.min(limit, 4)) return filled;
+  const rest = products
+    .filter((p) => !filled.some((f) => f._id === p._id))
+    .slice()
+    .sort((a, b) => Number(b.rating ?? 0) - Number(a.rating ?? 0));
+  return [...filled, ...rest].slice(0, limit);
+}
+
 /** Top-rated multi-card carousel: premium responsive showcase, 1/2/3/4 across. */
 export function TopRatedSpotlight({ products, onOpen }: { products: SpotlightProduct[]; onOpen: (id: string) => void }) {
-  const list = topRatedList(products);
+  const list = topRatedCarousel(products);
   const count = list.length;
   const theme = useTheme();
   const smUp = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
@@ -151,7 +183,7 @@ export function TopRatedSpotlight({ products, onOpen }: { products: SpotlightPro
           <Typography variant="overline" color="secondary" sx={{ letterSpacing: 1.5 }}>
             Top rated today
           </Typography>
-          <Chip size="small" label={`${count} crowd favorites`} />
+          <Chip size="small" label={`${count} top picks`} />
           <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 0.5 }}>
             <Typography variant="caption" color="text.secondary" data-testid="top-rated-counter">
               {page + 1} / {pageCount}
@@ -219,6 +251,8 @@ export function TopRatedSpotlight({ products, onOpen }: { products: SpotlightPro
             const price = Number(p.price ?? p.sellingPrice ?? 0);
             const rawImg = p.image ? getImageUrl(p.image) : "";
             const isFirst = i === 0;
+            const reviews = reviewCountOf(p);
+            const inStock = stockOf(p) > 0;
             return (
               <Box
                 key={p._id}
@@ -314,8 +348,11 @@ export function TopRatedSpotlight({ products, onOpen }: { products: SpotlightPro
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
                   <Rating value={Number(p.rating ?? 0)} readOnly precision={0.5} size="small" />
                   <Typography variant="caption" color="text.secondary">
-                    {Number(p.rating ?? 0).toFixed(1)} ({reviewCountOf(p)})
+                    {reviews > 0 ? `${Number(p.rating ?? 0).toFixed(1)} (${reviews})` : "No reviews yet"}
                   </Typography>
+                  {!inStock && (
+                    <Chip size="small" label="Out of stock" variant="outlined" />
+                  )}
                 </Box>
                 {(p.brand || p.category) && (
                   <Typography variant="caption" color="text.secondary" noWrap>
@@ -334,6 +371,7 @@ export function TopRatedSpotlight({ products, onOpen }: { products: SpotlightPro
                       : { "data-testid": `top-rated-open-${p._id}` })}
                     variant="contained"
                     size="small"
+                    disabled={!inStock}
                     onClick={() => onOpen(p._id)}
                     sx={{ ml: "auto", whiteSpace: "nowrap" }}
                   >
