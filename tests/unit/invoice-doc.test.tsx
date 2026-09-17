@@ -64,4 +64,9 @@ describe("renderInvoiceHtml", () => {
     expect(html).toContain("@media print");
     expect(html).not.toContain("<script");
   });
+
+  it("auto-prints when requested for the print flow", () => {
+    const html = renderInvoiceHtml(buildInvoiceDoc(order, seller), { autoprint: true });
+    expect(html).toContain("window.print()");
+  });
 });

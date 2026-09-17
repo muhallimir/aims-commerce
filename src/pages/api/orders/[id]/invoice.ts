@@ -98,9 +98,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).send(Buffer.from(pdf));
     }
     if (format === "html") {
+      const autoprint = req.query.autoprint === "1";
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.setHeader("Content-Disposition", `inline; filename="${doc.invoiceNumber}.html"`);
-      return res.status(200).send(renderInvoiceHtml(doc));
+      return res.status(200).send(renderInvoiceHtml(doc, { autoprint }));
     }
     return res.status(200).json({ doc });
   } catch (err: any) {

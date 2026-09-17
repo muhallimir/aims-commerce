@@ -173,7 +173,7 @@ function moneyFmt(n: number): string {
  * Standalone printable invoice document (used for download). Self-contained
  * HTML with inline print CSS: printing it yields only the invoice.
  */
-export function renderInvoiceHtml(doc: InvoiceDoc): string {
+export function renderInvoiceHtml(doc: InvoiceDoc, opts?: { autoprint?: boolean }): string {
   const rows = doc.lines
     .map(
       (l, i) => `<tr>
@@ -196,6 +196,7 @@ export function renderInvoiceHtml(doc: InvoiceDoc): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Invoice ${esc(doc.invoiceNumber)}</title>
+${opts?.autoprint ? `<script>window.addEventListener("load", () => window.print());</script>` : ""}
 <style>
   body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 0; background: #fff; }
   .sheet { max-width: 760px; margin: 24px auto; padding: 32px; }

@@ -101,7 +101,7 @@ export function OrderInvoice() {
             {doc && <InvoiceDocument doc={doc} />}
             {doc && (
               <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                <Button data-testid="invoice-print" variant="contained" size="small" onClick={() => window.print()}>
+                <Button data-testid="invoice-print" variant="contained" size="small" onClick={() => window.open(`/api/orders/${selectedId}/invoice?format=html&autoprint=1`, "_blank", "noopener")}>
                   Print / save PDF
                 </Button>
                 <Button
