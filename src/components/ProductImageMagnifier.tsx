@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 
 interface MagnifierProps {
@@ -8,7 +8,7 @@ interface MagnifierProps {
   /** pane: Amazon-style lens plus side zoom pane. inner: cursor-following zoom inside the frame. */
   mode?: "pane" | "inner";
   zoom?: number;
-  lensSize?: number;
+  /** Zoom pane width on large screens. Capped on medium screens so the card never clips it. */
   paneWidth?: number;
   /** Tap or click action, e.g. open the fullscreen viewer. */
   onTap?: () => void;
@@ -26,15 +26,18 @@ export function ProductImageMagnifier({
   src,
   alt,
   mode = "pane",
-  zoom = 2.2,
-  lensSize = 140,
-  paneWidth = 360,
+  zoom = 2.8,
+  paneWidth = 520,
   onTap,
   testId = "product-magnifier",
   sx = {},
 }: MagnifierProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const dims = useRef({ w: 0, h: 0 });
+  const theme = useTheme();
+  const lgUp = useMediaQuery(theme.breakpoints.up("lg"), { noSsr: true });
+  // Large pane like Amazon on wide screens, capped on medium so the card never clips it.
+  const effPane = lgUp ? paneWidth : Math.min(paneWidth, 380);
   const [canHover, setCanHover] = useState(false);
   const [active, setActive] = useState(false);
   const [pos, setPos] = useState({ x: 50, y: 50 });
@@ -56,8 +59,12 @@ export function ProductImageMagnifier({
   }, []);
 
   const { w, h } = dims.current;
-  const lensLeft = w > 0 ? Math.min(Math.max((pos.x / 100) * w - lensSize / 2, 0), Math.max(w - lensSize, 0)) : 0;
-  const lensTop = h > 0 ? Math.min(Math.max((pos.y / 100) * h - lensSize / 2, 0), Math.max(h - lensSize, 0)) : 0;
+  // Amazon mapping: the lens is exactly the area shown in the pane,
+  // so lens size is pane size divided by zoom, clamped to the photo.
+  const lensW = w > 0 ? Math.min(effPane / zoom, w) : effPane / zoom;
+  const lensH = h > 0 ? Math.min(h / zoom, h) : 180;
+  const lensLeft = w > 0 ? Math.min(Math.max((pos.x / 100) * w - lensW / 2, 0), Math.max(w - lensW, 0)) : 0;
+  const lensTop = h > 0 ? Math.min(Math.max((pos.y / 100) * h - lensH / 2, 0), Math.max(h - lensH, 0)) : 0;
   const showLens = canHover && active && mode === "pane";
   const showPane = canHover && active && mode === "pane";
   const innerZoom = canHover && active && mode === "inner";
@@ -126,8 +133,8 @@ export function ProductImageMagnifier({
           aria-hidden
           sx={{
             position: "absolute",
-            width: lensSize,
-            height: lensSize,
+            width: lensW,
+            height: lensH,
             left: lensLeft,
             top: lensTop,
             border: "1px solid",
@@ -146,9 +153,9 @@ export function ProductImageMagnifier({
             position: "absolute",
             left: "calc(100% + 16px)",
             top: 0,
-            width: paneWidth,
+            width: effPane,
             height: "100%",
-            minHeight: 280,
+            minHeight: 320,
             zIndex: 5,
             bgcolor: "white",
             border: "1px solid",

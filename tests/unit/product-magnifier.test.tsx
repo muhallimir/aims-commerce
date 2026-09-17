@@ -41,7 +41,7 @@ describe("ProductImageMagnifier", () => {
     mockMatchMedia(true);
     render(<ProductImageMagnifier src="/uploads/a.png" alt="Test product" mode="inner" testId="mag" />);
     fireEvent.mouseEnter(screen.getByTestId("mag"));
-    expect(screen.getByTestId("mag-image")).toHaveStyle("transform: scale(2.2)");
+    expect(screen.getByTestId("mag-image")).toHaveStyle("transform: scale(2.8)");
     expect(screen.queryByTestId("mag-zoom")).toBeNull();
   });
 });
