@@ -53,16 +53,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       for (const p of products) sellerMap[p.id] = p.seller_id;
 
       const result = await sql.begin(async (s) => {
+        const seq = await s`SELECT nextval('invoice_seq') AS v`;
+        const invoiceNumber = `INV-${String(seq[0].v).padStart(6, "0")}`;
         const order = (await s`
           INSERT INTO orders
             (id, user_id, payment_method, items_price, shipping_price,
-             tax_price, total_price,
+             tax_price, total_price, invoice_number,
              shipping_full_name, shipping_contact, shipping_address,
              shipping_city, shipping_postal_code, shipping_country,
              is_paid, is_delivered)
           VALUES (gen_random_uuid(), ${user._id}, ${paymentMethod},
                   ${itemsPrice}, ${shippingPrice},
-                  ${taxPrice}, ${totalPrice},
+                  ${taxPrice}, ${totalPrice}, ${invoiceNumber},
                   ${shippingAddress.fullName}, ${shippingAddress.contact},
                   ${shippingAddress.address}, ${shippingAddress.city},
                   ${shippingAddress.postalCode}, ${shippingAddress.country},

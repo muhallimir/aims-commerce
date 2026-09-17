@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const {
-      name, storeName, storeDescription, phone, address, city, country, isActiveStore,
+      name, storeName, storeDescription, phone, address, city, country, isActiveStore, taxId,
     } = req.body || {};
 
     if (!name || !storeName) {
@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         SET name = ${name},
             store_name = COALESCE(${storeName ?? null}, store_name),
             store_description = COALESCE(${storeDescription ?? null}, store_description),
+            tax_id = COALESCE(${taxId ?? null}, tax_id),
             is_active_store = COALESCE(${isActiveStore ?? null}, is_active_store)
         WHERE id = ${seller.id}
         RETURNING *;
@@ -68,6 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         _id: result.seller.id,
         storeName: result.seller.store_name || "",
         storeDescription: result.seller.store_description || "",
+        taxId: result.seller.tax_id || "",
         isActiveStore: result.seller.is_active_store || false,
         updatedAt: result.seller.updated_at,
       },

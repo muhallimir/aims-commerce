@@ -14,6 +14,7 @@ export function mapSeller(s: any) {
     isSeller: true,
     storeName: s.store_name || "",
     storeDescription: s.store_description || "",
+    taxId: s.tax_id || "",
     profileImage: s.profile_image || "",
     isActiveStore: s.is_active_store || false,
     createdAt: s.created_at,

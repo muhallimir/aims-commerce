@@ -35,6 +35,7 @@ const profileValidationSchema = yup.object({
     address: yup.string(),
     city: yup.string(),
     country: yup.string(),
+    taxId: yup.string().max(32, "Tax ID looks too long"),
     isActiveStore: yup.boolean(),
 });
 
@@ -57,6 +58,7 @@ const SellerProfileLayout: React.FC = () => {
             address: userInfo?.address || sellerInfo?.address || "",
             city: userInfo?.city || sellerInfo?.city || "",
             country: userInfo?.country || sellerInfo?.country || "",
+            taxId: sellerInfo?.taxId || "",
             isActiveStore: userInfo?.isActiveStore !== undefined ? userInfo.isActiveStore : true,
         },
         validationSchema: profileValidationSchema,
@@ -366,6 +368,20 @@ const SellerProfileLayout: React.FC = () => {
                                             value={formik.values.city}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
+                                            disabled={!isEditing}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            fullWidth
+                                            label="Tax / VAT ID"
+                                            name="taxId"
+                                            placeholder="Shown on customer invoices"
+                                            value={formik.values.taxId}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={Boolean(formik.touched.taxId && formik.errors.taxId)}
+                                            helperText={(formik.touched.taxId && (formik.errors.taxId as string)) || "Appears on invoices you issue"}
                                             disabled={!isEditing}
                                         />
                                     </Grid>

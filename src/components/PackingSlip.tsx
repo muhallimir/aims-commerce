@@ -24,7 +24,7 @@ export function PackingSlip({ order }: { order: SlipOrder }) {
       <Dialog data-testid="packing-dialog" open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Pack #{order._id.slice(-8)}</DialogTitle>
         <DialogContent>
-          <Box data-testid="packing-body">
+          <Box data-testid="packing-body" data-print-area>
             {slipLines(order).map((l) => (
               <Typography key={l} variant="body2">{l}</Typography>
             ))}

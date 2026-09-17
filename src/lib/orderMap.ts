@@ -22,6 +22,7 @@ export interface OrderRow {
   is_delivered: boolean;
   delivered_at: string | null;
   payment_result: string | null;
+  invoice_number?: string | null;
   created_at: string;
   updated_at: string;
   user_name?: string;
@@ -49,6 +50,7 @@ export function buildOrderResponse(order: any, items: any[], userInfo: { name?: 
     taxPrice: Number(order.tax_price),
     totalPrice: Number(order.total_price),
     paymentMethod: order.payment_method,
+    invoiceNumber: order.invoice_number || null,
     isPaid: order.is_paid,
     paidAt: order.paid_at,
     isDelivered: order.is_delivered,

@@ -52,3 +52,22 @@ a {
 		color-scheme: dark;
 	}
 }
+
+/* Invoices and packing slips print in isolation: everything else hides. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  [data-print-area],
+  [data-print-area] * {
+    visibility: visible;
+  }
+  [data-print-area] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+}
