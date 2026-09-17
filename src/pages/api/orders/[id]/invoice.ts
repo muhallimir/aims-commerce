@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import sql from "@lib/db";
-import { requireAuth } from "@lib/auth";
+import { getUserFromCookieToken, getUserFromRequest } from "@lib/auth";
 import { buildInvoiceDoc, renderInvoiceHtml } from "@lib/invoice";
 import { renderInvoicePdf } from "@lib/invoicePdf";
 
@@ -14,7 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!id || typeof id !== "string") {
     return res.status(400).json({ message: "Invalid id" });
   }
-  const user = requireAuth(req, res); if (!user) return;
+  // Bearer header for API fetches, `token` cookie for new-tab
+  // print/download navigations (window.open sends no headers).
+  const user = getUserFromRequest(req) ?? getUserFromCookieToken(req.cookies?.token);
+  if (!user) return res.status(401).json({ message: "No Token" });
 
   try {
     if (req.method !== "GET") {
