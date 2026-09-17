@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { ProductImageMagnifier } from "@components/ProductImageMagnifier";
 
 export interface QuickViewProduct {
   _id: string;
@@ -48,9 +49,14 @@ export function QuickViewDialog({ product, onClose, onAdd, onDetails }: Props) {
               {[product.category, product.brand].filter(Boolean).join(" • ")}
             </Typography>
             {product.image && (
-              <Box sx={{ textAlign: "center", my: 1 }}>
-                {/* plain img keeps the dialog light and test-friendly */}
-                <img data-testid="quick-view-image" src={product.image} alt={product.name} style={{ maxHeight: 220, maxWidth: "100%", objectFit: "contain" }} />
+              <Box sx={{ my: 1 }}>
+                <ProductImageMagnifier
+                  src={product.image}
+                  alt={product.name}
+                  mode="inner"
+                  testId="quick-view"
+                  sx={{ height: { xs: 220, sm: 260 }, maxWidth: 440, mx: "auto" }}
+                />
               </Box>
             )}
             <Typography variant="h6" data-testid="quick-view-price">${Number(product.price).toFixed(2)}</Typography>

@@ -18,6 +18,7 @@ import { AppState, ProductListState } from "@common/interface";
 import { updateCartList } from "@store/cart.slice";
 import useCartHandling from "src/hooks/useCartHandling";
 import { getImageUrl } from "@helpers/commonFn";
+import { ProductImageMagnifier } from "@components/ProductImageMagnifier";
 import { ShareButton } from "src/components/ShareButton";
 import { DeliveryPromise } from "src/components/DeliveryPromise";
 import { StockNotifier } from "src/components/StockNotifier";
@@ -80,24 +81,16 @@ const ProductDetailSection: React.FC = ({ }) => {
 								bgcolor: "rgba(0, 0, 0, 0.04)",
 							}}
 						/>
-					) : (
-						<CardMedia
-							component="img"
-							image={getImageUrl(product?.image)}
-							alt={product?.name}
-							sx={{
-								height: "100%",
-								width: "100%",
-								objectFit: "contain",
-								cursor: "zoom-in",
-								transition: "transform 0.3s ease",
-								"&:hover": {
-									transform: "scale(1.05)",
-								},
-							}}
-							onClick={handleOpen}
-						/>
-					)}
+				) : (
+					<ProductImageMagnifier
+						src={getImageUrl(product?.image)}
+						alt={product?.name ?? "Product"}
+						mode="pane"
+						onTap={handleOpen}
+						testId="product-magnifier"
+						sx={{ height: "100%", width: "100%" }}
+					/>
+				)}
 					{!xs && !loading && (
 						<IconButton
 							onClick={handleOpen}
