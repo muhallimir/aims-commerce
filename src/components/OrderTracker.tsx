@@ -19,10 +19,16 @@ import {
 } from "@mui/material";
 import { geocodeAddress } from "@lib/geocode";
 import { apiFetch } from "@lib/authFetch";
+import useThemeMode from "src/hooks/useThemeMode";
+
+function MapLoading() {
+  const { isDarkMode } = useThemeMode();
+  return <Box data-testid="tracking-map-loading" color={isDarkMode ? "common.white" : "text.primary"}>Loading map…</Box>;
+}
 
 const TrackingMap = dynamic(
   () => import("@components/TrackingMap").then((m) => m.TrackingMap),
-  { ssr: false, loading: () => <Box data-testid="tracking-map-loading">Loading map…</Box> }
+  { ssr: false, loading: () => <MapLoading /> }
 );
 
 const WAREHOUSE = { lat: 1.3521, lng: 103.8198, label: "AIMS warehouse, Singapore" };
@@ -65,6 +71,7 @@ function fmtDate(iso: string | null): string {
  */
 export function OrderTracker() {
   const { userInfo } = useSelector(({ user }: any) => user ?? {});
+  const { isDarkMode } = useThemeMode();
   const router = useRouter();
   const deepLink = typeof router.query.order === "string" ? router.query.order : "";
   const signedIn = Boolean(userInfo?._id);
@@ -143,7 +150,22 @@ export function OrderTracker() {
       )}
       {orders.length > 0 && (
         <Stack spacing={2}>
-          <FormControl fullWidth size="small">
+          <FormControl
+            fullWidth
+            size="small"
+            sx={
+              isDarkMode
+                ? {
+                    "& .MuiInputLabel-root": { color: "common.white" },
+                    "& .MuiOutlinedInput-root": {
+                      color: "common.white",
+                      "& fieldset": { borderColor: "grey.500" },
+                    },
+                    "& .MuiSvgIcon-root": { color: "common.white" },
+                  }
+                : {}
+            }
+          >
             <InputLabel id="tracker-order-label">Your orders</InputLabel>
             <Select
               data-testid="tracker-order-select"

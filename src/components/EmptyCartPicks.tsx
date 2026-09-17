@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import useThemeMode from "src/hooks/useThemeMode";
 import { updateCartList } from "@store/cart.slice";
 
 export interface TopPick {
@@ -23,6 +24,7 @@ export function topPicks(products: TopPick[], n = 3): TopPick[] {
  */
 export function EmptyCartPicks() {
   const dispatch = useDispatch();
+  const { isDarkMode } = useThemeMode();
   const [picks, setPicks] = useState<TopPick[]>([]);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export function EmptyCartPicks() {
 
   return (
     <Box data-testid="empty-cart-picks" sx={{ mt: 3, textAlign: "center" }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" color={isDarkMode ? "common.white" : "text.primary"} gutterBottom>
         Shoppers also love
       </Typography>
       <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>

@@ -1,6 +1,11 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SearchSuggestions, suggestionsFor } from "@components/SearchSuggestions";
 
+jest.mock("src/hooks/useThemeMode", () => ({
+  __esModule: true,
+  default: () => ({ isDarkMode: false, toggleTheme: () => {} }),
+}));
+
 describe("suggestionsFor", () => {
   const catalog = [{ name: "Red Sneaker" }, { name: "Blue Boot" }, { name: "Red Cap" }];
 

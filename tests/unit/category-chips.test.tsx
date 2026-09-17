@@ -1,6 +1,11 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CategoryChips } from "@components/CategoryChips";
 
+jest.mock("src/hooks/useThemeMode", () => ({
+  __esModule: true,
+  default: () => ({ isDarkMode: false, toggleTheme: () => {} }),
+}));
+
 describe("CategoryChips", () => {
   it("hides when there is nothing to filter", () => {
     const { container } = render(<CategoryChips categories={["All"]} value="All" onChange={() => {}} />);

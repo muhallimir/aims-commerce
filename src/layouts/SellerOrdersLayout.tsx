@@ -35,6 +35,7 @@ import {
     Refresh,
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import useThemeMode from "src/hooks/useThemeMode";
 import SearchBar from "src/components/bars/SearchBar";
 import { PayoutPreview } from "src/components/PayoutPreview";
 import { PackingSlip } from "src/components/PackingSlip";
@@ -42,6 +43,7 @@ import { PackingSlip } from "src/components/PackingSlip";
 const SellerOrdersLayout: React.FC = () => {
     const { orders } = useSelector((state: any) => state.seller);
     const { loading } = useSelector((state: any) => state.app);
+    const { isDarkMode } = useThemeMode();
 
     const { error: ordersError, refetch: refetchOrders } = useGetSellerOrdersQuery({});
     const [reqUpdateOrderStatus] = useUpdateOrderStatusMutation();
@@ -276,10 +278,10 @@ const SellerOrdersLayout: React.FC = () => {
                 ) : (
                     <Grid item xs={12}>
                         <Box textAlign="center" py={8}>
-                            <Typography variant="h6" color="text.secondary" gutterBottom>
+                            <Typography variant="h6" color={isDarkMode ? "common.white" : "text.secondary"} gutterBottom>
                                 No orders found
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"}>
                                 {searchQuery
                                     ? "Try adjusting your search terms"
                                     : "Orders will appear here once customers start purchasing your products"}
@@ -296,6 +298,7 @@ const SellerOrdersLayout: React.FC = () => {
                         page={currentPage}
                         onChange={handlePageChange}
                         color="primary"
+                        sx={isDarkMode ? { "& .MuiPaginationItem-root": { color: "common.white", borderColor: "grey.600" } } : {}}
                     />
                 </Box>
             )}

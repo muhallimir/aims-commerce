@@ -94,7 +94,7 @@ const CartPageLayout: React.FC = () => {
 										sx={{
 											display: "flex",
 											alignItems: "center",
-											border: "1px solid var(--background-dark)",
+											border: isDarkMode ? "1px solid #555555" : "1px solid var(--background-dark)",
 											borderRadius: "8px",
 											padding: 2,
 											mb: 2,
@@ -117,21 +117,21 @@ const CartPageLayout: React.FC = () => {
 											onClick={() => viewItem(item._id)}
 										/>
 										<Box sx={{ flexGrow: 1, color: "primary.main" }}>
-											<Typography variant={xs ? "body1" : "h5"}>
+											<Typography variant={xs ? "body1" : "h5"} color={isDarkMode ? "common.white" : "text.primary"}>
 												{item.name.length > 15
 													? `${item.name.slice(0, xs ? 15 : 50)}...`
 													: item.name}
 											</Typography>
 											{xs ? (
-												<Typography variant="body2" color="text.secondary">
+												<Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"}>
 													Price: ${item.price.toFixed(2)}
 												</Typography>
 											) : (
-												<Typography variant="body2" color="text.secondary">
+												<Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"}>
 													Price: ${item.price.toFixed(2)} × {item.quantity}
 												</Typography>
 											)}
-											<Typography variant="body2">
+											<Typography variant="body2" color={isDarkMode ? "common.white" : "text.primary"}>
 												Total: ${(item.price * item.quantity).toFixed(2)}
 											</Typography>
 											{xs ? (
@@ -154,9 +154,9 @@ const CartPageLayout: React.FC = () => {
 													>
 														<RemoveIcon />
 													</IconButton>
-													<Typography variant="body2" sx={{ mx: 1 }}>
-														{item.quantity}
-													</Typography>
+														<Typography variant="body2" color={isDarkMode ? "common.white" : "text.primary"} sx={{ mx: 1 }}>
+															{item.quantity}
+														</Typography>
 													<IconButton
 														onClick={() => increaseQuantity(item._id)}
 														sx={{
@@ -207,7 +207,7 @@ const CartPageLayout: React.FC = () => {
 							<Box
 								sx={{
 									padding: 2,
-									border: "1px solid #e0e0e0",
+									border: isDarkMode ? "1px solid #555555" : "1px solid #e0e0e0",
 									borderRadius: "8px",
 									height: "fit-content",
 									position: "sticky",
@@ -216,11 +216,7 @@ const CartPageLayout: React.FC = () => {
 							>
 								<Typography
 									variant="h6"
-									sx={{
-										...(!isDarkMode && {
-											color: "var(--color-text-secondary)",
-										}),
-									}}
+									color={isDarkMode ? "common.white" : "var(--color-text-secondary)"}
 								>
 									Total:
 								</Typography>								<Typography variant="h4" color="primary">

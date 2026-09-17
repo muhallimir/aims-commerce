@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { buildCompareRows, compareLimit, type CompareProduct } from "@lib/compare";
+import useThemeMode from "src/hooks/useThemeMode";
 
 export interface TrayItem extends CompareProduct {
   category?: string;
@@ -115,6 +116,7 @@ export function CompareTray({ items, onToggle, onClear }: {
 }
 
 export function CompareCheckbox({ item, checked, onToggle }: { item: TrayItem; checked: boolean; onToggle: (p: TrayItem) => void }) {
+  const { isDarkMode } = useThemeMode();
   return (
     <FormControlLabel
       control={
@@ -123,9 +125,10 @@ export function CompareCheckbox({ item, checked, onToggle }: { item: TrayItem; c
           size="small"
           checked={checked}
           onChange={() => onToggle(item)}
+          sx={isDarkMode ? { color: "grey.400", "&.Mui-checked": { color: "primary.main" } } : {}}
         />
       }
-      label={<Typography variant="body2" sx={{ color: "#1a1a1a" }}>Compare</Typography>}
+      label={<Typography variant="body2" color={isDarkMode ? "common.white" : "#1a1a1a"}>Compare</Typography>}
     />
   );
 }

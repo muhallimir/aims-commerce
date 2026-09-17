@@ -30,6 +30,7 @@ import {
     VisibilityOff,
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import useThemeMode from "src/hooks/useThemeMode";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import SearchBar from "src/components/bars/SearchBar";
@@ -58,6 +59,7 @@ const productValidationSchema = yup.object({
 
 const SellerProductsLayout: React.FC = () => {
     const { products } = useSelector((state: any) => state.seller);
+    const { isDarkMode } = useThemeMode();
 
     // Add RTK Query hook to enable automatic cache invalidation
     useGetSellerProductsQuery(undefined);
@@ -369,10 +371,10 @@ const SellerProductsLayout: React.FC = () => {
                 ) : (
                     <Grid item xs={12}>
                         <Box textAlign="center" py={8}>
-                            <Typography variant="h6" color="text.secondary" gutterBottom>
+                            <Typography variant="h6" color={isDarkMode ? "common.white" : "text.secondary"} gutterBottom>
                                 No products found
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" gutterBottom>
+                            <Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"} gutterBottom>
                                 {searchQuery
                                     ? "Try adjusting your search terms"
                                     : "Start by adding your first product to the store"}

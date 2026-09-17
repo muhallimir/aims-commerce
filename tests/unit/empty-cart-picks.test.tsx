@@ -1,7 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { EmptyCartPicks, topPicks } from "@components/EmptyCartPicks";
 
-jest.mock("react-redux", () => ({ useDispatch: () => jest.fn() }));
+jest.mock("react-redux", () => ({
+  useDispatch: () => jest.fn(),
+  useSelector: (sel: any) => sel({ app: { theme: "light" } }),
+}));
 
 describe("topPicks", () => {
   it("returns the three highest-rated", () => {

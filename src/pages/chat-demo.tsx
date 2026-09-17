@@ -11,8 +11,10 @@ import {
 } from '@mui/material'
 import chatbotService from '@services/chatbotService'
 import type { ChatbotMessage } from '@services/chatbotService'
+import useThemeMode from 'src/hooks/useThemeMode'
 
 export default function ChatDemoPage() {
+  const { isDarkMode } = useThemeMode()
   const [messages, setMessages] = useState<ChatbotMessage[]>([])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -48,8 +50,8 @@ export default function ChatDemoPage() {
 
   return (
     <Container data-testid="chat-demo-page" maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={700} gutterBottom>aims-commerce · chat demo</Typography>
-      <Typography variant="body2" color="text.secondary" gutterBottom>
+      <Typography variant="h4" fontWeight={700} color={isDarkMode ? "common.white" : "text.primary"} gutterBottom>aims-commerce · chat demo</Typography>
+      <Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"} gutterBottom>
         End-to-end chat flow using the existing chatbot service. Send a message below.
       </Typography>
       <Paper data-testid="chat-window" variant="outlined" sx={{ p: 2, mt: 2, minHeight: 320, maxHeight: 480, overflowY: 'auto' }}>
@@ -89,6 +91,13 @@ export default function ChatDemoPage() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') send() }}
           inputProps={{ 'data-testid': 'chat-input' }}
+          sx={isDarkMode ? {
+            '& .MuiOutlinedInput-root': {
+              color: 'common.white',
+              '& fieldset': { borderColor: 'grey.500' },
+            },
+            '& .MuiInputBase-input::placeholder': { color: 'grey.400', opacity: 1 },
+          } : {}}
         />
         <Button data-testid="chat-send" variant="contained" onClick={send} disabled={busy || !input.trim()}>
           {busy ? '…' : 'Send'}

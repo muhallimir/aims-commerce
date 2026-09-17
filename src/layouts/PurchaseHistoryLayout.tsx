@@ -22,12 +22,14 @@ import {
 import { ViewList, ShoppingCart } from "@mui/icons-material";
 import { AppState, Order } from "@common/interface";
 import { ReorderButton, type ReorderItem } from "src/components/ReorderButton";
+import useThemeMode from "src/hooks/useThemeMode";
 import { IssueReporter } from "src/components/IssueReporter";
 import { ArrivalEstimate } from "src/components/ArrivalEstimate";
 import { updateCartList } from "@store/cart.slice";
 
 const PurchaseHistoryLayout: React.FC = () => {
 	const { loading } = useSelector((state: { app: AppState }) => state.app);
+	const { isDarkMode } = useThemeMode();
 	const { orderList } = useSelector(({ order }: any) => order);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [ordersPerPage] = useState(6);
@@ -119,7 +121,7 @@ const PurchaseHistoryLayout: React.FC = () => {
 				</Grid>
 			) : !withPurchaseHistory && currentOrders.length === 0 ? (
 				<Box textAlign="center">
-					<Typography variant="body1" color="textSecondary" align="center">
+					<Typography variant="body1" color={isDarkMode ? "common.white" : "textSecondary"} align="center">
 						No purchase history available.
 					</Typography>
 					<Button

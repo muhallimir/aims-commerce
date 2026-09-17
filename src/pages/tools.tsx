@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useThemeMode from 'src/hooks/useThemeMode'
 import {
   Container, Typography, Card, CardContent, Stack, Button, Box, Alert,
 } from '@mui/material'
@@ -75,6 +76,7 @@ const FEATURES: FeatureDef[] = [
 ]
 
 export default function ToolsPage() {
+  const { isDarkMode } = useThemeMode()
   const [results, setResults] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState<Record<string, boolean>>({})
 
@@ -93,8 +95,8 @@ export default function ToolsPage() {
 
   return (
     <Container data-testid="tools-page" maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h3" fontWeight={700} gutterBottom>aims-commerce · tools showcase</Typography>
-      <Typography variant="body2" color="text.secondary" gutterBottom>
+      <Typography variant="h3" fontWeight={700} color={isDarkMode ? "common.white" : "text.primary"} gutterBottom>aims-commerce · tools showcase</Typography>
+      <Typography variant="body2" color={isDarkMode ? "common.white" : "text.secondary"} gutterBottom>
         30 features shipped behind one public route. Click <em>Run</em> on any card to hit the live API and render the real component.
       </Typography>
       <Box sx={{ mt: 3, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>

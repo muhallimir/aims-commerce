@@ -1,4 +1,5 @@
 import { Box, Chip } from "@mui/material";
+import useThemeMode from "src/hooks/useThemeMode";
 
 export interface SuggestProduct {
   name?: string;
@@ -25,6 +26,7 @@ export function SearchSuggestions({ products, query, onPick }: {
   query: string;
   onPick: (name: string) => void;
 }) {
+  const { isDarkMode } = useThemeMode();
   const items = suggestionsFor(products, query);
   if (items.length === 0) return null;
   return (
@@ -38,6 +40,7 @@ export function SearchSuggestions({ products, query, onPick }: {
           size="small"
           variant="outlined"
           onClick={() => onPick(n)}
+          sx={isDarkMode ? { color: "common.white", borderColor: "grey.500" } : {}}
         />
       ))}
     </Box>
