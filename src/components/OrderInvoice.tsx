@@ -6,6 +6,9 @@ import {
   Button,
   Card,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
   FormControl,
   InputLabel,
   MenuItem,
@@ -35,6 +38,7 @@ export function OrderInvoice() {
   const [selectedId, setSelectedId] = useState("");
   const [doc, setDoc] = useState<InvoiceDoc | null>(null);
   const [failed, setFailed] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
 
   useEffect(() => {
     if (!signedIn) return;
@@ -100,19 +104,34 @@ export function OrderInvoice() {
             </FormControl>
             {doc && <InvoiceDocument doc={doc} />}
             {doc && (
-              <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                <Button data-testid="invoice-print" variant="contained" size="small" onClick={() => window.open(`/api/orders/${selectedId}/invoice?format=html&autoprint=1`, "_blank", "noopener")}>
-                  Print / save PDF
-                </Button>
-                <Button
-                  data-testid="invoice-download"
-                  variant="outlined"
-                  size="small"
-                  onClick={() => window.open(`/api/orders/${selectedId}/invoice?format=pdf`, "_blank", "noopener")}
-                >
-                  Download PDF
-                </Button>
-              </Stack>
+              <>
+                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                  <Button data-testid="invoice-print" variant="contained" size="small" onClick={() => setPrintOpen(true)}>
+                    Print / save PDF
+                  </Button>
+                  <Button
+                    data-testid="invoice-download"
+                    variant="outlined"
+                    size="small"
+                    onClick={() => window.open(`/api/orders/${selectedId}/invoice?format=pdf`, "_blank", "noopener")}
+                  >
+                    Download PDF
+                  </Button>
+                </Stack>
+                <Dialog data-testid="invoice-print-dialog" open={printOpen} onClose={() => setPrintOpen(false)} maxWidth="md" fullWidth>
+                  <DialogContent>
+                    <InvoiceDocument doc={doc} printArea testId="invoice-print-preview" />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button data-testid="invoice-print-close" onClick={() => setPrintOpen(false)}>
+                      Close
+                    </Button>
+                    <Button data-testid="invoice-print-now" variant="contained" onClick={() => window.print()}>
+                      Print
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </>
             )}
           </CardContent>
         </Card>

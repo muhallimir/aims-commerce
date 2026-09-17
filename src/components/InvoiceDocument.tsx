@@ -10,11 +10,11 @@ function money(n: number): string {
  * stored totals, payment method. White island, print-scoped via
  * data-print-area plus the global print stylesheet.
  */
-export function InvoiceDocument({ doc }: { doc: InvoiceDoc }) {
+export function InvoiceDocument({ doc, printArea = false, testId = "invoice-preview" }: { doc: InvoiceDoc; printArea?: boolean; testId?: string }) {
   return (
     <Box
-      data-testid="invoice-preview"
-      data-print-area
+      data-testid={testId}
+      {...(printArea ? { "data-print-area": true } : {})}
       sx={{ mt: 2, p: { xs: 2, sm: 3 }, bgcolor: "common.white", color: "common.black", border: "1px solid #e0e0e0", borderRadius: 1 }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, flexWrap: "wrap" }}>

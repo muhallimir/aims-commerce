@@ -28,6 +28,14 @@ module.exports = async () => {
         },
       ],
     },
+    // pdfkit loads font/AFM data through dynamic requires the file tracer
+    // cannot follow, so ship them explicitly for the invoice PDF route.
+    outputFileTracingIncludes: {
+      "/api/orders/[id]/invoice": [
+        "./node_modules/pdfkit/js/standard-fonts/**/*",
+        "./node_modules/pdfkit/js/data/**/*",
+      ],
+    },
   };
 
   return nextConfig;
