@@ -21,26 +21,26 @@ const mapSellerProduct = (p) => ({
 });
 
 const mapSellerOrder = (o) => ({
-  _id: o.id,
-  user: o.user && { _id: o.user_id, name: o.user?.name || "", email: o.user?.email || "" },
-  orderItems: (o.orderItems || []).map((i) => ({
-    product: i.product_id,
+  _id: o._id || o.id,
+  user: o.user && { _id: o.user._id || o.user_id, name: o.user?.name || "", email: o.user?.email || "" },
+  orderItems: (o.orderItems || o.items || []).map((i) => ({
+    product: i.product || i.product_id,
     name: i.name,
     qty: i.qty,
     price: Number(i.price),
     image: i.image,
-    seller: i.seller_id,
+    seller: i.seller || i.seller_id,
   })),
-  itemsPrice: Number(o.items_price),
-  shippingPrice: Number(o.shipping_price),
-  taxPrice: Number(o.tax_price),
-  totalPrice: Number(o.total_price),
-  paymentMethod: o.payment_method,
-  isPaid: o.is_paid,
-  paidAt: o.paid_at,
-  isDelivered: o.is_delivered,
-  deliveredAt: o.delivered_at,
-  shippingAddress: {
+  itemsPrice: Number(o.itemsPrice ?? o.items_price),
+  shippingPrice: Number(o.shippingPrice ?? o.shipping_price),
+  taxPrice: Number(o.taxPrice ?? o.tax_price),
+  totalPrice: Number(o.totalPrice ?? o.total_price),
+  paymentMethod: o.paymentMethod ?? o.payment_method,
+  isPaid: o.isPaid ?? o.is_paid,
+  paidAt: o.paidAt ?? o.paid_at,
+  isDelivered: o.isDelivered ?? o.is_delivered,
+  deliveredAt: o.deliveredAt ?? o.delivered_at,
+  shippingAddress: o.shippingAddress || {
     fullName: o.shipping_full_name,
     contact: o.shipping_contact,
     address: o.shipping_address,
@@ -49,7 +49,7 @@ const mapSellerOrder = (o) => ({
     country: o.shipping_country,
   },
   paymentResult: o.payment_result ? JSON.parse(o.payment_result) : null,
-  createdAt: o.created_at,
+  createdAt: o.createdAt ?? o.created_at,
 });
 
 const initialState = {
