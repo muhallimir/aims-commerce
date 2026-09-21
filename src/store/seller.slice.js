@@ -26,7 +26,8 @@ const mapSellerOrder = (o) => ({
   orderItems: (o.orderItems || o.items || []).map((i) => ({
     product: i.product || i.product_id,
     name: i.name,
-    qty: i.qty,
+    qty: i.qty ?? i.quantity,
+    quantity: i.qty ?? i.quantity,
     price: Number(i.price),
     image: i.image,
     seller: i.seller || i.seller_id,
